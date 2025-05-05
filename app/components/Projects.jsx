@@ -39,12 +39,12 @@ const PROJECTS = [
   },
   {
     id: 4,
-    title: "Shell Landing Page",
-    description: "Multilingual landing page for Shell with responsive design, smooth animations, and language switching capabilities.",
-    image: "/shelanding.png",
-    link: "https://landing-page-ashen-seven-88.vercel.app/",
-    github: "https://github.com/username/shell-landing",
-    tech: ["Next.js", "i18n", "GSAP"]
+    title: "offee Bliss-Modern Café Website",
+    description: "A professional and elegant café website designed for modern coffee shops. Features responsive layout, menu display.",
+    image: "/Cafe.png",
+    link: "https://cafe-web-six.vercel.app/",
+    github: "https://github.com/AYOU-pixel/Cafe-web",
+    tech: ["Next.js", "Vite", "TailwindCSS"]
   },
   {
     id: 5,
