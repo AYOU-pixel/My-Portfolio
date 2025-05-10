@@ -25,13 +25,13 @@ const useScrollPosition = () => {
 // Projects data
 const projects = [
   {
-    id: 1,
-    title: "E-Commerce Platform",
-    description: "A feature-rich online store built with Next.js and Tailwind CSS that includes product filtering, cart functionality, payment processing, and responsive design.",
-    image: "/stor.png",
-    link: "https://ayou-store.netlify.app",
-    category: "e-commerce",
-    tech: ["Next.js", "TailwindCSS", "Stripe"]
+    id: 1, // Changed from 5 to 1
+    title: "E-commerce Website",
+    description: "A high-performance, secure, and feature-rich e-commerce frontend built using Next.js 14 and Tailwind CSS. It offers dynamic product browsing, an interactive cart system, responsive checkout flow, and seamless user experience with support for authentication, loyalty system, and optimized UI components.",
+    image: "/clothing.png",
+    link: "https://clothing-website-psi-ten.vercel.app/", 
+    category: "E-commerce",
+    tech: ["Next.js 14", "Tailwind CSS", "Vite"]
   },
   {
     id: 2,
@@ -61,7 +61,7 @@ const projects = [
     tech: ["React", "Next.js", "Weather API"]
   },
   {
-    id: 5,
+    id: 5, // Changed from 5 to 6
     title: "Shell Landing Page",
     description: "This landing page is designed for Shell, featuring branding elements and a structured layout with multiple sections. The page supports French and Arabic languages.",
     image: "/shelanding.png",
