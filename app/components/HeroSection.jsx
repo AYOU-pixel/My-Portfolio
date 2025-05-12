@@ -70,8 +70,17 @@ export default function HeroSection() {
               transition={{ delay: 0.4 }}
               className="text-lg sm:text-xl md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto"
             >
-              I craft immersive websites with code, creativity, and a touch of magic ✨
+              I help businesses boost online presence with modern, fast, and user-friendly web applications
             </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-sm text-slate-500 mt-2"
+            >
+              Trusted by 3+ startups to build scalable web platforms
+            </motion.p>
           </motion.div>
 
           {/* CTA Buttons */}
@@ -83,11 +92,11 @@ export default function HeroSection() {
           >
             <motion.a
               href="#projects"
-              className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg text-white font-semibold hover:shadow-lg transition-all"
+              className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg text-white font-semibold hover:shadow-lg transition-all text-base sm:text-lg w-full sm:w-auto justify-center"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
             >
-              <Rocket className="w-5 h-5" />
+              <Rocket className="w-5 h-5 mr-2" />
               See My Work
             </motion.a>
 
@@ -95,9 +104,9 @@ export default function HeroSection() {
               <Link
                 href="#contact"
                 scroll={true}
-                className="flex items-center gap-2 px-6 py-3 border border-slate-700 bg-slate-800/60 rounded-lg text-cyan-400 font-semibold backdrop-blur-md hover:border-cyan-400 transition-all"
+                className="flex items-center gap-2 px-6 py-3 border border-slate-700 bg-slate-800/40 rounded-lg text-slate-400 font-medium backdrop-blur-md hover:border-cyan-400 hover:text-cyan-400 transition-all text-base sm:text-lg w-full sm:w-auto justify-center"
               >
-                <Send className="w-5 h-5" />
+                <Send className="w-5 h-5 mr-2" />
                 Let's Connect
               </Link>
             </motion.div>
