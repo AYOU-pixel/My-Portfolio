@@ -454,11 +454,12 @@ function Navbar() {
             animate="open"
             exit="closed"
             variants={mobileMenuVariants}
-            className={`fixed inset-0 ${
-              darkMode ? "bg-slate-900/95" : "bg-slate-50/95"
-            } z-40 md:hidden flex flex-col pt-20 pb-8 px-4`}
+            className={`fixed inset-0 w-full max-w-full h-full overflow-y-auto
+              ${darkMode ? "bg-slate-900/95" : "bg-slate-50/95"}
+              z-50 md:hidden flex flex-col pt-20 pb-8 px-4`}
+            style={{ WebkitOverflowScrolling: 'touch', touchAction: 'manipulation' }}
           >
-            <div className="flex flex-col items-center gap-6 w-full px-4 mt-4 overflow-y-auto">
+            <div className="flex flex-col items-center gap-6 w-full px-4 mt-4">
               {navLinks.map((link) => {
                 const Icon = link.icon;
                 const isActive = activeSection === link.href;
