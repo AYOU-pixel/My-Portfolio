@@ -42,7 +42,7 @@ const NavLink = memo(({ link, isActive, isHovered, onHoverStart, onHoverEnd, han
     <motion.div
       onHoverStart={() => onHoverStart(link.id)}
       onHoverEnd={onHoverEnd}
-      className="relative px-3 py-2"
+      className="relative px-1 sm:px-2 md:px-3 py-2"
     >
       <AnimatePresence>
         {isHovered && (
@@ -59,18 +59,18 @@ const NavLink = memo(({ link, isActive, isHovered, onHoverStart, onHoverEnd, han
         href={link.href}
         aria-label={link.ariaLabel}
         title={link.label}
-        className="flex items-center gap-2 relative"
+        className="flex items-center gap-1 sm:gap-2 relative"
         onClick={handleScrollToSection(link.href)}
       >
         <motion.span
           variants={{
             rest: { y: 0, scale: 1 },
-            hover: { y: -3, scale: 1.1, transition: { type: "spring", stiffness: 400, damping: 15 } },
+            hover: { y: -2, scale: 1.1, transition: { type: "spring", stiffness: 400, damping: 15 } },
           }}
           animate={isHovered ? "hover" : "rest"}
           className={`text-${isActive ? "cyan-400" : darkMode ? "slate-400" : "slate-600"}`}
         >
-          <Icon className="w-5 h-5" />
+          <Icon className="w-4 h-4 md:w-5 md:h-5" />
         </motion.span>
         <motion.span
           variants={{
@@ -78,7 +78,7 @@ const NavLink = memo(({ link, isActive, isHovered, onHoverStart, onHoverEnd, han
             hover: { color: "#06B6D4", opacity: 1, transition: { duration: 0.2, ease: "easeOut" } },
           }}
           animate={isHovered || isActive ? "hover" : "rest"}
-          className={`font-medium ${isActive ? "font-semibold" : ""} text-sm md:text-base`}
+          className={`font-medium ${isActive ? "font-semibold" : ""} text-xs sm:text-sm md:text-base`}
         >
           {link.label}
         </motion.span>
@@ -112,9 +112,9 @@ const MobileNavLink = memo(({ link, isActive, handleScrollToSection, darkMode, r
     >
       <Link
         href={link.href}
-        className={`flex items-center gap-4 p-4 ${
+        className={`flex items-center gap-3 p-3 sm:p-4 ${
           isActive ? "text-cyan-400 font-semibold" : darkMode ? "text-slate-300" : "text-slate-700"
-        } transition-colors duration-200 text-lg`}
+        } transition-colors duration-200 text-base sm:text-lg`}
         onClick={handleScrollToSection(link.href)}
       >
         <motion.span
@@ -124,7 +124,7 @@ const MobileNavLink = memo(({ link, isActive, handleScrollToSection, darkMode, r
             rest: { scale: 1, rotate: 0, color: darkMode ? "#CBD5E1" : "#1E293B" },
           }}
         >
-          <Icon className="w-6 h-6" />
+          <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
         </motion.span>
         <span>{link.label}</span>
         {isActive && (
@@ -148,10 +148,25 @@ const Navbar = memo(function Navbar() {
   const [darkMode, setDarkMode] = useState(false);
   const [scrollDirection, setScrollDirection] = useState("up");
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
   const { scrollY } = useScroll();
   const mobileMenuRef = useRef(null);
   const prevScrollY = useRef(0);
   const reduceMotion = useRef(false);
+  const scrollTimeout = useRef(null);
+  
+  // Get viewport width for responsive adjustments
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+    
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Initialize theme and reduced motion
   useEffect(() => {
@@ -181,10 +196,10 @@ const Navbar = memo(function Navbar() {
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
-  // Scroll to top
+  // Scroll to top with debounce
   const scrollToTop = useCallback(() => {
     if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: reduceMotion.current ? "auto" : "smooth" });
     }
   }, []);
 
@@ -194,86 +209,113 @@ const Navbar = memo(function Navbar() {
       e.preventDefault();
       setMobileMenuOpen(false);
       if (typeof window === "undefined") return;
-      setTimeout(() => {
+      
+      // Use requestAnimationFrame for smoother scrolling
+      requestAnimationFrame(() => {
         const element = document.querySelector(href);
         if (element) {
-          const navHeight = 80;
+          const navHeight = isSmallScreen ? 64 : 80; // Adjust based on navbar height
           const y = element.getBoundingClientRect().top + window.pageYOffset - navHeight;
-          window.scrollTo({ top: y, behavior: "smooth" });
+          window.scrollTo({ 
+            top: y, 
+            behavior: reduceMotion.current ? "auto" : "smooth" 
+          });
           setActiveSection(href);
         }
-      }, 100);
+      });
     },
-    []
+    [isSmallScreen]
   );
 
-  // Optimized scroll handling
+  // Optimized scroll handling with throttling
   useEffect(() => {
     if (typeof window === "undefined") return;
-    let ticking = false;
-
-    const updateScroll = () => {
-      const currentScrollY = window.scrollY;
-      setIsScrolled(currentScrollY > 300);
-      if (currentScrollY > prevScrollY.current + 10) {
-        setScrollDirection("down");
-      } else if (currentScrollY < prevScrollY.current - 10) {
-        setScrollDirection("up");
-      }
-
-      // Active section detection
-      const sections = document.querySelectorAll("section");
-      let maxVisibleSection = null;
-      let maxVisibleAmount = 0;
-
-      for (const section of sections) {
-        const rect = section.getBoundingClientRect();
-        const visibleHeight = Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
-        if (visibleHeight > 0 && visibleHeight > maxVisibleAmount) {
-          maxVisibleAmount = visibleHeight;
-          maxVisibleSection = section;
-        }
-      }
-
-      if (maxVisibleSection) {
-        setActiveSection(`#${maxVisibleSection.id}`);
-      }
-
-      prevScrollY.current = currentScrollY;
-      ticking = false;
-    };
-
+    
     const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateScroll);
-        ticking = true;
+      // Clear existing timeout
+      if (scrollTimeout.current) {
+        window.cancelAnimationFrame(scrollTimeout.current);
       }
+      
+      // Schedule new one
+      scrollTimeout.current = window.requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+        setIsScrolled(currentScrollY > 100); // Reduced threshold for faster reaction
+        if (currentScrollY > prevScrollY.current + 5) {
+          setScrollDirection("down");
+        } else if (currentScrollY < prevScrollY.current - 5) {
+          setScrollDirection("up");
+        }
+
+        // Active section detection - IntersectionObserver would be better but this is simpler for now
+        // Get all sections
+        const sections = document.querySelectorAll("section");
+        let currentSection = null;
+        let maxVisibility = 0;
+
+        sections.forEach(section => {
+          const rect = section.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          
+          // Calculate how much of the section is visible
+          const visibleTop = Math.max(0, rect.top);
+          const visibleBottom = Math.min(windowHeight, rect.bottom);
+          const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+          
+          // Add weight to sections near the top of the viewport
+          const topProximity = 1 - (visibleTop / windowHeight) * 0.5;
+          const weightedVisibility = visibleHeight * topProximity;
+          
+          if (weightedVisibility > maxVisibility) {
+            maxVisibility = weightedVisibility;
+            currentSection = section;
+          }
+        });
+
+        if (currentSection && currentSection.id) {
+          setActiveSection(`#${currentSection.id}`);
+        }
+
+        prevScrollY.current = currentScrollY;
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    // Initial calculation
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeout.current) {
+        window.cancelAnimationFrame(scrollTimeout.current);
+      }
+    };
   }, []);
 
-  // Scroll lock for mobile menu
+  // Mobile menu handling
   useEffect(() => {
     if (typeof window === "undefined") return;
+    
+    // Check if screen size changes to desktop while mobile menu is open
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Body scroll lock for mobile menu
     if (mobileMenuOpen) {
-      const scrollY = window.scrollY;
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = "100%";
+      document.body.style.overflow = 'hidden';
     } else {
-      const scrollY = parseInt(document.body.style.top || "0", 10);
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      window.scrollTo(0, -scrollY);
+      document.body.style.overflow = '';
     }
+    
     return () => {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
+      window.removeEventListener('resize', handleResize);
+      document.body.style.overflow = '';
     };
   }, [mobileMenuOpen]);
 
@@ -318,8 +360,9 @@ const Navbar = memo(function Navbar() {
         animate={reduceMotion.current ? {} : { y: 0 }}
         transition={reduceMotion.current ? {} : { type: "spring", stiffness: 350, damping: 20 }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+          <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
+            {/* Logo/Home button */}
             <motion.div
               whileHover={reduceMotion.current ? {} : { scale: 1.05 }}
               whileTap={reduceMotion.current ? {} : { scale: 0.95 }}
@@ -335,9 +378,9 @@ const Navbar = memo(function Navbar() {
                   <Image
                     src="/logos.jpg"
                     alt="Logo"
-                    width={48}
-                    height={48}
-                    className="rounded-full object-cover border-2 border-transparent group-hover:border-cyan-400 transition-all duration-300 sm:w-16 sm:h-16"
+                    width={40}
+                    height={40}
+                    className="rounded-full object-cover border-2 border-transparent group-hover:border-cyan-400 transition-all duration-300 sm:w-12 sm:h-12 md:w-14 md:h-14"
                     priority
                     loading="eager"
                   />
@@ -350,7 +393,8 @@ const Navbar = memo(function Navbar() {
               </Link>
             </motion.div>
 
-            <div className="hidden md:flex items-center gap-4 lg:gap-8">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-2 lg:gap-6">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.id}
@@ -365,7 +409,8 @@ const Navbar = memo(function Navbar() {
               ))}
             </div>
 
-            <div className="hidden md:flex items-center gap-3 lg:gap-4">
+            {/* Desktop Call-to-action */}
+            <div className="hidden md:flex items-center gap-2 lg:gap-4">
               <motion.button
                 whileHover={reduceMotion.current ? {} : { scale: 1.1, rotate: darkMode ? 12 : -12 }}
                 whileTap={reduceMotion.current ? {} : { scale: 0.9 }}
@@ -386,7 +431,7 @@ const Navbar = memo(function Navbar() {
                   href="#contact"
                   aria-label="Contact me for hiring"
                   onClick={handleScrollToSection("#contact")}
-                  className={`px-4 py-2 lg:px-6 lg:py-3 ${
+                  className={`px-3 py-2 lg:px-5 lg:py-3 ${
                     darkMode ? "bg-gradient-to-r from-cyan-500 to-blue-500" : "bg-gradient-to-r from-cyan-600 to-blue-600"
                   } text-white rounded-xl font-medium flex items-center gap-2 relative overflow-hidden shadow-lg group text-sm lg:text-base`}
                 >
@@ -396,7 +441,8 @@ const Navbar = memo(function Navbar() {
               </motion.div>
             </div>
 
-            <div className="md:hidden flex items-center gap-3">
+            {/* Mobile Navigation Controls */}
+            <div className="md:hidden flex items-center gap-2">
               <motion.button
                 whileTap={reduceMotion.current ? {} : { scale: 0.9 }}
                 onClick={() => setDarkMode(!darkMode)}
@@ -405,7 +451,7 @@ const Navbar = memo(function Navbar() {
                 } transition-colors duration-300`}
                 aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
               >
-                {darkMode ? <FiSun className="w-5 h-5 text-yellow-400" /> : <FiMoon className="w-5 h-5 text-slate-800" />}
+                {darkMode ? <FiSun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" /> : <FiMoon className="w-4 h-4 sm:w-5 sm:h-5 text-slate-800" />}
               </motion.button>
               <motion.button
                 whileTap={reduceMotion.current ? {} : { scale: 0.9 }}
@@ -419,13 +465,14 @@ const Navbar = memo(function Navbar() {
                 aria-expanded={mobileMenuOpen}
                 aria-controls="mobile-menu"
               >
-                {mobileMenuOpen ? <FiX className="h-6 w-6" /> : <FiMenu className="h-6 w-6" />}
+                {mobileMenuOpen ? <FiX className="h-5 w-5 sm:h-6 sm:w-6" /> : <FiMenu className="h-5 w-5 sm:h-6 sm:w-6" />}
               </motion.button>
             </div>
           </div>
         </div>
       </motion.nav>
 
+      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -452,7 +499,7 @@ const Navbar = memo(function Navbar() {
             }}
             className={`fixed inset-0 ${darkMode ? "bg-slate-900/95" : "bg-slate-50/95"} z-40 md:hidden flex flex-col pt-16 pb-8 px-4 sm:pt-20`}
           >
-            <div className="flex flex-col items-center gap-4 w-full px-4 mt-4 overflow-y-auto">
+            <div className="flex flex-col items-center gap-3 w-full px-3 mt-4 overflow-y-auto">
               {navLinks.map((link) => (
                 <MobileNavLink
                   key={link.id}
@@ -468,13 +515,13 @@ const Navbar = memo(function Navbar() {
                   closed: { x: -20, opacity: 0 },
                   open: { x: 0, opacity: 1, transition: reduceMotion.current ? {} : { type: "spring", stiffness: 350 } },
                 }}
-                whileHover={reduceMotion.current ? {} : { scale: 1.05, y: -2, boxShadow: darkMode ? "0 8px 32px rgba(6, 182, 212, 0.3)" : "0 8px 32px rgba(6, 182, 212, 0.4)" }}
+                whileHover={reduceMotion.current ? {} : { scale: 1.05, y: -2 }}
                 className="w-full mt-4"
               >
                 <Link
                   href="#contact"
                   onClick={handleScrollToSection("#contact")}
-                  className={`block w-full py-4 px-6 ${
+                  className={`block w-full py-3 px-4 ${
                     darkMode ? "bg-gradient-to-r from-cyan-500 to-blue-500" : "bg-gradient-to-r from-cyan-600 to-blue-600"
                   } text-white rounded-xl font-medium text-center shadow-lg relative overflow-hidden text-base`}
                 >
@@ -489,7 +536,7 @@ const Navbar = memo(function Navbar() {
                 }}
                 className="mt-6 w-full text-center"
               >
-                <p className={`text-sm ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
+                <p className={`text-xs sm:text-sm ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
                   Press <kbd className={`px-2 py-1 rounded ${darkMode ? "bg-slate-800" : "bg-slate-200"}`}>ESC</kbd> to close menu
                 </p>
               </motion.div>
@@ -498,6 +545,7 @@ const Navbar = memo(function Navbar() {
         )}
       </AnimatePresence>
 
+      {/* Scroll to Top Button */}
       <AnimatePresence>
         {isScrolled && (
           <motion.button
@@ -507,14 +555,14 @@ const Navbar = memo(function Navbar() {
             whileHover={reduceMotion.current ? {} : { scale: 1.1 }}
             whileTap={reduceMotion.current ? {} : { scale: 0.9 }}
             onClick={scrollToTop}
-            className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 p-2 sm:p-3 rounded-full ${
+            className={`fixed bottom-4 right-4 p-2 rounded-full ${
               darkMode ? "bg-slate-800 hover:bg-slate-700 text-cyan-400" : "bg-slate-200 hover:bg-slate-300 text-cyan-600"
             } shadow-lg z-30`}
             aria-label="Back to top"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 sm:h-6 sm:w-6"
+              className="h-4 w-4 sm:h-5 sm:w-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
