@@ -42,7 +42,7 @@ body {
 .animate-bounce-slow {
   animation: bounce-slow 2.5s infinite;
 }
-/* يمكن إضافته في ملف CSS عام */
+
 body {
   scroll-behavior: smooth;
 }

@@ -1,5 +1,4 @@
 "use client";
-
 import { useMemo } from "react";
 import { Button, Container, Typography, Grid, Card, CardContent } from "@mui/material";
 import { styled } from "@mui/system";
@@ -8,7 +7,6 @@ import { motion } from "framer-motion";
 import { Eye, Github } from "lucide-react";
 import Link from "next/link";
 
-// Project data - moved outside component to prevent re-creation
 const PROJECTS = [
   {
     id: 1,
@@ -66,7 +64,6 @@ const PROJECTS = [
   }
 ];
 
-// Animation variants - defined once for reuse
 const fadeInUp = {
   hidden: { opacity: 0, y: 50 },
   visible: { opacity: 1, y: 0 }
@@ -79,20 +76,11 @@ const pulse = {
   }
 };
 
-// Styled components with improved performance
 const SectionWrapper = styled("section")(({ theme }) => ({
   position: "relative",
   minHeight: "100vh",
   padding: "6rem 0",
-  background: `
-    linear-gradient(
-      135deg,
-      rgba(15, 23, 42, 0.98) 0%,
-      rgba(15, 23, 42, 0.95) 40%,
-      rgba(30, 58, 138, 0.9) 100%
-    ),
-    url('/grid.svg')
-  `,
+  background: `linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.95), rgba(30, 58, 138, 0.9)), url('/grid.svg')`,
   backgroundSize: "cover",
   backdropFilter: "blur(4px)",
   [theme.breakpoints.down('md')]: {
@@ -131,8 +119,8 @@ const TitleText = styled(Typography)(({ theme }) => ({
 }));
 
 const ImageContainer = styled("div")(({ theme }) => ({
-  position: "relative", 
-  height: "220px", 
+  position: "relative",
+  height: "220px",
   overflow: "hidden",
   borderTopLeftRadius: "16px",
   borderTopRightRadius: "16px",
@@ -180,6 +168,10 @@ const LiveDemoButton = styled(Button)({
     transform: "translateY(-2px)",
     boxShadow: "0 4px 16px rgba(34, 211, 238, 0.3)",
   },
+  "&:focus": {
+    outline: "2px solid #22d3ee",
+    outlineOffset: "2px",
+  },
 });
 
 const CodeButton = styled(Button)({
@@ -194,6 +186,10 @@ const CodeButton = styled(Button)({
     borderColor: "#4ade80",
     background: "rgba(74, 222, 128, 0.1)",
     transform: "translateY(-2px)",
+  },
+  "&:focus": {
+    outline: "2px solid #4ade80",
+    outlineOffset: "2px",
   },
 });
 
@@ -210,13 +206,14 @@ const ViewMoreButton = styled(Button)({
     background: "rgba(34, 211, 238, 0.1)",
     transform: "scale(1.02)",
   },
+  "&:focus": {
+    outline: "2px solid #22d3ee",
+    outlineOffset: "2px",
+  },
 });
 
-// Memoized ProjectCard component to prevent unnecessary re-renders
 const ProjectCard = ({ project }) => {
   const { title, description, image, link, github, tech } = project;
-
-  // Image error handling function
   const handleImageError = (e) => {
     if (e.target instanceof HTMLImageElement) {
       e.target.src = '/fallback-project.png';
@@ -236,11 +233,11 @@ const ProjectCard = ({ project }) => {
         <ImageContainer>
           <Image
             src={image}
-            alt={title}
+            alt={`${title} project`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            style={{ 
-              objectFit: "cover", 
+            style={{
+              objectFit: "cover",
               objectPosition: "center top",
               transition: "transform 0.5s ease"
             }}
@@ -251,36 +248,33 @@ const ProjectCard = ({ project }) => {
             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAIAAoDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9Tv2Rf2e9H0bQR438Q6UZ9YvfMuNKsb2Jlm0/T5Yw0d3NE+JFvrxGV1dHT7LAyIjLNLPFJ+YniH9sb4rf8Jt8TPE3gP4h6l4g0HXfF+v6to0OrGfSbrT9NuNYvJ9Kt4LLUHht44dKglghtxaxeULaOPZs2Ej/AEfHrRXnYfBKlCKapyaSV+Z67dzqr4+VSb5ZNJt2XKuh//Z"
           />
         </ImageContainer>
-
         <CardContent sx={{ flexGrow: 1, p: 3 }}>
-          <Typography 
-            variant="h6" 
-            sx={{ 
+          <Typography
+            variant="h6"
+            sx={{
               background: "linear-gradient(45deg, #f8fafc, #e2e8f0)",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",
-              mb: 1.5, 
+              mb: 1.5,
               fontWeight: 600,
               fontSize: "1.25rem",
             }}
           >
             {title}
           </Typography>
-          
-          <Typography 
-            variant="body1" 
-            sx={{ 
-              color: "#cbd5e1", 
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#cbd5e1",
               fontWeight: 500,
               fontSize: "0.95rem",
               lineHeight: 1.6,
-              "&:hover": { color: "#f1f5f9" } 
+              "&:hover": { color: "#f1f5f9" }
             }}
           >
             {description}
           </Typography>
-          
           <TechChipContainer>
             {tech?.map((item, index) => (
               <TechChip
@@ -294,7 +288,6 @@ const ProjectCard = ({ project }) => {
             ))}
           </TechChipContainer>
         </CardContent>
-
         <CardContent sx={{ pt: 0, pb: 3 }}>
           <ButtonGroup>
             <LiveDemoButton
@@ -306,7 +299,6 @@ const ProjectCard = ({ project }) => {
             >
               Live Demo
             </LiveDemoButton>
-            
             {github && (
               <CodeButton
                 variant="outlined"
@@ -325,15 +317,13 @@ const ProjectCard = ({ project }) => {
   );
 };
 
-// Main Projects component
 const Projects = () => {
-  // Use a properly memoized project data
   const memoizedProjects = useMemo(() => PROJECTS, []);
-  
+
   return (
     <SectionWrapper id="projects">
       <Container maxWidth="lg">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
@@ -342,7 +332,6 @@ const Projects = () => {
           <TitleText variant="h2">
             My Projects
           </TitleText>
-
           <Typography
             variant="body1"
             sx={{
@@ -358,7 +347,6 @@ const Projects = () => {
             A collection of impactful projects solving real-world problems with modern web solutions.
           </Typography>
         </motion.div>
-
         <Grid container spacing={{ xs: 2, md: 3 }}>
           {memoizedProjects.map((project) => (
             <Grid item xs={12} sm={6} lg={4} key={project.id}>
@@ -366,14 +354,13 @@ const Projects = () => {
             </Grid>
           ))}
         </Grid>
-
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.5 }}
           className="text-center mt-10"
         >
-          <Link href="/morproject" passHref>
+          <Link href="/moreprojects" passHref>
             <ViewMoreButton
               variant="outlined"
               startIcon={<Eye size={18} />}
@@ -383,9 +370,7 @@ const Projects = () => {
           </Link>
         </motion.div>
       </Container>
-
-      {/* Scroll Indicator - Optimized animation */}
-      <motion.div 
+      <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
         variants={pulse}
         animate="animate"
