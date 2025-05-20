@@ -1,641 +1,397 @@
 "use client";
 
-import React, { memo, useCallback, useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { FiCode, FiUser, FiMail, FiBriefcase, FiSun, FiMoon, FiX, FiMenu } from "react-icons/fi";
 import Link from "next/link";
 import Image from "next/image";
+import { Code, Briefcase, Send, Terminal, ChevronDown, Sparkles, ArrowUpRight, Zap, LineChart } from "lucide-react";
+import { motion, useTransform, useScroll, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import Typewriter from "typewriter-effect"; // Added for typewriter effect
 
-// Navigation links configuration
-const navLinks = [
-  { id: 1, href: "#about", label: "About", icon: FiUser, ariaLabel: "Navigate to About section" },
-  { id: 2, href: "#skills", label: "Skills", icon: FiCode, ariaLabel: "Navigate to Skills section" },
-  { id: 3, href: "#projects", label: "Projects", icon: FiBriefcase, ariaLabel: "Navigate to Projects section" },
-  { id: 4, href: "#contact", label: "Contact", icon: FiMail, ariaLabel: "Navigate to Contact section" },
-];
+export default function HeroSection() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref });
+  const x = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const [isMounted, setIsMounted] = useState(false);
+  const [hoverButton, setHoverButton] = useState(false);
+  const [activeStack, setActiveStack] = useState(null);
 
-// ErrorBoundary component for robust error handling
-class ErrorBoundary extends React.Component {
-  state = { hasError: false };
+  // Only set isMounted if not already true
+  useEffect(() => {
+    if (!isMounted) setIsMounted(true);
+  }, [isMounted]);
 
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
+  // Memoized animation configs
+  const floatingAnimation = useMemo(() => ({
+    y: [0, -10, 0],
+    transition: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+  }), []);
 
-  componentDidCatch(error, errorInfo) {
-    console.error("Navbar Error:", error, errorInfo);
-  }
+  const rotateAnimation = useMemo(() => ({
+    rotate: [0, 10, -10, 0],
+    transition: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+  }), []);
 
-  render() {
-    if (this.state.hasError) {
-      return <div className="p-4 text-red-500 text-center">Something went wrong with the navigation.</div>;
-    }
-    return this.props.children;
-  }
-}
+  const waveAnimation = useMemo(() => ({
+    y: [0, -20, 0],
+    transition: { duration: 8, repeat: Infinity, ease: "easeInOut" },
+  }), []);
 
-// Reusable NavLink component for desktop navigation
-const NavLink = memo(({ link, isActive, isHovered, onHoverStart, onHoverEnd, handleScrollToSection, darkMode }) => {
-  const Icon = link.icon;
+  // Memoized tech stack
+  const techStack = useMemo(() => [
+    { name: "React", desc: "Built 5+ projects for startups", icon: <Code className="w-4 h-4 text-cyan-400" />, years: "3+ years" },
+    { name: "Next.js", desc: "SEO-optimized web apps", icon: <Code className="w-4 h-4 text-cyan-400" />, years: "2+ years" },
+    { name: "TypeScript", desc: "Type-safe development", icon: <Code className="w-4 h-4 text-cyan-400" />, years: "2+ years" },
+    { name: "Node.js", desc: "Backend APIs and services", icon: <Code className="w-4 h-4 text-cyan-400" />, years: "3+ years" },
+  ], []);
+
+  // Memoized scroll to projects handler
+  const handleScrollToProjects = useCallback(() => {
+    document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  if (!isMounted) return null;
 
   return (
-    <motion.div
-      onHoverStart={() => onHoverStart(link.id)}
-      onHoverEnd={onHoverEnd}
-      className="relative px-2 md:px-3 lg:px-4 py-2"
+    <section
+      ref={ref}
+      className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-200 via-slate-900 to-indigo-400 overflow-hidden border-b border-slate-700/30"
+      role="banner"
+      aria-label="Hero Section"
     >
-      <AnimatePresence>
-        {isHovered && (
-          <motion.span
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className={`absolute inset-0 ${darkMode ? "bg-cyan-500/20" : "bg-cyan-500/30"} rounded-full`}
-            transition={{ type: "spring", stiffness: 400 }}
-          />
-        )}
-      </AnimatePresence>
-      <Link
-        href={link.href}
-        aria-label={link.ariaLabel}
-        title={link.label}
-        className="flex items-center gap-2 relative"
-        onClick={handleScrollToSection(link.href)}
+      {/* Animated Background Elements */}
+      <motion.div
+        className="absolute inset-0 bg-grid-slate-700/10 bg-[length:40px_40px]"
+        style={{ x }}
+        aria-hidden="true"
+      />
+      
+      {/* Animated waves */}
+      <motion.div 
+        className="absolute bottom-0 left-0 right-0 h-64 opacity-10"
+        animate={waveAnimation}
       >
-        <motion.span
-          variants={{
-            rest: { y: 0, scale: 1 },
-            hover: { y: -2, scale: 1.1, transition: { type: "spring", stiffness: 400, damping: 15 } },
-          }}
-          animate={isHovered ? "hover" : "rest"}
-          className={`${isActive ? "text-cyan-400" : darkMode ? "text-slate-400" : "text-slate-600"}`}
-        >
-          <Icon className="w-4 h-4 md:w-5 md:h-5" />
-        </motion.span>
-        <motion.span
-          variants={{
-            rest: { color: darkMode ? "#CBD5E1" : "#1E293B", opacity: 0.9 },
-            hover: { color: "#06B6D4", opacity: 1, transition: { duration: 0.2, ease: "easeOut" } },
-          }}
-          animate={isHovered || isActive ? "hover" : "rest"}
-          className={`font-medium ${isActive ? "font-semibold" : ""} hidden sm:block text-sm md:text-base`}
-        >
-          {link.label}
-        </motion.span>
-        {isActive && (
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            exit={{ scaleX: 0 }}
-            className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-cyan-400 to-blue-500"
-            transition={{ type: "spring", stiffness: 400, damping: 20 }}
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="absolute bottom-0 left-0 w-full h-full">
+          <path 
+            d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" 
+            className="fill-cyan-500/30"
           />
-        )}
-      </Link>
-    </motion.div>
-  );
-});
-
-// Reusable MobileNavLink component for mobile menu
-const MobileNavLink = memo(({ link, isActive, handleScrollToSection, darkMode, reduceMotion }) => {
-  const Icon = link.icon;
-
-  return (
-    <motion.div
-      variants={{
-        closed: { x: -20, opacity: 0 },
-        open: { x: 0, opacity: 1, transition: reduceMotion ? {} : { type: "spring", stiffness: 350 } },
-      }}
-      className="w-full relative"
-      whileHover={reduceMotion ? {} : { x: 5 }}
-      transition={reduceMotion ? {} : { type: "spring", stiffness: 350 }}
-    >
-      <Link
-        href={link.href}
-        className={`flex items-center gap-3 p-3 ${
-          isActive ? "text-cyan-400 font-semibold" : darkMode ? "text-slate-300" : "text-slate-700"
-        } transition-colors duration-200 text-base`}
-        onClick={handleScrollToSection(link.href)}
-      >
-        <motion.span
-          animate={isActive ? "active" : "rest"}
-          variants={{
-            active: { scale: 1.2, rotate: -10, color: "#06B6D4" },
-            rest: { scale: 1, rotate: 0, color: darkMode ? "#CBD5E1" : "#1E293B" },
-          }}
-        >
-          <Icon className="w-5 h-5" />
-        </motion.span>
-        <span>{link.label}</span>
-        {isActive && (
-          <motion.div
-            className="absolute left-0 h-full w-[3px] bg-cyan-400 rounded-r"
-            initial={{ opacity: 0, scaleY: 0 }}
-            animate={{ opacity: 1, scaleY: 1 }}
-            transition={reduceMotion ? {} : { type: "spring", stiffness: 500 }}
+          <path 
+            d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" 
+            className="fill-indigo-500/20" 
+            transform="translate(0, 5)"
           />
-        )}
-      </Link>
-    </motion.div>
-  );
-});
+        </svg>
+      </motion.div>
+      
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/90 via-slate-900/50 to-slate-900/90" />
 
-// Main Navbar component
-const Navbar = memo(function Navbar() {
-  const [activeSection, setActiveSection] = useState("#about");
-  const [hoveredLink, setHoveredLink] = useState(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-  const [scrollDirection, setScrollDirection] = useState("up");
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [isMediumScreen, setIsMediumScreen] = useState(false);
-  const { scrollY } = useScroll();
-  const mobileMenuRef = useRef(null);
-  const prevScrollY = useRef(0);
-  const reduceMotion = useRef(false);
-  const bodyScrollPosition = useRef(0);
-
-  // Get viewport width for responsive adjustments
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 640);
-      setIsMediumScreen(window.innerWidth >= 640 && window.innerWidth < 1024);
-
-      if (window.innerWidth >= 1024 && mobileMenuOpen) {
-        setMobileMenuOpen(false);
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [mobileMenuOpen]);
-
-  // Initialize theme and reduced motion
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initialTheme = savedTheme === "dark" || (!savedTheme && prefersDark);
-    setDarkMode(initialTheme);
-    document.documentElement.classList.toggle("dark", initialTheme);
-
-    reduceMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  }, []);
-
-  // Sync theme changes
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
-  }, [darkMode]);
-
-  // Reduced motion listener
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    reduceMotion.current = mediaQuery.matches;
-    const handler = (e) => (reduceMotion.current = e.matches);
-    mediaQuery.addEventListener("change", handler);
-    return () => mediaQuery.removeEventListener("change", handler);
-  }, []);
-
-  // Robust scroll lock for mobile menu
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    if (mobileMenuOpen) {
-      bodyScrollPosition.current = window.scrollY;
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${bodyScrollPosition.current}px`;
-      document.body.style.width = "100%";
-      document.body.style.overflow = "hidden";
-      document.body.style.touchAction = "none";
-    } else {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      document.body.style.overflow = "";
-      document.body.style.touchAction = "";
-      window.scrollTo(0, bodyScrollPosition.current);
-    }
-
-    return () => {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      document.body.style.overflow = "";
-      document.body.style.touchAction = "";
-    };
-  }, [mobileMenuOpen]);
-
-  // Scroll to top
-  const scrollToTop = useCallback(() => {
-    if (typeof window === "undefined") return;
-    window.scrollTo({ top: 0, behavior: reduceMotion.current ? "auto" : "smooth" });
-  }, []);
-
-  // Scroll to section
-  const handleScrollToSection = useCallback(
-    (href) => (e) => {
-      e.preventDefault();
-      setMobileMenuOpen(false);
-      if (typeof window === "undefined") return;
-
-      requestAnimationFrame(() => {
-        const element = document.querySelector(href);
-        if (element) {
-          const navHeight = isSmallScreen ? 56 : isMediumScreen ? 64 : 72;
-          const y = element.getBoundingClientRect().top + window.pageYOffset - navHeight;
-          window.scrollTo({
-            top: y,
-            behavior: reduceMotion.current ? "auto" : "smooth",
-          });
-          setActiveSection(href);
-        }
-      });
-    },
-    [isSmallScreen, isMediumScreen]
-  );
-
-  // Scroll handling with IntersectionObserver
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY > 20 && !isScrolled) {
-        setIsScrolled(true);
-      } else if (currentScrollY <= 20 && isScrolled) {
-        setIsScrolled(false);
-      }
-
-      if (currentScrollY > prevScrollY.current + 10) {
-        if (scrollDirection !== "down") setScrollDirection("down");
-      } else if (currentScrollY < prevScrollY.current - 10) {
-        if (scrollDirection !== "up") setScrollDirection("up");
-      }
-
-      prevScrollY.current = currentScrollY;
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        let currentSection = null;
-        let maxRatio = 0;
-
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
-            maxRatio = entry.intersectionRatio;
-            currentSection = entry.target;
-          }
-        });
-
-        if (currentSection && currentSection.id) {
-          const newActive = `#${currentSection.id}`;
-          if (activeSection !== newActive) {
-            setActiveSection(newActive);
-          }
-        }
-      },
-      {
-        root: null,
-        rootMargin: `-${isSmallScreen ? 56 : isMediumScreen ? 64 : 72}px 0px 0px 0px`,
-        threshold: [0.1, 0.3, 0.5, 0.7, 0.9],
-      }
-    );
-
-    const sections = document.querySelectorAll("section[id]");
-    sections.forEach((section) => observer.observe(section));
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      sections.forEach((section) => observer.unobserve(section));
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [activeSection, isScrolled, scrollDirection, isSmallScreen, isMediumScreen]);
-
-  // Click outside mobile menu handler
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const handleClickOutside = (event) => {
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
-        setMobileMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-    };
-  }, []);
-
-  // Keyboard navigation
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape" && mobileMenuOpen) {
-        setMobileMenuOpen(false);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [mobileMenuOpen]);
-
-  // Dynamic background properties
-  const bgOpacity = useTransform(scrollY, [0, 100], [0.6, 0.95]);
-  const navBlur = useTransform(scrollY, [0, 50], [4, 8]);
-
-  return (
-    <ErrorBoundary>
-      <motion.nav
-        style={{
-          backgroundColor: darkMode ? `rgba(15, 23, 42, ${bgOpacity.get()})` : `rgba(241, 245, 249, ${bgOpacity.get()})`,
-          backdropFilter: `blur(${navBlur.get()}px)`,
+      {/* Enhanced Soft Circles with subtle animation */}
+      <motion.div 
+        className="absolute -top-24 -right-24 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl"
+        animate={{
+          scale: [1, 1.1, 1],
+          opacity: [0.2, 0.3, 0.2],
         }}
-        className={`fixed top-0 w-full z-50 border-b ${
-          darkMode ? "border-slate-800/70" : "border-slate-200/70"
-        } transition-transform duration-300 ${
-          scrollDirection === "down" && isScrolled && !mobileMenuOpen ? "-translate-y-full" : "translate-y-0"
-        }`}
-        initial={reduceMotion.current ? {} : { y: -100 }}
-        animate={reduceMotion.current ? {} : { y: 0 }}
-        transition={reduceMotion.current ? {} : { type: "spring", stiffness: 350, damping: 20 }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16 lg:h-18">
-            {/* Logo/Home button */}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div 
+        className="absolute -bottom-24 -left-24 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl"
+        animate={{
+          scale: [1, 1.15, 1],
+          opacity: [0.2, 0.25, 0.2],
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div className="container mx-auto px-4 sm:px-6 py-24 z-10">
+        <div className="flex flex-col items-center gap-10 text-center">
+          {/* Enhanced Headline with improved visual hierarchy */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-6"
+          >
             <motion.div
-              whileHover={reduceMotion.current ? {} : { scale: 1.05 }}
-              whileTap={reduceMotion.current ? {} : { scale: 0.95 }}
-              onClick={scrollToTop}
-              onKeyDown={(e) => e.key === "Enter" && scrollToTop()}
-              className="cursor-pointer flex-shrink-0"
-              role="button"
-              tabIndex={0}
-              aria-label="Return to top of page"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="flex items-center justify-center gap-2"
             >
-              <Link href="#" passHref>
-                <div className="relative group">
-                  <Image
-                    src="/logos.jpg"
-                    alt="Logo"
-                    width={40}
-                    height={40}
-                    className="rounded-full object-cover border-2 border-transparent group-hover:border-cyan-400 transition-all duration-300"
-                    priority
-                    loading="eager"
+              {/* Personal Logo with enhanced animation */}
+              <motion.span 
+                className="flex items-center justify-center w-10 h-10 rounded-md bg-gradient-to-br from-cyan-500 to-blue-600 text-white font-bold text-lg"
+                whileHover={{ 
+                  rotate: [0, 10, -10, 0],
+                  scale: 1.1,
+                  transition: { duration: 0.5 }
+                }}
+              >
+                A
+              </motion.span>
+
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight text-[#F5F5F5]">
+                Hey, I'm{" "}
+                <motion.span 
+                  className="text-amber-400 relative inline-block"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  Ayoub
+                  <motion.span 
+                    className="absolute -bottom-1 left-0 w-full h-0.5 bg-amber-400/70"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ delay: 0.6, duration: 0.6 }}
                   />
-                  <motion.div
-                    className="absolute inset-0 rounded-full bg-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    animate={reduceMotion.current ? {} : { scale: [1, 1.1, 1], opacity: [0, 0.3, 0] }}
-                    transition={reduceMotion.current ? {} : { duration: 2, repeat: Infinity, repeatType: "loop" }}
-                  />
-                </div>
-              </Link>
+                </motion.span>
+              </h1>
             </motion.div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1">
-              {navLinks.map((link) => (
-                <NavLink
-                  key={link.id}
-                  link={link}
-                  isActive={activeSection === link.href}
-                  isHovered={hoveredLink === link.id}
-                  onHoverStart={() => setHoveredLink(link.id)}
-                  onHoverEnd={() => setHoveredLink(null)}
-                  handleScrollToSection={handleScrollToSection}
-                  darkMode={darkMode}
-                />
-              ))}
-            </div>
+            {/* Personal Story with enhanced Typewriter effect */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-sm sm:text-base text-slate-300 font-medium tracking-wider drop-shadow-md"
+            >
+              <Typewriter
+                options={{
+                  strings: [
+                    "Turning ideas into seamless digital experiences since 2020",
+                    "Creating elegant solutions to complex problems",
+                    "Building the web, one component at a time"
+                  ],
+                  autoStart: true,
+                  loop: true,
+                  delay: 50,
+                  deleteSpeed: 30,
+                }}
+              />
+            </motion.div>
 
-            {/* Tablet Navigation */}
-            <div className="hidden sm:flex lg:hidden items-center space-x-1">
-              {navLinks.map((link) => (
+            {/* Professional Title with improved visibility */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-sm sm:text-base text-slate-200 font-medium tracking-wider drop-shadow"
+            >
+              Web Developer | Frontend Engineer | UX-Centric Builder
+            </motion.p>
+
+            {/* Enhanced Value Proposition with emoji icons */}
+            <motion.h2
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-lg sm:text-xl md:text-2xl text-[#F5F5F5] font-medium max-w-2xl mx-auto leading-relaxed"
+            >
+              I build{" "}
+              <span className="text-cyan-300 font-semibold inline-flex items-center">
+                high-performing <Zap className="w-5 h-5 ml-1 text-cyan-300" />
+              </span>{" "}
+              <span className="text-indigo-300 font-semibold inline-flex items-center">
+                scalable <LineChart className="w-5 h-5 ml-1 text-indigo-300" />
+              </span>{" "}
+              web apps that users love and businesses trust
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="text-sm md:text-base text-slate-300 mt-2 font-medium"
+            >
+              Trusted by 3+ startups to build SEO-optimized platforms that drive growth
+            </motion.p>
+
+            {/* Achievement with badge */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+              className="flex justify-center mt-1"
+            >
+              <span className="text-xs bg-emerald-900/30 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800/50 inline-flex items-center gap-1">
+                <span>✓</span> Improved load time by 30% for a startup client
+              </span>
+            </motion.div>
+          </motion.div>
+
+          {/* Enhanced CTA Buttons with improved animations */}
+          <motion.div
+            className="flex flex-col sm:flex-row gap-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+          >
+            <motion.a
+              href="#projects"
+              className="group flex items-center gap-2 px-6 py-3 bg-amber-400 rounded-lg text-slate-900 font-semibold hover:shadow-lg focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-slate-900 transition-all text-base sm:text-lg w-full sm:w-auto justify-center shadow-lg"
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 10px 25px -5px rgba(251, 191, 36, 0.4)" 
+              }}
+              whileTap={{ scale: 0.95, transition: { type: "spring", stiffness: 300 } }}
+            >
+              <Briefcase className="w-5 h-5 mr-2 group-hover:animate-pulse" />
+              View Portfolio
+            </motion.a>
+
+            <motion.div
+              onHoverStart={() => setHoverButton(true)}
+              onHoverEnd={() => setHoverButton(false)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95, transition: { type: "spring", stiffness: 300 } }}
+            >
+              <Link
+                href="#contact"
+                scroll={true}
+                className="flex items-center gap-2 px-6 py-3 border border-sky-300 bg-transparent rounded-lg text-sky-300 font-medium hover:border-cyan-400 hover:text-cyan-400 hover:ring-1 hover:ring-cyan-500/50 focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition-all text-base sm:text-lg w-full sm:w-auto justify-center shadow-lg"
+              >
+                <Send className="w-5 h-5 mr-2" />
+                Start a Project
                 <motion.div
-                  key={link.id}
-                  className="relative p-2"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  animate={hoverButton ? { x: 3, y: -3, opacity: 1 } : { x: 0, y: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <Link
-                    href={link.href}
-                    aria-label={link.ariaLabel}
-                    title={link.label}
-                    className="flex items-center justify-center"
-                    onClick={handleScrollToSection(link.href)}
-                    passHref
-                  >
-                    <span className={activeSection === link.href ? "text-cyan-400" : darkMode ? "text-slate-300" : "text-slate-600"}>
-                      <link.icon className="w-5 h-5" />
-                    </span>
-                    {activeSection === link.href && (
+                  <ArrowUpRight className="w-4 h-4" />
+                </motion.div>
+              </Link>
+            </motion.div>
+          </motion.div>
+
+          {/* Enhanced Tech Stack with badges and tooltips */}
+          <motion.div
+            className="flex flex-col items-center gap-2 mt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+          >
+            <p className="text-xs text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <span className="h-px w-4 bg-slate-600"></span>
+              Tech Stack
+              <span className="h-px w-4 bg-slate-600"></span>
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-3 mt-2">
+              {techStack.map((tech, index) => (
+                <motion.div
+                  key={tech.name}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 1.2 + index * 0.1 }}
+                  whileHover={{ scale: 1.1 }}
+                  className="relative"
+                  onHoverStart={() => setActiveStack(tech.name)}
+                  onHoverEnd={() => setActiveStack(null)}
+                >
+                  <div className="group px-3 py-1.5 bg-slate-800 backdrop-blur-md text-slate-200 rounded-full text-xs border border-slate-700 hover:border-cyan-400 flex items-center gap-1 shadow-md">
+                    {tech.icon}
+                    {tech.name}
+                  </div>
+                  
+                  {/* Enhanced tooltip with animation */}
+                  <AnimatePresence>
+                    {activeStack === tech.name && (
                       <motion.div
-                        className="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-cyan-400"
-                        layoutId="activeTabIndicator"
-                      />
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 5 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute -top-16 left-1/2 -translate-x-1/2 w-36 bg-slate-800 text-xs text-slate-200 px-3 py-2 rounded-md border border-slate-700/50 shadow-xl z-10"
+                      >
+                        <div className="font-medium text-cyan-400 mb-1">{tech.years}</div>
+                        <div className="text-slate-300">{tech.desc}</div>
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-800 border-r border-b border-slate-700/50 transform rotate-45"></div>
+                      </motion.div>
                     )}
-                  </Link>
+                  </AnimatePresence>
                 </motion.div>
               ))}
             </div>
+          </motion.div>
 
-            {/* Desktop & Tablet Call-to-action */}
-            <div className="hidden sm:flex items-center gap-2">
-              <motion.button
-                whileHover={reduceMotion.current ? {} : { scale: 1.1, rotate: darkMode ? 12 : -12 }}
-                whileTap={reduceMotion.current ? {} : { scale: 0.9 }}
-                onClick={() => setDarkMode(!darkMode)}
-                className={`p-2 rounded-full ${
-                  darkMode ? "bg-slate-800 hover:bg-slate-700" : "bg-slate-200 hover:bg-slate-300"
-                } transition-colors duration-300`}
-                aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-              >
-                {darkMode ? <FiSun className="w-5 h-5 text-yellow-400" /> : <FiMoon className="w-5 h-5 text-slate-800" />}
-              </motion.button>
-              <motion.div
-                whileHover={reduceMotion.current ? {} : { scale: 1.05, y: -2 }}
-                whileTap={reduceMotion.current ? {} : { scale: 0.95 }}
-                transition={reduceMotion.current ? {} : { type: "spring", stiffness: 350 }}
-              >
-                <Link
-                  href="#contact"
-                  aria-label="Contact me for hiring"
-                  onClick={handleScrollToSection("#contact")}
-                  className={`px-3 py-2 ${
-                    darkMode ? "bg-gradient-to-r from-cyan-500 to-blue-500" : "bg-gradient-to-r from-cyan-600 to-blue-600"
-                  } text-white rounded-xl font-medium flex items-center gap-2 relative overflow-hidden shadow-lg group text-sm`}
-                  passHref
-                >
-                  <span className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-                  <span className="relative">Hire Me</span>
-                </Link>
-              </motion.div>
-            </div>
-
-            {/* Mobile Navigation Controls */}
-            <div className="sm:hidden flex items-center gap-2">
-              <motion.button
-                whileTap={reduceMotion.current ? {} : { scale: 0.9 }}
-                onClick={() => setDarkMode(!darkMode)}
-                className={`p-2 rounded-lg ${
-                  darkMode ? "bg-slate-800/80 hover:bg-slate-700/80" : "bg-slate-200/80 hover:bg-slate-300/80"
-                } transition-colors duration-300`}
-                aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-              >
-                {darkMode ? <FiSun className="w-4 h-4 text-yellow-400" /> : <FiMoon className="w-4 h-4 text-slate-800" />}
-              </motion.button>
-              <motion.button
-                whileTap={reduceMotion.current ? {} : { scale: 0.9 }}
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={`p-2 rounded-lg ${
-                  darkMode
-                    ? "bg-slate-800/80 text-slate-100 hover:bg-slate-700/80 hover:text-cyan-400"
-                    : "bg-slate-200/80 text-slate-800 hover:bg-slate-300/80 hover:text-cyan-600"
-                } transition-colors duration-300`}
-                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-                aria-expanded={mobileMenuOpen}
-                aria-controls="mobile-menu"
-              >
-                {mobileMenuOpen ? <FiX className="h-5 w-5" /> : <FiMenu className="h-5 w-5" />}
-              </motion.button>
-            </div>
-
-            {/* Tablet Menu Toggle */}
-            <div className="hidden sm:flex lg:hidden items-center">
-              <motion.button
-                whileTap={reduceMotion.current ? {} : { scale: 0.9 }}
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={`p-2 ml-2 rounded-lg ${
-                  darkMode
-                    ? "bg-slate-800/80 text-slate-100 hover:bg-slate-700/80 hover:text-cyan-400"
-                    : "bg-slate-200/80 text-slate-800 hover:bg-slate-300/80 hover:text-cyan-600"
-                } transition-colors duration-300`}
-                aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-                aria-expanded={mobileMenuOpen}
-                aria-controls="mobile-menu"
-              >
-                {mobileMenuOpen ? <FiX className="h-5 w-5" /> : <FiMenu className="h-5 w-5" />}
-              </motion.button>
-            </div>
-          </div>
-        </div>
-      </motion.nav>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
+          {/* Enhanced Profile Picture with improved animation and shadow */}
           <motion.div
-            ref={mobileMenuRef}
-            id="mobile-menu"
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={{
-              closed: {
-                x: "-100%",
-                opacity: 0,
-                transition: reduceMotion.current
-                  ? { duration: 0.2 }
-                  : { type: "spring", stiffness: 400, damping: 40, when: "afterChildren", staggerChildren: 0.05, staggerDirection: -1 },
-              },
-              open: {
-                x: 0,
-                opacity: 1,
-                transition: reduceMotion.current
-                  ? { duration: 0.2 }
-                  : { type: "spring", stiffness: 350, damping: 30, when: "beforeChildren", staggerChildren: 0.1 },
-              },
-            }}
-            className={`fixed inset-0 ${
-              darkMode ? "bg-slate-900/95" : "bg-slate-50/95"
-            } z-40 lg:hidden flex flex-col pt-16 pb-8 px-4`}
+            className="relative mt-8 group"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.4 }}
           >
-            <div className="flex flex-col items-center gap-3 w-full max-w-md mx-auto px-3 mt-4 overflow-y-auto">
-              {navLinks.map((link) => (
-                <MobileNavLink
-                  key={link.id}
-                  link={link}
-                  isActive={activeSection === link.href}
-                  handleScrollToSection={handleScrollToSection}
-                  darkMode={darkMode}
-                  reduceMotion={reduceMotion.current}
+            <motion.div 
+              className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 to-indigo-500/30 rounded-2xl blur-xl"
+              animate={{ 
+                opacity: [0.5, 0.8, 0.5],
+              }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-2xl p-1 bg-gradient-to-tr from-cyan-400/20 to-indigo-500/20 backdrop-blur-md">
+              <div className="relative w-full h-full rounded-xl overflow-hidden border border-slate-700/40 bg-slate-900/80 shadow-xl">
+                <Image
+                  src="/ayoub.webp"
+                  alt="Ayoub — Front-End Developer"
+                  fill
+                  className="object-cover grayscale-[10%] group-hover:grayscale-0 transition-all duration-500"
+                  quality={95}
+                  priority
+                  sizes="(max-width: 640px) 192px, 224px"
                 />
-              ))}
-              <motion.div
-                variants={{
-                  closed: { x: -20, opacity: 0 },
-                  open: { x: 0, opacity: 1, transition: reduceMotion.current ? {} : { type: "spring", stiffness: 350 } },
-                }}
-                whileHover={reduceMotion.current ? {} : { scale: 1.05, y: -2 }}
-                className="w-full mt-4"
-              >
-                <Link
-                  href="#contact"
-                  onClick={handleScrollToSection("#contact")}
-                  className={`block w-full py-3 px-4 ${
-                    darkMode ? "bg-gradient-to-r from-cyan-500 to-blue-500" : "bg-gradient-to-r from-cyan-600 to-blue-600"
-                  } text-white rounded-xl font-medium text-center shadow-lg relative overflow-hidden text-base`}
-                  passHref
+
+                {/* Enhanced Floating Icons */}
+                <motion.div
+                  className="absolute -top-3 -right-3 p-2 rounded-full border border-slate-700/50 bg-slate-900/70 shadow-lg"
+                  animate={rotateAnimation}
                 >
-                  <span className="absolute inset-0 bg-white/20 -translate-x-full hover:translate-x-full transition-transform duration-700 ease-out" />
-                  <span className="relative">Hire Me</span>
-                </Link>
-              </motion.div>
-              <motion.div
-                variants={{
-                  closed: { x: -20, opacity: 0 },
-                  open: { x: 0, opacity: 1, transition: reduceMotion.current ? {} : { type: "spring", stiffness: 350 } },
-                }}
-                className="mt-6 w-full text-center"
-              >
-                <p className={`text-xs sm:text-sm ${darkMode ? "text-slate-400" : "text-slate-600"}`}>
-                  Press <kbd className={`px-2 py-1 rounded ${darkMode ? "bg-slate-800" : "bg-slate-200"}`}>ESC</kbd> to close menu
-                </p>
-              </motion.div>
+                  <Terminal className="w-5 h-5 text-cyan-400" />
+                </motion.div>
+
+                <motion.div
+                  className="absolute -bottom-3 -left-3 p-2 rounded-full border border-slate-700/50 bg-slate-900/70 shadow-lg"
+                  animate={floatingAnimation}
+                >
+                  <Sparkles className="w-5 h-5 text-indigo-400" />
+                </motion.div>
+              </div>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* Scroll to Top Button */}
-      <AnimatePresence>
-        {isScrolled && (
-          <motion.button
-            initial={reduceMotion.current ? { opacity: 1 } : { opacity: 0, y: 20 }}
-            animate={reduceMotion.current ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={reduceMotion.current ? { opacity: 0 } : { opacity: 0, y: 20 }}
-            whileHover={reduceMotion.current ? {} : { scale: 1.1 }}
-            whileTap={reduceMotion.current ? {} : { scale: 0.9 }}
-            onClick={scrollToTop}
-            className={`fixed bottom-4 right-4 p-3 rounded-full ${
-              darkMode ? "bg-slate-800 hover:bg-slate-700 text-cyan-400" : "bg-white hover:bg-slate-100 text-cyan-600"
-            } shadow-lg z-30`}
-            aria-label="Back to top"
+          {/* Enhanced Divider */}
+          <motion.div
+            className="w-24 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent my-4"
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ delay: 1.6 }}
+          />
+
+          {/* Enhanced Scroll Indicator with improved animation */}
+          <motion.div
+            className="mt-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.6 }}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+            <motion.p 
+              className="text-sm text-slate-400 mb-2"
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ repeat: Infinity, duration: 2 }}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-            </svg>
-          </motion.button>
-        )}
-      </AnimatePresence>
-    </ErrorBoundary>
+              See my projects below
+            </motion.p>
+            <motion.div
+              animate={{ 
+                y: [0, 10, 0], 
+                opacity: [0.8, 1, 0.8],
+              }}
+              transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+              className="cursor-pointer"
+              onClick={handleScrollToProjects}
+            >
+              <ChevronDown className="w-7 h-7 text-cyan-400/80 mx-auto" />
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
   );
-});
-
-export default Navbar;
+}
