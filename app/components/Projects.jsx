@@ -212,6 +212,8 @@ const ViewMoreButton = styled(Button)({
   },
 });
 
+const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
+
 const ProjectCard = ({ project }) => {
   const { title, description, image, link, github, tech } = project;
   const handleImageError = (e) => {
@@ -225,8 +227,8 @@ const ProjectCard = ({ project }) => {
       variants={fadeInUp}
       initial="hidden"
       animate="visible"
-      transition={{ duration: 0.5 }}
-      whileHover={{ scale: 1.02 }}
+      transition={{ duration: isMobile ? 0.2 : 0.5 }}
+      whileHover={isMobile ? {} : { scale: 1.02 }}
       style={{ height: "100%" }}
     >
       <StyledCard>
@@ -235,15 +237,16 @@ const ProjectCard = ({ project }) => {
             src={image}
             alt={`${title} project`}
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes={isMobile ? "100vw" : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
             style={{
               objectFit: "cover",
               objectPosition: "center top",
-              transition: "transform 0.5s ease"
+              transition: isMobile ? undefined : "transform 0.5s ease"
             }}
-            className="hover:scale-105"
+            className={isMobile ? undefined : "hover:scale-105"}
             onError={handleImageError}
-            loading="lazy"
+            loading={isMobile ? "eager" : "lazy"}
+            quality={isMobile ? 40 : 75}
             placeholder="blur"
             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAIAAoDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9Tv2Rf2e9H0bQR438Q6UZ9YvfMuNKsb2Jlm0/T5Yw0d3NE+JFvrxGV1dHT7LAyIjLNLPFJ+YniH9sb4rf8Jt8TPE3gP4h6l4g0HXfF+v6to0OrGfSbrT9NuNYvJ9Kt4LLUHht44dKglghtxaxeULaOPZs2Ej/AEfHrRXnYfBKlCKapyaSV+Z67dzqr4+VSb5ZNJt2XKuh//Z"
           />
@@ -360,7 +363,7 @@ const Projects = () => {
           transition={{ delay: 0.3, duration: 0.5 }}
           className="text-center mt-10"
         >
-          <Link href="/moreprojects" passHref>
+          <Link href="/morproject" passHref>
             <ViewMoreButton
               variant="outlined"
               startIcon={<Eye size={18} />}

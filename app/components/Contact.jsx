@@ -71,6 +71,9 @@ export default function ContactSection() {
     }
   };
 
+  // Detect mobile device
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -103,51 +106,51 @@ export default function ContactSection() {
     <section
       id="contact"
       ref={ref}
-      className={`py-16 md:py-24 px-4 sm:px-6 lg:px-8 ${
+      className={`py-10 md:py-24 px-2 sm:px-4 lg:px-8 ${
         isDarkMode ? "bg-slate-900 text-white" : "bg-white text-gray-800"
       }`}
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
-          className="flex flex-col items-center"
+          className={isMobile ? "flex flex-col items-center gap-6" : "flex flex-col items-center"}
           initial="hidden"
           animate={controls}
           variants={containerVariants}
         >
           {/* Section Heading */}
-          <motion.div variants={itemVariants} className="text-center mb-12">
+          <motion.div variants={itemVariants} className={isMobile ? "text-center mb-6" : "text-center mb-12"}>
             <div className="flex items-center justify-center mb-2">
-              <div className={`h-1 w-12 rounded ${
+              <div className={`h-1 w-8 md:w-12 rounded ${
                 isDarkMode ? "bg-indigo-500" : "bg-blue-500"
               } mr-4`} />
-              <h2 className="text-sm uppercase tracking-wider font-semibold text-gray-500 dark:text-gray-400">
+              <h2 className="text-xs md:text-sm uppercase tracking-wider font-semibold text-gray-500 dark:text-gray-400">
                 Let's Connect
               </h2>
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+            <h1 className={isMobile ? "text-2xl font-bold mb-2" : "text-3xl md:text-4xl font-bold tracking-tight mb-4"}>
               Get in Touch
             </h1>
-            <p className={`text-lg ${
+            <p className={`text-base ${
               isDarkMode ? "text-gray-300" : "text-gray-600"
             } max-w-xl mx-auto`}>
               Have a project in mind or just want to connect? My inbox is always open.
             </p>
           </motion.div>
 
-          <div className="w-full grid md:grid-cols-2 gap-12 lg:gap-16">
+          <div className={isMobile ? "w-full flex flex-col gap-6" : "w-full grid md:grid-cols-2 gap-12 lg:gap-16"}>
             {/* Contact Methods */}
             <motion.div
-              className="space-y-8"
+              className={isMobile ? "space-y-4" : "space-y-8"}
               variants={containerVariants}
             >
               {/* Contact Cards */}
               <motion.div
                 variants={itemVariants}
-                className={`p-6 rounded-2xl ${
+                className={`p-4 md:p-6 rounded-2xl ${
                   isDarkMode ? "bg-slate-800" : "bg-gray-50"
                 } shadow-lg`}
               >
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                   <div className="flex items-start gap-4">
                     <div className={`p-3 rounded-lg ${
                       isDarkMode ? "bg-indigo-500/20" : "bg-blue-500/20"
@@ -205,23 +208,23 @@ export default function ContactSection() {
               </motion.div>
 
               {/* Social Links */}
-              <motion.div variants={itemVariants} className="space-y-4">
-                <h3 className="text-lg font-semibold">Follow Me</h3>
-                <div className="flex gap-4">
+              <motion.div variants={itemVariants} className="space-y-2 md:space-y-4">
+                <h3 className="text-base md:text-lg font-semibold">Follow Me</h3>
+                <div className="flex gap-3 md:gap-4">
                   {socialLinks.map((link, i) => (
                     <motion.a
                       key={link.name}
                       href={link.url}
                       custom={i}
                       variants={socialVariants}
-                      whileHover={{ y: -5 }}
-                      className={`p-3 rounded-xl ${
+                      whileHover={isMobile ? undefined : { y: -5 }}
+                      className={`p-2 md:p-3 rounded-xl ${
                         isDarkMode ? "bg-slate-800" : "bg-gray-100"
                       } hover:shadow-lg transition-shadow ${link.color}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <span className="text-2xl">{link.icon}</span>
+                      <span className="text-xl md:text-2xl">{link.icon}</span>
                     </motion.a>
                   ))}
                 </div>
@@ -232,11 +235,11 @@ export default function ContactSection() {
             <motion.form
               variants={itemVariants}
               onSubmit={handleSubmit}
-              className={`p-6 rounded-2xl ${
+              className={`p-4 md:p-6 rounded-2xl ${
                 isDarkMode ? "bg-slate-800" : "bg-gray-50"
-              } shadow-lg space-y-6`}
+              } shadow-lg space-y-4 md:space-y-6`}
             >
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
                   <motion.input
@@ -310,13 +313,14 @@ export default function ContactSection() {
               <motion.button
                 type="submit"
                 disabled={status.sending}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`w-full py-3 rounded-lg font-medium text-white ${
+                whileHover={isMobile ? undefined : { scale: 1.05 }}
+                whileTap={isMobile ? undefined : { scale: 0.95 }}
+                className={`w-full py-2 md:py-3 rounded-lg font-medium text-white ${
                   isDarkMode
                     ? "bg-gradient-to-r from-indigo-500 to-purple-600"
                     : "bg-gradient-to-r from-blue-500 to-purple-600"
                 } shadow-md relative overflow-hidden group flex items-center justify-center gap-2`}
+                style={isMobile ? {fontSize: '1rem'} : {}}
               >
                 <span className="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-[200%] transition-transform duration-700 ease-in-out" />
                 {status.sending ? (

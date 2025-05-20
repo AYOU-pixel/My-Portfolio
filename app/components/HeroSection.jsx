@@ -15,26 +15,44 @@ export default function HeroSection() {
   const [hoverButton, setHoverButton] = useState(false);
   const [activeStack, setActiveStack] = useState(null);
 
+  // Detect mobile and reduced motion
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+  const [reduceMotionPref, setReduceMotionPref] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduceMotionPref(mediaQuery.matches);
+    const handler = (e) => setReduceMotionPref(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+
   // Only set isMounted if not already true
   useEffect(() => {
     if (!isMounted) setIsMounted(true);
   }, [isMounted]);
 
-  // Memoized animation configs
-  const floatingAnimation = useMemo(() => ({
-    y: [0, -10, 0],
-    transition: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-  }), []);
+  // Memoized animation configs (less animation on mobile/reduced motion)
+  const floatingAnimation = useMemo(() => (
+    isMobile || reduceMotionPref ? {} : {
+      y: [0, -10, 0],
+      transition: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+    }
+  ), [isMobile, reduceMotionPref]);
 
-  const rotateAnimation = useMemo(() => ({
-    rotate: [0, 10, -10, 0],
-    transition: { duration: 6, repeat: Infinity, ease: "easeInOut" },
-  }), []);
+  const rotateAnimation = useMemo(() => (
+    isMobile || reduceMotionPref ? {} : {
+      rotate: [0, 10, -10, 0],
+      transition: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+    }
+  ), [isMobile, reduceMotionPref]);
 
-  const waveAnimation = useMemo(() => ({
-    y: [0, -20, 0],
-    transition: { duration: 8, repeat: Infinity, ease: "easeInOut" },
-  }), []);
+  const waveAnimation = useMemo(() => (
+    isMobile || reduceMotionPref ? {} : {
+      y: [0, -20, 0],
+      transition: { duration: 8, repeat: Infinity, ease: "easeInOut" },
+    }
+  ), [isMobile, reduceMotionPref]);
 
   // Memoized tech stack
   const techStack = useMemo(() => [
@@ -59,49 +77,54 @@ export default function HeroSection() {
       aria-label="Hero Section"
     >
       {/* Animated Background Elements */}
-      <motion.div
-        className="absolute inset-0 bg-grid-slate-700/10 bg-[length:40px_40px]"
-        style={{ x }}
-        aria-hidden="true"
-      />
-      
+      {!isMobile && !reduceMotionPref && (
+        <motion.div
+          className="absolute inset-0 bg-grid-slate-700/10 bg-[length:40px_40px]"
+          style={{ x }}
+          aria-hidden="true"
+        />
+      )}
       {/* Animated waves */}
-      <motion.div 
-        className="absolute bottom-0 left-0 right-0 h-64 opacity-10"
-        animate={waveAnimation}
-      >
-        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="absolute bottom-0 left-0 w-full h-full">
-          <path 
-            d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" 
-            className="fill-cyan-500/30"
-          />
-          <path 
-            d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" 
-            className="fill-indigo-500/20" 
-            transform="translate(0, 5)"
-          />
-        </svg>
-      </motion.div>
-      
+      {!isMobile && !reduceMotionPref && (
+        <motion.div 
+          className="absolute bottom-0 left-0 right-0 h-64 opacity-10"
+          animate={waveAnimation}
+        >
+          <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="absolute bottom-0 left-0 w-full h-full">
+            <path 
+              d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" 
+              className="fill-cyan-500/30"
+            />
+            <path 
+              d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" 
+              className="fill-indigo-500/20" 
+              transform="translate(0, 5)"
+            />
+          </svg>
+        </motion.div>
+      )}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900/90 via-slate-900/50 to-slate-900/90" />
-
       {/* Enhanced Soft Circles with subtle animation */}
-      <motion.div 
-        className="absolute -top-24 -right-24 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl"
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.2, 0.3, 0.2],
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div 
-        className="absolute -bottom-24 -left-24 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl"
-        animate={{
-          scale: [1, 1.15, 1],
-          opacity: [0.2, 0.25, 0.2],
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      />
+      {!isMobile && !reduceMotionPref && (
+        <motion.div 
+          className="absolute -top-24 -right-24 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.2, 0.3, 0.2],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+      )}
+      {!isMobile && !reduceMotionPref && (
+        <motion.div 
+          className="absolute -bottom-24 -left-24 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.15, 1],
+            opacity: [0.2, 0.25, 0.2],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+      )}
 
       <div className="container mx-auto px-4 sm:px-6 py-24 z-10">
         <div className="flex flex-col items-center gap-10 text-center">
@@ -333,25 +356,27 @@ export default function HeroSection() {
                   alt="Ayoub — Front-End Developer"
                   fill
                   className="object-cover grayscale-[10%] group-hover:grayscale-0 transition-all duration-500"
-                  quality={95}
+                  quality={isMobile ? 60 : 95}
                   priority
-                  sizes="(max-width: 640px) 192px, 224px"
+                  sizes={isMobile ? "128px" : "(max-width: 640px) 192px, 224px"}
                 />
-
                 {/* Enhanced Floating Icons */}
-                <motion.div
-                  className="absolute -top-3 -right-3 p-2 rounded-full border border-slate-700/50 bg-slate-900/70 shadow-lg"
-                  animate={rotateAnimation}
-                >
-                  <Terminal className="w-5 h-5 text-cyan-400" />
-                </motion.div>
-
-                <motion.div
-                  className="absolute -bottom-3 -left-3 p-2 rounded-full border border-slate-700/50 bg-slate-900/70 shadow-lg"
-                  animate={floatingAnimation}
-                >
-                  <Sparkles className="w-5 h-5 text-indigo-400" />
-                </motion.div>
+                {!isMobile && !reduceMotionPref && (
+                  <motion.div
+                    className="absolute -top-3 -right-3 p-2 rounded-full border border-slate-700/50 bg-slate-900/70 shadow-lg"
+                    animate={rotateAnimation}
+                  >
+                    <Terminal className="w-5 h-5 text-cyan-400" />
+                  </motion.div>
+                )}
+                {!isMobile && !reduceMotionPref && (
+                  <motion.div
+                    className="absolute -bottom-3 -left-3 p-2 rounded-full border border-slate-700/50 bg-slate-900/70 shadow-lg"
+                    animate={floatingAnimation}
+                  >
+                    <Sparkles className="w-5 h-5 text-indigo-400" />
+                  </motion.div>
+                )}
               </div>
             </div>
           </motion.div>

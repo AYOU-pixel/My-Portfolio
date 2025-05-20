@@ -83,17 +83,20 @@ export default function AboutSection() {
     "Problem solving"
   ];
   
+  // Detect mobile device
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
+  
   return (
     <section
       id="about"
       ref={ref}
-      className={`py-16 md:py-24 px-4 sm:px-6 lg:px-8 ${
+      className={`py-12 md:py-24 px-2 sm:px-4 lg:px-8 ${
         isDarkMode ? "bg-slate-900 text-white" : "bg-white text-gray-800"
       } transition-colors duration-300`}
     >
       <div className="max-w-6xl mx-auto">
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center"
+          className={isMobile ? "grid grid-cols-1 gap-6 items-center" : "grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center"}
           initial="hidden"
           animate={controls}
           variants={containerVariants}
@@ -140,116 +143,114 @@ export default function AboutSection() {
           </motion.div>
           
           {/* Right Column - Content */}
-          <motion.div className="space-y-6 md:space-y-8" variants={containerVariants}>
+          <motion.div className={isMobile ? "space-y-4" : "space-y-6 md:space-y-8"} variants={containerVariants}>
             {/* Heading */}
             <motion.div variants={itemVariants}>
               <div className="flex items-center mb-2">
-                <div className={`h-1 w-12 rounded ${
+                <div className={`h-1 w-8 md:w-12 rounded ${
                   isDarkMode ? "bg-indigo-500" : "bg-blue-500"
                 } mr-4`} />
-                <h2 className="text-sm uppercase tracking-wider font-semibold text-gray-500 dark:text-gray-400">
+                <h2 className="text-xs md:text-sm uppercase tracking-wider font-semibold text-gray-500 dark:text-gray-400">
                   About Me
                 </h2>
+                <div className="h-1 w-8 md:w-12 rounded bg-blue-500 ml-4 hidden md:block" />
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
+              <h1 className={isMobile ? "text-2xl font-bold" : "text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight"}>
                 Ayoub
               </h1>
-              <p className={`text-xl mt-2 ${
+              <p className={`text-lg mt-2 ${
                 isDarkMode ? "text-indigo-400" : "text-blue-600"
               } font-medium`}>
                 Front-end Web Developer
               </p>
             </motion.div>
-            
             {/* Introduction */}
             <motion.p
               variants={itemVariants}
-              className="text-base md:text-lg leading-relaxed"
+              className={isMobile ? "text-sm leading-relaxed" : "text-base md:text-lg leading-relaxed"}
             >
               I am a passionate front-end developer with a strong focus on building performant 
               and accessible web applications using modern tools like React and Next.js. 
               With an eye for detail and a dedication to creating seamless user experiences, 
               I turn complex problems into elegant solutions.
             </motion.p>
-            
             {/* Skills */}
             <motion.div variants={itemVariants}>
-              <h3 className="text-lg font-semibold mb-3">Tech Stack</h3>
-              <div className="flex flex-wrap gap-3 md:gap-4">
+              <h3 className={isMobile ? "text-base font-semibold mb-2" : "text-lg font-semibold mb-3"}>Tech Stack</h3>
+              <div className={isMobile ? "flex flex-wrap gap-2" : "flex flex-wrap gap-3 md:gap-4"}>
                 {skills.map((skill, index) => (
                   <motion.div
                     key={skill.name}
                     custom={index}
                     variants={skillVariants}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
+                    className={`flex items-center gap-2 px-2 py-1 md:px-3 md:py-2 rounded-lg ${
                       isDarkMode ? "bg-slate-800" : "bg-gray-100"
                     } hover:shadow-md transition-shadow`}
-                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                    whileHover={isMobile ? undefined : { y: -5, transition: { duration: 0.2 } }}
                   >
-                    <span className={`text-xl ${skill.color}`}>{skill.icon}</span>
-                    <span className="text-sm font-medium">{skill.name}</span>
+                    <span className={`text-lg md:text-xl ${skill.color}`}>{skill.icon}</span>
+                    <span className="text-xs md:text-sm font-medium">{skill.name}</span>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
-            
             {/* Values */}
             <motion.div variants={itemVariants}>
-              <h3 className="text-lg font-semibold mb-3">My Values</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <h3 className={isMobile ? "text-base font-semibold mb-2" : "text-lg font-semibold mb-3"}>My Values</h3>
+              <div className={isMobile ? "grid grid-cols-2 gap-2" : "grid grid-cols-2 md:grid-cols-4 gap-3"}>
                 {values.map((value, index) => (
                   <motion.div
                     key={value}
                     custom={index}
                     variants={skillVariants}
-                    className={`flex items-center justify-center text-center p-3 rounded-lg ${
+                    className={`flex items-center justify-center text-center p-2 md:p-3 rounded-lg ${
                       isDarkMode ? "bg-slate-800" : "bg-gray-100"
                     } hover:shadow-md transition-shadow`}
-                    whileHover={{ 
+                    whileHover={isMobile ? undefined : { 
                       scale: 1.05,
                       backgroundColor: isDarkMode ? "rgba(99, 102, 241, 0.2)" : "rgba(59, 130, 246, 0.1)"
                     }}
                   >
-                    <span className="text-sm font-medium">{value}</span>
+                    <span className="text-xs md:text-sm font-medium">{value}</span>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
-            
             {/* CTA Button */}
-            <motion.div variants={itemVariants} className="pt-4">
-              <div className="flex flex-col sm:flex-row gap-4">
+            <motion.div variants={itemVariants} className="pt-2 md:pt-4">
+              <div className={isMobile ? "flex flex-col gap-3" : "flex flex-col sm:flex-row gap-4"}>
                 <motion.a
                   href="#contact"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`px-6 py-3 rounded-lg font-medium text-white ${
+                  whileHover={isMobile ? undefined : { scale: 1.05 }}
+                  whileTap={isMobile ? undefined : { scale: 0.95 }}
+                  className={`px-4 py-2 md:px-6 md:py-3 rounded-lg font-medium text-white ${
                     isDarkMode 
                       ? "bg-gradient-to-r from-indigo-500 to-purple-600" 
                       : "bg-gradient-to-r from-blue-500 to-purple-600"
                   } shadow-md flex items-center justify-center group relative overflow-hidden`}
+                  style={isMobile ? {fontSize: '1rem'} : {}}
                 >
                   <span className="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-[200%] transition-transform duration-700 ease-in-out" />
                   <span className="relative">Let's work together</span>
                   <motion.span
                     initial={{ x: 0 }}
-                    whileHover={{ x: 5 }}
+                    whileHover={isMobile ? undefined : { x: 5 }}
                     className="ml-2"
                   >
                     →
                   </motion.span>
                 </motion.a>
-                
                 <motion.a
                   href="/front-end-developer-resume-ayoub-pdf.pdf"
                   download
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`px-6 py-3 rounded-lg font-medium border-2 ${
+                  whileHover={isMobile ? undefined : { scale: 1.05 }}
+                  whileTap={isMobile ? undefined : { scale: 0.95 }}
+                  className={`px-4 py-2 md:px-6 md:py-3 rounded-lg font-medium border-2 ${
                     isDarkMode 
                       ? "border-indigo-500 text-indigo-400 hover:bg-indigo-500/10" 
                       : "border-blue-500 text-blue-600 hover:bg-blue-50"
                   } flex items-center justify-center transition-colors`}
+                  style={isMobile ? {fontSize: '1rem'} : {}}
                 >
                   Download Resume
                 </motion.a>
