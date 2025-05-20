@@ -39,6 +39,7 @@ function Navbar() {
   const [reduceMotion, setReduceMotion] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false); // New state to track if user has scrolled
+  const [hydrated, setHydrated] = useState(false); // Track hydration
   const { scrollY } = useScroll();
   const mobileMenuRef = useRef(null);
   const observerRef = useRef(null);
@@ -168,6 +169,11 @@ function Navbar() {
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
+  // Hydration effect
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
   // ScrollToSection handler
   const handleScrollToSection = useCallback(
     (href) => (e) => {
@@ -200,6 +206,10 @@ function Navbar() {
 
   const bgOpacity = useTransform(scrollY, [0, 100], [0.1, 0.95]);
   const navBlur = useTransform(scrollY, [0, 50], [4, 12]);
+
+  // Use default values for bgOpacity and navBlur until hydrated
+  const bgOpacityValue = hydrated ? bgOpacity.get() : darkMode ? 0.95 : 0.1;
+  const navBlurValue = hydrated ? navBlur.get() : 8;
 
   const linkVariants = {
     rest: { color: darkMode ? "#CBD5E1" : "#1E293B", opacity: 0.9 },
@@ -317,8 +327,8 @@ function Navbar() {
   const motionNav = (
     <motion.nav
       style={{ 
-        backgroundColor: darkMode ? `rgba(15, 23, 42, ${bgOpacity.get()})` : `rgba(241, 245, 249, ${bgOpacity.get()})`,
-        backdropFilter: `blur(${navBlur.get()}px)`,
+        backgroundColor: darkMode ? `rgba(15, 23, 42, ${bgOpacityValue})` : `rgba(241, 245, 249, ${bgOpacityValue})`,
+        backdropFilter: `blur(${navBlurValue}px)`,
         willChange: 'transform, background-color, backdrop-filter'
       }}
       className={`fixed top-0 w-full z-50 border-b dark:border-slate-800 border-slate-200 transition-transform duration-300 ${
@@ -441,6 +451,9 @@ function Navbar() {
     </motion.nav>
   );
 
+  // Only render after hydration to avoid SSR/client mismatch
+  if (!hydrated) return null;
+
   return (
     <ErrorBoundary>
       {motionNav}
@@ -454,12 +467,11 @@ function Navbar() {
             animate="open"
             exit="closed"
             variants={mobileMenuVariants}
-            className={`fixed inset-0 w-full max-w-full h-full overflow-y-auto
-              ${darkMode ? "bg-slate-900/95" : "bg-slate-50/95"}
-              z-50 md:hidden flex flex-col pt-20 pb-8 px-4`}
-            style={{ WebkitOverflowScrolling: 'touch', touchAction: 'manipulation' }}
+            className={`fixed inset-0 ${
+              darkMode ? "bg-slate-900/95" : "bg-slate-50/95"
+            } z-40 md:hidden flex flex-col pt-20 pb-8 px-4`}
           >
-            <div className="flex flex-col items-center gap-6 w-full px-4 mt-4">
+            <div className="flex flex-col items-center gap-6 w-full px-4 mt-4 overflow-y-auto">
               {navLinks.map((link) => {
                 const Icon = link.icon;
                 const isActive = activeSection === link.href;
