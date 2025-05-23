@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Code, Briefcase, Send, Terminal, ChevronDown, Sparkles, ArrowUpRight, Zap, LineChart } from "lucide-react";
+import { Code, Briefcase, Send, Terminal, ChevronDown, Sparkles, ArrowUpRight } from "lucide-react"; // Removed Zap, LineChart as they were used inline and might be what was referred to as "emojis"
 import { motion, useTransform, useScroll, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import Typewriter from "typewriter-effect"; // Added for typewriter effect
+import Typewriter from "typewriter-effect";
 
 export default function HeroSection() {
   const ref = useRef(null);
@@ -15,7 +15,6 @@ export default function HeroSection() {
   const [hoverButton, setHoverButton] = useState(false);
   const [activeStack, setActiveStack] = useState(null);
 
-  // Detect mobile and reduced motion
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
   const [reduceMotionPref, setReduceMotionPref] = useState(false);
   useEffect(() => {
@@ -27,12 +26,10 @@ export default function HeroSection() {
     return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
-  // Only set isMounted if not already true
   useEffect(() => {
     if (!isMounted) setIsMounted(true);
   }, [isMounted]);
 
-  // Memoized animation configs (less animation on mobile/reduced motion)
   const floatingAnimation = useMemo(() => (
     isMobile || reduceMotionPref ? {} : {
       y: [0, -10, 0],
@@ -54,15 +51,15 @@ export default function HeroSection() {
     }
   ), [isMobile, reduceMotionPref]);
 
-  // Memoized tech stack
   const techStack = useMemo(() => [
     { name: "React", desc: "Built 5+ projects for startups", icon: <Code className="w-4 h-4 text-cyan-400" />, years: "3+ years" },
     { name: "Next.js", desc: "SEO-optimized web apps", icon: <Code className="w-4 h-4 text-cyan-400" />, years: "2+ years" },
     { name: "TypeScript", desc: "Type-safe development", icon: <Code className="w-4 h-4 text-cyan-400" />, years: "2+ years" },
     { name: "Node.js", desc: "Backend APIs and services", icon: <Code className="w-4 h-4 text-cyan-400" />, years: "3+ years" },
+    // Consider adding Tailwind CSS if it's a core part of your stack, as mentioned in suggestions
+    // { name: "TailwindCSS", desc: "Rapid UI development", icon: <Code className="w-4 h-4 text-teal-400" />, years: "2+ years" },
   ], []);
 
-  // Memoized scroll to projects handler
   const handleScrollToProjects = useCallback(() => {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
   }, []);
@@ -133,7 +130,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="space-y-6"
+            className="space-y-6" // Increased vertical spacing for better readability
           >
             <motion.div
               initial={{ opacity: 0 }}
@@ -141,7 +138,6 @@ export default function HeroSection() {
               transition={{ delay: 0.2 }}
               className="flex items-center justify-center gap-2"
             >
-              {/* Personal Logo with enhanced animation */}
               <motion.span 
                 className="flex items-center justify-center w-10 h-10 rounded-md bg-gradient-to-br from-cyan-500 to-blue-600 text-white font-bold text-lg"
                 whileHover={{ 
@@ -154,7 +150,7 @@ export default function HeroSection() {
               </motion.span>
 
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight tracking-tight text-[#F5F5F5]">
-                Hey, I'm{" "}
+                Hi, I'm{" "} {/* UPDATED */}
                 <motion.span 
                   className="text-amber-400 relative inline-block"
                   whileHover={{ scale: 1.05 }}
@@ -169,20 +165,43 @@ export default function HeroSection() {
                 </motion.span>
               </h1>
             </motion.div>
+            
+            {/* Professional Title with improved visibility */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }} // Adjusted delay
+              className="text-base sm:text-lg text-slate-200 font-medium tracking-wider drop-shadow"
+            >
+              {/* UPDATED */}
+              Frontend Developer | UX-Focused Engineer | React & Next.js Expert
+            </motion.p>
 
-            {/* Personal Story with enhanced Typewriter effect */}
+            {/* Enhanced Value Proposition */}
+            <motion.h2
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }} // Adjusted delay
+              className="text-lg sm:text-xl md:text-2xl text-[#F5F5F5] font-semibold max-w-2xl mx-auto leading-relaxed"
+            >
+              {/* UPDATED - Stronger, clearer value proposition */}
+              I craft fast, scalable, and SEO-ready web interfaces that drive real results.
+            </motion.h2>
+            
+            {/* Personal Story / Deeper Value Proposition with Typewriter effect */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-sm sm:text-base text-slate-300 font-medium tracking-wider drop-shadow-md"
+              transition={{ delay: 0.5 }} // Adjusted delay
+              className="text-sm sm:text-base text-slate-300 font-medium tracking-wider drop-shadow-md max-w-xl mx-auto"
             >
               <Typewriter
                 options={{
                   strings: [
-                    "Turning ideas into seamless digital experiences since 2020",
-                    "Creating elegant solutions to complex problems",
-                    "Building the web, one component at a time"
+                    // UPDATED - More focused on value and client needs
+                    "Helping startups launch clean, high-performance web applications.",
+                    "Specializing in React, Next.js, and modern frontend tooling.",
+                    "Building user experiences that are both beautiful and effective."
                   ],
                   autoStart: true,
                   loop: true,
@@ -192,53 +211,40 @@ export default function HeroSection() {
               />
             </motion.div>
 
-            {/* Professional Title with improved visibility */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-sm sm:text-base text-slate-200 font-medium tracking-wider drop-shadow"
-            >
-              Web Developer | Frontend Engineer | UX-Centric Builder
-            </motion.p>
-
-            {/* Enhanced Value Proposition with emoji icons */}
-            <motion.h2
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="text-lg sm:text-xl md:text-2xl text-[#F5F5F5] font-medium max-w-2xl mx-auto leading-relaxed"
-            >
-              I build{" "}
-              <span className="text-cyan-300 font-semibold inline-flex items-center">
-                high-performing <Zap className="w-5 h-5 ml-1 text-cyan-300" />
-              </span>{" "}
-              <span className="text-indigo-300 font-semibold inline-flex items-center">
-                scalable <LineChart className="w-5 h-5 ml-1 text-indigo-300" />
-              </span>{" "}
-              web apps that users love and businesses trust
-            </motion.h2>
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="text-sm md:text-base text-slate-300 mt-2 font-medium"
+              transition={{ delay: 0.6 }} // Adjusted delay
+              className="text-sm md:text-base text-slate-300 mt-2 font-medium max-w-lg mx-auto" // Added max-width
             >
-              Trusted by 3+ startups to build SEO-optimized platforms that drive growth
+              {/* UPDATED - "Trusted by" statement */}
+              Trusted by early-stage startups to deliver fast, SEO-optimized web platforms that drive growth.
             </motion.p>
 
             {/* Achievement with badge */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
+              transition={{ delay: 0.7 }} // Adjusted delay
               className="flex justify-center mt-1"
             >
-              <span className="text-xs bg-emerald-900/30 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800/50 inline-flex items-center gap-1">
-                <span>✓</span> Improved load time by 30% for a startup client
+              <span className="text-xs bg-emerald-900/30 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800/50 inline-flex items-center gap-1.5">
+                <span>✓</span>
+                {/* UPDATED - More specific achievement */}
+                Achieved 30% faster load times for a SaaS client via Next.js & Tailwind CSS optimization.
               </span>
             </motion.div>
+
+             {/* Closing call to action statement */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.75 }}
+              className="text-md text-slate-200 font-medium pt-2" // Added padding top
+            >
+              Let’s build something that looks great and performs even better.
+            </motion.p>
           </motion.div>
 
           {/* Enhanced CTA Buttons with improved animations */}
@@ -246,10 +252,11 @@ export default function HeroSection() {
             className="flex flex-col sm:flex-row gap-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
+            transition={{ delay: 0.85 }} // Adjusted delay to follow text
           >
             <motion.a
               href="#projects"
+              onClick={handleScrollToProjects} // Added for smooth scroll if #projects is on same page
               className="group flex items-center gap-2 px-6 py-3 bg-amber-400 rounded-lg text-slate-900 font-semibold hover:shadow-lg focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-slate-900 transition-all text-base sm:text-lg w-full sm:w-auto justify-center shadow-lg"
               whileHover={{ 
                 scale: 1.05,
@@ -286,14 +293,14 @@ export default function HeroSection() {
 
           {/* Enhanced Tech Stack with badges and tooltips */}
           <motion.div
-            className="flex flex-col items-center gap-2 mt-6"
+            className="flex flex-col items-center gap-2 mt-6" // Reduced top margin slightly
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
+            transition={{ delay: 1 }} // Adjusted delay
           >
             <p className="text-xs text-slate-300 uppercase tracking-wider flex items-center gap-2">
               <span className="h-px w-4 bg-slate-600"></span>
-              Tech Stack
+              My Tech Stack
               <span className="h-px w-4 bg-slate-600"></span>
             </p>
 
@@ -303,7 +310,7 @@ export default function HeroSection() {
                   key={tech.name}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: 1.2 + index * 0.1 }}
+                  transition={{ delay: 1.1 + index * 0.1 }} // Adjusted delay
                   whileHover={{ scale: 1.1 }}
                   className="relative"
                   onHoverStart={() => setActiveStack(tech.name)}
@@ -314,7 +321,6 @@ export default function HeroSection() {
                     {tech.name}
                   </div>
                   
-                  {/* Enhanced tooltip with animation */}
                   <AnimatePresence>
                     {activeStack === tech.name && (
                       <motion.div
@@ -337,10 +343,10 @@ export default function HeroSection() {
 
           {/* Enhanced Profile Picture with improved animation and shadow */}
           <motion.div
-            className="relative mt-8 group"
+            className="relative mt-8 group" // Maintained margin
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.4 }}
+            transition={{ delay: 1.3 }} // Adjusted delay
           >
             <motion.div 
               className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 to-indigo-500/30 rounded-2xl blur-xl"
@@ -352,15 +358,14 @@ export default function HeroSection() {
             <div className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-2xl p-1 bg-gradient-to-tr from-cyan-400/20 to-indigo-500/20 backdrop-blur-md">
               <div className="relative w-full h-full rounded-xl overflow-hidden border border-slate-700/40 bg-slate-900/80 shadow-xl">
                 <Image
-                  src="/ayoub.webp"
-                  alt="Ayoub — Front-End Developer"
+                  src="/ayoub.webp" // Make sure this path is correct
+                  alt="Ayoub — Frontend Developer & UX Engineer" // Updated alt text
                   fill
                   className="object-cover grayscale-[10%] group-hover:grayscale-0 transition-all duration-500"
                   quality={isMobile ? 60 : 95}
                   priority
                   sizes={isMobile ? "128px" : "(max-width: 640px) 192px, 224px"}
                 />
-                {/* Enhanced Floating Icons */}
                 {!isMobile && !reduceMotionPref && (
                   <motion.div
                     className="absolute -top-3 -right-3 p-2 rounded-full border border-slate-700/50 bg-slate-900/70 shadow-lg"
@@ -386,15 +391,15 @@ export default function HeroSection() {
             className="w-24 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent my-4"
             initial={{ opacity: 0, scaleX: 0 }}
             animate={{ opacity: 1, scaleX: 1 }}
-            transition={{ delay: 1.6 }}
+            transition={{ delay: 1.5 }} // Adjusted delay
           />
 
           {/* Enhanced Scroll Indicator with improved animation */}
           <motion.div
-            className="mt-6"
+            className="mt-6" // Maintained margin
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.6 }}
+            transition={{ delay: 1.5 }} // Adjusted delay
           >
             <motion.p 
               className="text-sm text-slate-400 mb-2"

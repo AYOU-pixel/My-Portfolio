@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Button, Container, Typography, Grid, Card, CardContent } from "@mui/material";
 import { styled } from "@mui/system";
 import Image from "next/image";
@@ -212,10 +212,17 @@ const ViewMoreButton = styled(Button)({
   },
 });
 
-const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
-
 const ProjectCard = ({ project }) => {
   const { title, description, image, link, github, tech } = project;
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 600);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const handleImageError = (e) => {
     if (e.target instanceof HTMLImageElement) {
       e.target.src = '/fallback-project.png';
