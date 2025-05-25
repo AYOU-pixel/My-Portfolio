@@ -2,6 +2,7 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Eye, Github, ExternalLink, Code, Sparkles, ArrowUpRight, ChevronDown } from "lucide-react";
+import Link from "next/link";
 
 const PROJECTS = [
 	{
@@ -9,7 +10,7 @@ const PROJECTS = [
 		title: "Online Food Delivery Page",
 		description:
 			"Responsive food delivery website with user-friendly interface, real-time order tracking, and secure payment integration.",
-		image: "/Delevry.png",
+		image: "/Delevry.webp",
 		link: "https://food-delivery-page-sandy.vercel.app/",
 		github: "https://github.com/AYOU-pixel/Food-Delivery-Page",
 		tech: ["Next.js", "TailwindCSS", "Stripe", "Vite"],
@@ -20,7 +21,7 @@ const PROJECTS = [
 		title: "Sneaker Store",
 		description:
 			"Sleek e-commerce website for sneakers with smooth shopping experience, product filtering, and wishlist functionality.",
-		image: "/eco.png",
+		image: "/eco.webp",
 		link: "https://ecomerc-wm.vercel.app/",
 		github: "https://github.com/AYOU-pixel/ecomerc_wm",
 		tech: ["React", "Redux", "Node.js"],
@@ -30,7 +31,7 @@ const PROJECTS = [
 		title: "Weather App",
 		description:
 			"Real-time weather application with location detection, 5-day forecast, and interactive weather maps using OpenWeather API.",
-		image: "/weather.png",
+		image: "/weather.webp",
 		link: "https://weather-app-navy-sigma-78.vercel.app/",
 		github: "https://github.com/AYOU-pixel/Weather-App",
 		tech: ["React", "Next.js", "Weather API"],
@@ -40,7 +41,7 @@ const PROJECTS = [
 		title: "Coffee Bliss - Modern Café Website",
 		description:
 			"A professional and elegant café website designed for modern coffee shops. Features responsive layout, menu display.",
-		image: "/Cafe.png",
+		image: "/Cafe.webp",
 		link: "https://cafe-web-six.vercel.app/",
 		github: "https://github.com/AYOU-pixel/Cafe-web",
 		tech: ["Next.js", "Vite", "TailwindCSS"],
@@ -50,7 +51,7 @@ const PROJECTS = [
 		title: "Apple Landing Page",
 		description:
 			"Modern product showcase page with sleek animations, product carousel, and responsive design for all devices.",
-		image: "/Applepage.png",
+		image: "/Applepage.webp",
 		link: "https://apple-page-dusky.vercel.app/",
 		github: "https://github.com/AYOU-pixel/Apple-page",
 		tech: ["Framer Motion", "Next.js", "Vite"],
@@ -60,7 +61,7 @@ const PROJECTS = [
 		title: "Food Delivery Landing Page",
 		description:
 			"A modern food delivery landing page with responsive design, smooth animations, restaurant showcase, and intuitive UI for seamless ordering experience on all devices.",
-		image: "/landingDelevry.png",
+		image: "/landingDelevry.webp",
 		link: "https://delivery-page-black.vercel.app/",
 		github: "https://github.com/AYOU-pixel/Delivery-Page",
 		tech: ["Next.js", "TailwindCSS", "Stripe", "Vite"],
@@ -232,20 +233,21 @@ export default function ProjectsSection() {
 					transition={{ delay: 0.8 }}
 					className="text-center"
 				>
-					<motion.button
-						onClick={handleViewMore}
-						className="group flex items-center justify-center gap-3 px-8 py-4 mx-auto border-2 border-cyan-500 rounded-full text-cyan-500 font-semibold text-lg hover:bg-cyan-500 hover:text-white shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden"
-						whileHover={{
-							scale: 1.05,
-							boxShadow: "0 12px 24px rgba(6, 182, 212, 0.4)",
-						}}
-						whileTap={{ scale: 0.95 }}
-					>
-						<span className="absolute inset-0 bg-cyan-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-						<Eye className="w-5 h-5" />
-						<span>{showAll ? "Show Less" : "View All Projects"}</span>
-						<ArrowUpRight className="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
-					</motion.button>
+					<Link href="/morproject">
+						<motion.button
+							className="group flex items-center justify-center gap-3 px-8 py-4 mx-auto border-2 border-cyan-500 rounded-full text-cyan-500 font-semibold text-lg hover:bg-cyan-500 hover:text-white shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden"
+							whileHover={{
+								scale: 1.05,
+								boxShadow: "0 12px 24px rgba(6, 182, 212, 0.4)",
+							}}
+							whileTap={{ scale: 0.95 }}
+						>
+							<span className="absolute inset-0 bg-cyan-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
+							<Eye className="w-5 h-5" />
+							<span>View All Projects</span>
+							<ArrowUpRight className="w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
+						</motion.button>
+					</Link>
 				</motion.div>
 
 				{/* Scroll Indicator */}

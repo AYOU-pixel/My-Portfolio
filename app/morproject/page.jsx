@@ -28,7 +28,7 @@ const projects = [
     id: 1, // Changed from 5 to 1
     title: "E-commerce Website",
     description: "A high-performance, secure, and feature-rich e-commerce frontend built using Next.js 14 and Tailwind CSS. It offers dynamic product browsing, an interactive cart system, responsive checkout flow, and seamless user experience with support for authentication, loyalty system, and optimized UI components.",
-    image: "/clothing.png",
+    image: "/clothing.webp",
     link: "https://clothing-website-psi-ten.vercel.app/", 
     category: "E-commerce",
     tech: ["Next.js 14", "Tailwind CSS", "Vite"]
@@ -37,37 +37,19 @@ const projects = [
     id: 2,
     title: "Sneaker Store",
     description: "Sleek e-commerce website for sneakers with smooth shopping experience, customer reviews, and real-time inventory tracking.",
-    image: "/eco.png",
+    image: "/eco.webp",
     link: "https://ecomerc-wm.vercel.app/",
     category: "e-commerce",
     tech: ["React", "Redux", "Node.js"]
   },
   {
-    id: 3,
-    title: "Portfolio",
-    description: "Modern portfolio showcasing development projects with interactive elements and smooth animations.",
-    image: "/port.png",
-    link: "https://portfolioapping.netlify.app/",
-    category: "personal",
-    tech: ["React", "Framer Motion", "GSAP"]
-  },
-  {
     id: 4,
     title: "Weather App",
     description: "A weather app built with React and Next.js efficiently retrieves and displays real-time weather data. It leverages Next.js for optimized performance.",
-    image: "/weather.png",
+    image: "/weather.webp",
     link: "https://weather-app-navy-sigma-78.vercel.app/",
     category: "utility",
     tech: ["React", "Next.js", "Weather API"]
-  },
-  {
-    id: 5, // Changed from 5 to 6
-    title: "Shell Landing Page",
-    description: "This landing page is designed for Shell, featuring branding elements and a structured layout with multiple sections. The page supports French and Arabic languages.",
-    image: "/shelanding.png",
-    link: "https://shell-landing.vercel.app/",
-    category: "corporate",
-    tech: ["Next.js", "i18n", "GSAP"]
   }
 ];
 

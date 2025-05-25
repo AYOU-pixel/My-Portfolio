@@ -314,7 +314,7 @@ function Navbar() {
   // Optimized image loading
   const logoImage = (
     <Image 
-      src="/logos.jpg" 
+      src="/logos.webp" 
       alt="Logo" 
       width={64} 
       height={64}

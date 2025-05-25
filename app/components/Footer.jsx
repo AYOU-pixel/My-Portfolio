@@ -59,7 +59,7 @@ export default function FooterSection() {
               className="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-slate-700/50 hover:border-cyan-400 transition-all"
             >
               <Image
-                src="/logos.jpg"
+                src="/logos.webp"
                 alt="Ayoub's Logo"
                 fill
                 className="object-cover"
