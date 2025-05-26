@@ -76,9 +76,10 @@ const ProjectCard = memo(({ project }) => {
             src={project.image}
             alt={project.title}
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw" // Define responsive sizes
             className="object-cover object-center-top transition-transform duration-500 hover:scale-105"
-            loading="lazy"
+            loading="lazy" // Lazy load images for better performance
+            quality={80} // Adjust quality for performance
             onError={handleImageError}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/80 pointer-events-none" />

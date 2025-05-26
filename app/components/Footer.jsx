@@ -63,9 +63,11 @@ export default function FooterSection() {
                 alt="Ayoub's Logo"
                 fill
                 className="object-cover"
-                sizes={isMobile ? "80px" : "120px"}
-                quality={isMobile ? 60 : 100}
-              />
+                sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, 160px" // Define responsive sizes
+                quality={80} // Adjust quality for performance
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xg"
+/>
             </motion.div>
             <p className="text-slate-400 text-xs md:text-sm text-center md:text-left max-w-xs leading-relaxed">
               Crafting high-performance web experiences with modern technologies

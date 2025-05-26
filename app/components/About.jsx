@@ -117,9 +117,10 @@ export default function AboutSection() {
                   height={600}
                   className="w-full h-auto object-cover"
                   priority
-                  onError={(e) => {
-                    e.target.src = "/api/placeholder/600/600";
-                  }}
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw" // Define responsive sizes
+                  quality={80} // Adjust quality for performance
+                  placeholder="blur"
+                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xg"
                 />
                 <div
                   className={`absolute bottom-0 left-0 right-0 p-4 ${

@@ -376,9 +376,9 @@ export default function HeroSection() {
                         alt="Ayoub - Frontend Developer specializing in React and Next.js"
                         fill
                         className="object-cover filter brightness-110 contrast-105"
-                        quality={85}
+                        quality={80} // Adjust quality for performance
                         priority
-                        sizes="(max-width: 768px) 320px, 384px"
+                        sizes="(max-width: 768px) 320px, (max-width: 1024px) 384px, 480px" // Define responsive sizes
                         placeholder="blur"
                         blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xg"
                       />

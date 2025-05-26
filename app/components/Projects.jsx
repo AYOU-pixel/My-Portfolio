@@ -3,6 +3,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Eye, Github, ExternalLink, Code, Sparkles, ArrowUpRight, ChevronDown } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const PROJECTS = [
 	{
@@ -322,41 +323,18 @@ const ProjectCard = ({
 			onHoverStart={() => setHoveredProject(project.id)}
 			onHoverEnd={() => setHoveredProject(null)}
 		>
-			{/* Card Container with Glassmorphism */}
 			<div className="relative h-full bg-slate-900/50 backdrop-blur-sm border border-slate-700/30 rounded-2xl overflow-hidden hover:border-cyan-400/50 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-cyan-500/20">
-				{/* Floating Icons - Matching Hero Section */}
-				{!isMobile && !reduceMotionPref && hoveredProject === project.id && (
-					<>
-						<motion.div
-							className="absolute top-4 right-4 p-2 bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-xl shadow-lg z-10"
-							initial={{ opacity: 0, scale: 0 }}
-							animate={{ opacity: 1, scale: 1 }}
-							exit={{ opacity: 0, scale: 0 }}
-							transition={{ delay: 0.1 }}
-						>
-							<Code className="w-4 h-4 text-cyan-400" />
-						</motion.div>
-						<motion.div
-							className="absolute top-4 left-4 p-2 bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-xl shadow-lg z-10"
-							initial={{ opacity: 0, scale: 0 }}
-							animate={{ opacity: 1, scale: 1 }}
-							exit={{ opacity: 0, scale: 0 }}
-							transition={{ delay: 0.2 }}
-						>
-							<Sparkles className="w-4 h-4 text-blue-400" />
-						</motion.div>
-					</>
-				)}
-
-				{/* Image Container */}
 				<div className="relative h-48 sm:h-56 overflow-hidden">
 					{!imageError ? (
-						<motion.img
+						<Image
 							src={project.image}
 							alt={`${project.title} project screenshot`}
 							className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
 							onError={handleImageError}
 							loading="lazy"
+							sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw" // Define responsive sizes
+							quality={80} // Adjust quality for performance
+							fill // Ensures the image fills the container
 						/>
 					) : (
 						<div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-700 flex items-center justify-center">
@@ -367,13 +345,10 @@ const ProjectCard = ({
 						</div>
 					)}
 
-					{/* Gradient Overlay */}
 					<div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 				</div>
 
-				{/* Content */}
 				<div className="p-6 space-y-4">
-					{/* Title */}
 					<motion.h3
 						className="text-xl font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-blue-500 transition-all duration-300"
 						layoutId={`title-${project.id}`}
@@ -381,12 +356,10 @@ const ProjectCard = ({
 						{project.title}
 					</motion.h3>
 
-					{/* Description */}
 					<p className="text-slate-400 leading-relaxed text-sm line-clamp-3 group-hover:text-slate-300 transition-colors duration-300">
 						{project.description}
 					</p>
 
-					{/* Tech Stack */}
 					<div className="flex flex-wrap gap-2">
 						{project.tech.map((tech, techIndex) => (
 							<motion.span
@@ -401,7 +374,6 @@ const ProjectCard = ({
 						))}
 					</div>
 
-					{/* Action Buttons */}
 					<div className="flex gap-3 pt-4">
 						<motion.a
 							href={project.link}

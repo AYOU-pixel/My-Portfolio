@@ -320,7 +320,8 @@ function Navbar() {
       height={64}
       className="rounded-full object-cover border-2 border-transparent group-hover:border-cyan-400 transition-all duration-300"
       priority
-      sizes="(max-width: 768px) 48px, 64px"
+      sizes="(max-width: 640px) 48px, (max-width: 768px) 56px, 64px" // Define responsive sizes
+      quality={80} // Adjust quality for better performance
     />
   );
 
