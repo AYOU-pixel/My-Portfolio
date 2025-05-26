@@ -155,7 +155,7 @@ export default function FooterSection() {
           animate={{ opacity: 1 }}
           className="text-center border-t border-slate-700/30 pt-6 md:pt-8"
         >
-          <p className="text-xs md:text-sm text-slate-500">
+          <p className="text-xs md:text-sm text-slate-300">
             Crafted by{" "}
             <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent font-semibold">
               Ayoub
