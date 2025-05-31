@@ -1,206 +1,321 @@
 "use client";
-
-import React, { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
-import { FiCode, FiZap, FiLayers, FiTool, FiArrowRight } from "react-icons/fi";
-import { SiTypescript, SiJavascript, SiRedux, SiFigma } from "react-icons/si";
-
-const frontendSkills = [
-	{
-		category: "Core Technologies",
-		icon: <FiCode />,
-		items: ["React", "Next.js", "TypeScript", "JavaScript (ES6+)", "HTML5/CSS3"],
-		color: "text-cyan-400",
-		iconComponent: <SiTypescript className="text-cyan-400" />,
-	},
-	{
-		category: "Styling & UI",
-		icon: <FiLayers />,
-		items: ["Tailwind CSS", "Styled Components", "CSS Modules", "SASS/SCSS", "Responsive Design"],
-		color: "text-purple-400",
-		iconComponent: <SiFigma className="text-purple-400" />,
-	},
-	{
-		category: "State Management",
-		icon: <FiZap />,
-		items: ["Redux", "Context API", "React Query", "Zustand", "Recoil"],
-		color: "text-blue-400",
-		iconComponent: <SiRedux className="text-blue-400" />,
-	},
-	{
-		category: "Tools & Workflow",
-		icon: <FiTool />,
-		items: ["Webpack", "Vite", "Jest", "React Testing Library", "Git/GitHub"],
-		color: "text-green-400",
-		iconComponent: <SiJavascript className="text-green-400" />,
-	},
-];
+import { FaReact, FaNodeJs, FaGitAlt, FaFigma } from "react-icons/fa";
+import { 
+  SiNextdotjs, SiTailwindcss, SiMongodb, SiExpress, 
+  SiTypescript, SiJest, SiGraphql, SiRedux 
+} from "react-icons/si";
 
 export default function SkillsSection() {
-	const ref = useRef(null);
-	const controls = useAnimation();
-	const isInView = useInView(ref, { once: true, threshold: 0.2 });
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
-	useEffect(() => {
-		if (isInView) {
-			controls.start("visible");
-		}
-	}, [isInView, controls]);
+  const ref = useRef(null);
+  const controls = useAnimation();
+  const isInView = useInView(ref, { once: true, threshold: 0.2 });
 
-	const containerVariants = {
-		hidden: { opacity: 0 },
-		visible: {
-			opacity: 1,
-			transition: {
-				staggerChildren: 0.1,
-				delayChildren: 0.2,
-			},
-		},
-	};
+  useEffect(() => {
+    setIsClient(true);
+    const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    setIsDarkMode(darkModeQuery.matches);
+    const handleChange = (e) => setIsDarkMode(e.matches);
+    darkModeQuery.addEventListener("change", handleChange);
+    return () => darkModeQuery.removeEventListener("change", handleChange);
+  }, []);
 
-	const itemVariants = {
-		hidden: { y: 30, opacity: 0 },
-		visible: {
-			y: 0,
-			opacity: 1,
-			transition: { type: "spring", stiffness: 100, damping: 20 },
-		},
-	};
+  useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    }
+  }, [isInView, controls]);
 
-	const cardHoverVariants = {
-		hover: {
-			y: -10,
-			backgroundColor: "rgba(30, 41, 59, 0.5)",
-			transition: { type: "spring", stiffness: 300 },
-		},
-	};
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
 
-	// Detect mobile device
-	const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
 
-	return (
-		<section
-			id="skills"
-			ref={ref}
-			className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-slate-900 text-white"
-		>
-			<div className="max-w-7xl mx-auto">
-				<motion.div
-					initial="hidden"
-					animate={controls}
-					variants={containerVariants}
-				>
-					{/* Section Header */}
-					<motion.div
-						variants={itemVariants}
-						className="mb-16 text-center"
-					>
-						<div className="flex items-center justify-center mb-4">
-							<div className="h-1 w-12 rounded bg-gradient-to-r from-cyan-500 to-blue-500 mr-4" />
-							<h2 className="text-sm uppercase tracking-wider font-semibold text-cyan-400">
-								Technical Expertise
-							</h2>
-							<div className="h-1 w-12 rounded bg-gradient-to-r from-blue-500 to-cyan-500 ml-4" />
-						</div>
-						<h1 className="text-4xl md:text-5xl font-bold mb-4">
-							Frontend <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">Skills</span>
-						</h1>
-						<p className="text-lg text-slate-400 max-w-2xl mx-auto">
-							Combining cutting-edge technologies with proven development practices
-						</p>
-					</motion.div>
+  const skillVariants = {
+    hidden: { scale: 0, opacity: 0 },
+    visible: (i) => ({
+      scale: 1,
+      opacity: 1,
+      transition: {
+        delay: i * 0.1,
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
+      },
+    }),
+  };
 
-					{/* Skills Grid */}
-					<motion.div
-						variants={containerVariants}
-						className={isMobile ? "grid grid-cols-1 gap-4 mb-12" : "grid grid-cols-1 md:grid-cols-2 gap-6 mb-20"}
-					>
-						{frontendSkills.map((skill, index) => (
-							<motion.div
-								key={index}
-								variants={itemVariants}
-								whileHover={isMobile ? undefined : "hover"}
-								className="group relative"
-							>
-								<motion.div
-									variants={cardHoverVariants}
-									className="p-8 rounded-2xl bg-slate-800/20 backdrop-blur-sm border border-slate-700 hover:border-cyan-500/30 transition-all h-full"
-									style={isMobile ? {padding: '1.5rem'} : {}}
-								>
-									<div className="flex items-start mb-6">
-										<div className="p-3 rounded-lg bg-slate-700/50 mr-4">
-											{skill.iconComponent}
-										</div>
-										<div>
-											<h3 className="text-xl font-semibold text-white mb-2">
-												{skill.category}
-											</h3>
-											<div className="h-1 w-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" />
-										</div>
-									</div>
+  const progressVariants = {
+    hidden: { width: 0 },
+    visible: (level) => ({
+      width: `${level}%`,
+      transition: { duration: 1.2, ease: "easeInOut", delay: 0.3 }
+    })
+  };
 
-									<ul className="space-y-3 pl-4">
-										{skill.items.map((item, i) => (
-											<li
-												key={i}
-												className="flex items-center text-slate-400 group-hover:text-slate-300 transition-colors"
-											>
-												<span className={`w-2 h-2 rounded-full mr-3 ${skill.color}`} />
-												{item}
-											</li>
-										))}
-									</ul>
+  const skills = [
+    { name: "React", icon: <FaReact />, color: "text-blue-500", level: 95 },
+    { name: "Next.js", icon: <SiNextdotjs />, color: "text-black dark:text-white", level: 90 },
+    { name: "TypeScript", icon: <SiTypescript />, color: "text-blue-600", level: 85 },
+    { name: "Tailwind", icon: <SiTailwindcss />, color: "text-cyan-500", level: 92 },
+    { name: "Node.js", icon: <FaNodeJs />, color: "text-green-600", level: 88 },
+    { name: "MongoDB", icon: <SiMongodb />, color: "text-green-500", level: 85 },
+    { name: "Express", icon: <SiExpress />, color: "text-gray-700 dark:text-gray-300", level: 87 },
+    { name: "Redux", icon: <SiRedux />, color: "text-purple-600", level: 82 },
+    { name: "GraphQL", icon: <SiGraphql />, color: "text-pink-500", level: 78 },
+    { name: "Jest", icon: <SiJest />, color: "text-red-500", level: 80 },
+    { name: "Git", icon: <FaGitAlt />, color: "text-orange-500", level: 90 },
+    { name: "Figma", icon: <FaFigma />, color: "text-purple-500", level: 85 },
+  ];
 
-									<div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
-								</motion.div>
-							</motion.div>
-						))}
-					</motion.div>
+  const softSkills = [
+    "Problem Solving",
+    "Team Collaboration", 
+    "Code Reviews",
+    "Performance Optimization",
+    "UI/UX Design",
+    "Agile Development"
+  ];
 
-					{/* Additional Skills */}
-					<motion.div
-						variants={itemVariants}
-						className={isMobile ? "bg-slate-800/30 rounded-2xl p-4 border border-slate-700/50 mb-10" : "bg-slate-800/30 rounded-2xl p-8 border border-slate-700/50 mb-16"}
-					>
-						<h3 className="text-xl font-semibold text-white mb-6">Complementary Skills</h3>
-						<div className="flex flex-wrap gap-2">
-							{["Framer Motion", "GraphQL", "Storybook", "Web Accessibility", "Jest", "Webpack"].map((skill, i) => (
-								<motion.div
-									key={i}
-									whileHover={isMobile ? undefined : { scale: 1.05 }}
-									className="px-4 py-2 bg-slate-700/30 rounded-full text-slate-300 hover:text-cyan-400 border border-slate-600/50 hover:border-cyan-400/30 transition-all"
-									style={isMobile ? {fontSize: '0.95rem', padding: '0.5rem 1rem'} : {}}
-								>
-									{skill}
-								</motion.div>
-							))}
-						</div>
-					</motion.div>
+  return (
+    <section
+      id="skills"
+      ref={ref}
+      className={`py-12 md:py-24 px-2 sm:px-4 lg:px-8 ${
+        isDarkMode ? "bg-slate-800 text-white" : "bg-gray-50 text-gray-800"
+      } transition-colors duration-300`}
+    >
+      <div className="max-w-6xl mx-auto">
+        <motion.div
+          initial="hidden"
+          animate={controls}
+          variants={containerVariants}
+        >
+          {/* Section Header */}
+          <motion.div 
+            className="text-center mb-12 md:mb-16"
+            variants={itemVariants}
+          >
+            <div className="flex items-center justify-center mb-4">
+              <div
+                className={`h-1 w-8 md:w-12 rounded ${
+                  isDarkMode ? "bg-indigo-500" : "bg-blue-500"
+                } mr-4`}
+              />
+              <h2 className="text-xs md:text-sm uppercase tracking-wider font-semibold text-gray-500 dark:text-gray-400">
+                Technical Skills
+              </h2>
+              <div
+                className={`h-1 w-8 md:w-12 rounded ${
+                  isDarkMode ? "bg-indigo-500" : "bg-blue-500"
+                } ml-4`}
+              />
+            </div>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+              My Expertise
+            </h1>
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Technologies and tools I use to craft exceptional digital experiences
+            </p>
+          </motion.div>
 
-					{/* CTA Section */}
-					<motion.div
-						variants={itemVariants}
-						className="text-center"
-					>
-						<div className={isMobile ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-2xl p-4 border border-cyan-500/30" : "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-2xl p-8 border border-cyan-500/30"}>
-							<h2 className="text-2xl font-bold text-white mb-4">Ready to Elevate Your Project?</h2>
-							<p className="text-slate-400 mb-6 max-w-xl mx-auto">
-								Let's combine technical excellence with user-centered design to create something remarkable.
-							</p>
-							<motion.a
-								href="#contact"
-								whileHover={isMobile ? undefined : { scale: 1.05 }}
-								whileTap={isMobile ? undefined : { scale: 0.95 }}
-								className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg font-medium text-white shadow-lg hover:shadow-cyan-500/20 transition-all"
-								style={isMobile ? {padding: '0.75rem 1.5rem', fontSize: '1rem'} : {}}
-							>
-								Start a Conversation
-								<FiArrowRight className="ml-2" />
-							</motion.a>
-						</div>
-					</motion.div>
-				</motion.div>
-			</div>
-		</section>
-	);
+          {/* Skills Grid */}
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12"
+            variants={containerVariants}
+          >
+            {/* Technical Skills */}
+            <motion.div
+              className={`p-6 md:p-8 rounded-2xl ${
+                isDarkMode ? "bg-slate-900/50" : "bg-white"
+              } shadow-xl border ${
+                isDarkMode ? "border-slate-700" : "border-gray-200"
+              }`}
+              variants={itemVariants}
+              whileHover={{ y: -5 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <div className="flex items-center mb-6">
+                <div
+                  className={`p-3 rounded-xl ${
+                    isDarkMode ? "bg-indigo-500/20" : "bg-blue-50"
+                  }`}
+                >
+                  <FaReact className={`text-xl ${isDarkMode ? "text-indigo-400" : "text-blue-500"}`} />
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold ml-4">
+                  Technical Stack
+                </h3>
+              </div>
+
+              <div className="space-y-4">
+                {skills.map((skill, index) => (
+                  <motion.div
+                    key={skill.name}
+                    custom={index}
+                    variants={skillVariants}
+                    className="group"
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center">
+                        <div
+                          className={`p-2 rounded-lg ${
+                            isDarkMode ? "bg-slate-800" : "bg-gray-100"
+                          } group-hover:scale-110 transition-transform`}
+                        >
+                          <span className={`text-lg ${skill.color}`}>
+                            {skill.icon}
+                          </span>
+                        </div>
+                        <span className="ml-3 font-medium text-sm md:text-base">
+                          {skill.name}
+                        </span>
+                      </div>
+                      <span className="text-xs md:text-sm font-mono text-gray-500 dark:text-gray-400">
+                        {skill.level}%
+                      </span>
+                    </div>
+                    <div
+                      className={`h-2 ${
+                        isDarkMode ? "bg-slate-700" : "bg-gray-200"
+                      } rounded-full overflow-hidden`}
+                    >
+                      <motion.div
+                        className={`h-full rounded-full bg-gradient-to-r ${
+                          isDarkMode
+                            ? "from-indigo-500 to-purple-600"
+                            : "from-blue-500 to-purple-600"
+                        }`}
+                        variants={progressVariants}
+                        custom={skill.level}
+                        initial="hidden"
+                        animate={isInView ? "visible" : "hidden"}
+                      />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Soft Skills */}
+            <motion.div
+              className={`p-6 md:p-8 rounded-2xl ${
+                isDarkMode ? "bg-slate-900/50" : "bg-white"
+              } shadow-xl border ${
+                isDarkMode ? "border-slate-700" : "border-gray-200"
+              }`}
+              variants={itemVariants}
+              whileHover={{ y: -5 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <div className="flex items-center mb-6">
+                <div
+                  className={`p-3 rounded-xl ${
+                    isDarkMode ? "bg-purple-500/20" : "bg-purple-50"
+                  }`}
+                >
+                  <div className={`w-6 h-6 rounded-full bg-gradient-to-r ${
+                    isDarkMode 
+                      ? "from-purple-400 to-pink-400" 
+                      : "from-purple-500 to-pink-500"
+                  }`} />
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold ml-4">
+                  Core Strengths
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                {softSkills.map((skill, index) => (
+                  <motion.div
+                    key={skill}
+                    custom={index}
+                    variants={skillVariants}
+                    className={`p-4 rounded-xl ${
+                      isDarkMode ? "bg-slate-800" : "bg-gray-50"
+                    } hover:shadow-md transition-shadow group`}
+                    whileHover={{
+                      scale: 1.02,
+                      backgroundColor: isDarkMode
+                        ? "rgba(139, 92, 246, 0.1)"
+                        : "rgba(59, 130, 246, 0.05)",
+                    }}
+                  >
+                    <div className="flex items-center">
+                      <div
+                        className={`w-2 h-2 rounded-full ${
+                          isDarkMode ? "bg-purple-400" : "bg-purple-500"
+                        } mr-3 group-hover:scale-150 transition-transform`}
+                      />
+                      <span className="font-medium text-sm md:text-base">
+                        {skill}
+                      </span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Achievement Stats */}
+              <motion.div 
+                className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700"
+                variants={itemVariants}
+              >
+                <div className="grid grid-cols-2 gap-4 text-center">
+                  <div>
+                    <motion.div
+                      className={`text-2xl md:text-3xl font-bold ${
+                        isDarkMode ? "text-indigo-400" : "text-blue-600"
+                      }`}
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                      transition={{ delay: 0.5, type: "spring" }}
+                    >
+                      3+
+                    </motion.div>
+                    <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
+                      Years Experience
+                    </div>
+                  </div>
+                  <div>
+                    <motion.div
+                      className={`text-2xl md:text-3xl font-bold ${
+                        isDarkMode ? "text-purple-400" : "text-purple-600"
+                      }`}
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                      transition={{ delay: 0.7, type: "spring" }}
+                    >
+                      20+
+                    </motion.div>
+                    <div className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
+                      Projects Built
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
 }
