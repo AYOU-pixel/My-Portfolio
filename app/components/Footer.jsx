@@ -1,6 +1,6 @@
 "use client";
 
-import { Linkedin, Github, Twitter, Mail, Phone, FileText, ArrowUp, Globe } from "lucide-react";
+import { Linkedin, Github, Twitter, Mail, Phone, FileText, Globe } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
@@ -62,7 +62,7 @@ export default function FooterSection() {
   const quickLinks = useMemo(() => [
     { 
       icon: Globe, 
-      href: "https://github.com/AYOU-pixel/Portfolio-2", 
+      href: "https://github.com/AYOU-pixel/My-Portfolio", 
       text: "Portfolio",
       external: true 
     },
@@ -263,21 +263,6 @@ export default function FooterSection() {
           </p>
         </motion.div>
       </div>
-
-      {/* Back to Top Button */}
-      <motion.button
-        onClick={scrollToTop}
-        className="fixed right-4 lg:right-6 bottom-4 lg:bottom-6 p-3 rounded-full bg-slate-800/80 backdrop-blur-md border border-slate-700/30 hover:border-cyan-400/50 transition-all duration-300 z-50 shadow-lg hover:shadow-cyan-400/20"
-        style={{ opacity, y }}
-        aria-label="Scroll to top"
-        whileHover={!isMobile ? { scale: 1.1 } : undefined}
-        whileTap={{ scale: 0.9 }}
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1 }}
-      >
-        <ArrowUp className="w-5 h-5 text-cyan-400" />
-      </motion.button>
     </motion.footer>
   );
 }
