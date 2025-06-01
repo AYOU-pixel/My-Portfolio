@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: "Ayoub Portfolio",
     images: [
       {
-        url: "/logos.jpg",
+        url: "/logos.webp",
         width: 1200,
         height: 630,
         alt: "Ayoub Portfolio Logo",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
       "Creative Front-End Developer from Morocco, crafting seamless and vibrant digital experiences.",
     site: "@your_twitter_handle",
     creator: "@your_twitter_handle",
-    images: ["logos.jpg"],
+    images: ["logos.webp"],
   },
 };
 
@@ -52,7 +52,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/logos.jpg" type="image/jpeg" />
+        <link rel="icon" href="/logos.webp" type="image/jpeg" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-950 text-slate-100`}
