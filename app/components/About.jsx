@@ -1,108 +1,202 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+
+import { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
-import { motion, useAnimation, useInView } from "framer-motion";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { useTheme } from "next-themes";
+import {
+  Briefcase,
+  Download,
+  ArrowRight,
+  Sun,
+  Moon,
+} from "lucide-react";
 import { FaReact, FaNodeJs } from "react-icons/fa";
 import { SiNextdotjs, SiTailwindcss, SiMongodb, SiExpress } from "react-icons/si";
 
-export default function AboutSection() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isClient, setIsClient] = useState(false); // New state to check if rendering on client
+// Shared animation variants from HeroSection and ProjectsSection
+const ANIMATION_VARIANTS = {
+  floating: {
+    y: [0, -12, 0],
+    transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+  },
+  glowPulse: {
+    scale: [1, 1.02, 1],
+    opacity: [0.8, 1, 0.8],
+    transition: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+  },
+  backgroundFloat: {
+    scale: [1, 1.1, 1],
+    opacity: [0.4, 0.6, 0.4],
+    rotate: [0, 180, 360],
+    transition: { duration: 20, repeat: Infinity, ease: "linear" },
+  },
+  slideInLeft: {
+    initial: { opacity: 0, x: -60, y: 20 },
+    animate: { opacity: 1, x: 0, y: 0 },
+    transition: { duration: 0.8, ease: "easeOut" },
+  },
+  fadeInUp: {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+  skillFade: {
+    initial: { opacity: 0, scale: 0.8 },
+    animate: { opacity: 1, scale: 1 },
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
 
+const skills = [
+  { name: "React", icon: <FaReact className="w-5 h-5 text-sky-400" />, color: "sky" },
+  { name: "Next.js", icon: <SiNextdotjs className="w-5 h-5 text-indigo-400" />, color: "indigo" },
+  { name: "Tailwind CSS", icon: <SiTailwindcss className="w-5 h-5 text-teal-400" />, color: "teal" },
+  { name: "Node.js", icon: <FaNodeJs className="w-5 h-5 text-green-400" />, color: "green" },
+  { name: "MongoDB", icon: <SiMongodb className="w-5 h-5 text-green-500" />, color: "green" },
+  { name: "Express", icon: <SiExpress className="w-5 h-5 text-gray-400" />, color: "gray" },
+];
+
+const values = [
+  "Writing scalable, maintainable codebases",
+  "Designing UI that feels native and intuitive",
+  "Optimizing for real performance, not just metrics",
+  "Understanding the problem before writing code",
+];
+
+export default function AboutSection() {
   const ref = useRef(null);
-  const controls = useAnimation();
-  const isInView = useInView(ref, { once: true, threshold: 0.2 });
+  const statsRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref });
+  const isStatsInView = useInView(statsRef, { once: true, margin: "-100px" });
+  const { theme, setTheme } = useTheme();
+  const x = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
+
+  const [state, setState] = useState({
+    isMounted: false,
+    isMobile: false,
+    reduceMotionPref: false,
+  });
 
   useEffect(() => {
-    setIsClient(true); // Set to true after component mounts
+    if (typeof window === "undefined") return;
 
-    const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    setIsDarkMode(darkModeQuery.matches);
-    const handleChange = (e) => setIsDarkMode(e.matches);
-    darkModeQuery.addEventListener("change", handleChange);
-    return () => darkModeQuery.removeEventListener("change", handleChange);
+    const isMobile = window.innerWidth <= 768;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    setState((prev) => ({
+      ...prev,
+      isMounted: true,
+      isMobile,
+      reduceMotionPref: mediaQuery.matches,
+    }));
+
+    const handler = (e) => setState((prev) => ({ ...prev, reduceMotionPref: e.matches }));
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
-  useEffect(() => {
-    if (isInView) {
-      controls.start("visible");
-    }
-  }, [isInView, controls]);
+  const animationProps = useMemo(() => {
+    const shouldAnimate = !state.isMobile && !state.reduceMotionPref;
+    return {
+      floating: shouldAnimate ? ANIMATION_VARIANTS.floating : {},
+      glowPulse: shouldAnimate ? ANIMATION_VARIANTS.glowPulse : {},
+      backgroundFloat: shouldAnimate ? ANIMATION_VARIANTS.backgroundFloat : {},
+      showFloatingElements: shouldAnimate,
+    };
+  }, [state.isMobile, state.reduceMotionPref]);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-  };
-
-  const skillVariants = {
-    hidden: { scale: 0, opacity: 0 },
-    visible: (i) => ({
-      scale: 1,
-      opacity: 1,
-      transition: {
-        delay: i * 0.1,
-        type: "spring",
-        stiffness: 260,
-        damping: 20,
-      },
-    }),
-  };
-
-  const skills = [
-    { name: "React", icon: <FaReact />, color: "text-blue-500" },
-    { name: "Next.js", icon: <SiNextdotjs />, color: "text-black dark:text-white" },
-    { name: "Tailwind", icon: <SiTailwindcss />, color: "text-cyan-500" },
-    { name: "Node.js", icon: <FaNodeJs />, color: "text-green-600" },
-    { name: "MongoDB", icon: <SiMongodb />, color: "text-green-500" },
-    { name: "Express", icon: <SiExpress />, color: "text-gray-700 dark:text-gray-300" },
-  ];
-
-  const values = [
-    "Writing scalable, maintainable codebases",
-    "Designing UI that feels native and intuitive",
-    "Optimizing for real performance, not just metrics",
-    "Understanding the problem before writing code",
-  ];
+  if (!state.isMounted) {
+    return (
+      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 pt-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="max-w-5xl mx-auto text-center">
+            <div className="animate-pulse">
+              <div className="h-16 bg-slate-800 rounded mb-4 w-3/4 mx-auto"></div>
+              <div className="h-8 bg-slate-800 rounded mb-6 w-1/2 mx-auto"></div>
+              <div className="h-6 bg-slate-800 rounded w-2/3 mx-auto"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
       id="about"
       ref={ref}
-      className={`py-12 md:py-24 px-2 sm:px-4 lg:px-8 ${
-        isDarkMode ? "bg-slate-900 text-white" : "bg-white text-gray-800"
-      } transition-colors duration-300`}
+      className="relative py-20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 overflow-hidden"
+      role="region"
+      aria-label="About Me Section"
     >
-      <div className="max-w-6xl mx-auto">
+      {animationProps.showFloatingElements && (
+        <>
+          <motion.div
+            className="absolute inset-0 bg-grid-slate-700/[0.05] bg-[length:60px_60px]"
+            style={{ x, y }}
+            aria-hidden="true"
+          />
+          <motion.div
+            className="absolute top-1/4 -right-40 w-[500px] h-[500px] bg-gradient-to-br from-sky-500/30 to-indigo-600/30 rounded-full blur-3xl"
+            animate={animationProps.backgroundFloat}
+            aria-hidden="true"
+          />
+          <motion.div
+            className="absolute bottom-1/4 -left-40 w-[400px] h-[400px] bg-gradient-to-tr from-indigo-500/30 to-blue-600/30 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.4, 0.6, 0.4],
+              rotate: [0, -180, -360],
+              transition: { duration: 25, repeat: Infinity, ease: "linear" },
+            }}
+            aria-hidden="true"
+          />
+        </>
+      )}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div {...ANIMATION_VARIANTS.slideInLeft} className="text-center mb-16">
+          <motion.h2
+            className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-6 font-poppins"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            About{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-indigo-500">
+              Me
+            </span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-base text-slate-300 leading-relaxed max-w-3xl mx-auto font-poppins"
+          >
+            A glimpse into my journey as a self-taught frontend developer, passionate about building scalable, user-focused web applications.
+          </motion.p>
+        </motion.div>
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center"
           initial="hidden"
-          animate={controls}
-          variants={containerVariants}
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.2, delayChildren: 0.1 },
+            },
+          }}
         >
           {/* Left Column - Portrait */}
           <motion.div
             className="relative overflow-hidden rounded-2xl"
-            variants={itemVariants}
+            variants={ANIMATION_VARIANTS.fadeInUp}
           >
-            <div
-              className={`absolute inset-0 bg-gradient-to-br ${
-                isDarkMode ? "from-indigo-500 to-purple-700" : "from-blue-500 to-purple-600"
-              } opacity-20 rounded-2xl`}
+            <motion.div
+              className="absolute -inset-4 bg-gradient-to-r from-sky-500/30 to-indigo-600/30 rounded-full blur-2xl shadow-[0_0_40px_rgba(14,165,233,0.2)]"
+              animate={animationProps.glowPulse}
             />
             <div className="relative p-4 md:p-0">
               <motion.div
@@ -112,28 +206,22 @@ export default function AboutSection() {
               >
                 <Image
                   src="/ayoub.webp"
-                  alt="Ayoub - Front-end Developer"
+                  alt="Ayoub - Frontend Developer"
                   width={600}
                   height={600}
                   className="w-full h-auto object-cover"
                   priority
-                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw" // Define responsive sizes
-                  quality={80} // Adjust quality for performance
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                  quality={80}
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xg"
                 />
-                <div
-                  className={`absolute bottom-0 left-0 right-0 p-4 ${
-                    isDarkMode ? "bg-slate-900/80" : "bg-white/80"
-                  } backdrop-blur-sm`}
-                >
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-slate-900/80 backdrop-blur-sm">
                   <div className="flex items-center space-x-2">
-                    <span
-                      className={`inline-block w-3 h-3 rounded-full ${
-                        isDarkMode ? "bg-green-400" : "bg-green-500"
-                      } animate-pulse`}
-                    />
-                    <span className="text-sm font-medium">Available for projects</span>
+                    <span className="inline-block w-3 h-3 rounded-full bg-green-400 animate-pulse" />
+                    <span className="text-sm font-medium text-slate-300 font-poppins">
+                      Available for projects
+                    </span>
                   </div>
                 </div>
               </motion.div>
@@ -142,124 +230,116 @@ export default function AboutSection() {
           {/* Right Column - Content */}
           <motion.div
             className="space-y-6 md:space-y-8"
-            variants={containerVariants}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.2, delayChildren: 0.3 },
+              },
+            }}
           >
             {/* Heading */}
-            <motion.div variants={itemVariants}>
+            <motion.div variants={ANIMATION_VARIANTS.fadeInUp}>
               <div className="flex items-center mb-2">
-                <div
-                  className={`h-1 w-8 md:w-12 rounded ${
-                    isDarkMode ? "bg-indigo-500" : "bg-blue-500"
-                  } mr-4`}
-                />
-                <h2 className="text-xs md:text-sm uppercase tracking-wider font-semibold text-gray-500 dark:text-gray-400">
+                <div className="h-1 w-8 md:w-12 rounded bg-sky-500 mr-4" />
+                <h2 className="text-xs md:text-sm uppercase tracking-wider font-semibold text-slate-400">
                   About Me
                 </h2>
-                <div className="h-1 w-8 md:w-12 rounded bg-blue-500 ml-4 hidden md:block" />
+                <div className="h-1 w-8 md:w-12 rounded bg-sky-500 ml-4 hidden md:block" />
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white font-poppins">
                 Ayoub
               </h1>
-              <p
-                className={`text-lg mt-2 ${
-                  isDarkMode ? "text-indigo-400" : "text-blue-600"
-                } font-medium`}
-              >
+              <p className="text-lg mt-2 text-sky-400 font-medium font-poppins">
                 UX-Focused Frontend Developer
               </p>
             </motion.div>
             {/* Introduction */}
             <motion.p
-              variants={itemVariants}
-              className="text-base md:text-lg leading-relaxed"
+              variants={ANIMATION_VARIANTS.fadeInUp}
+              className="text-base md:text-lg text-slate-300 leading-relaxed font-poppins"
             >
-              I’m Ayoub, a self-taught front-end developer focused on building fast, accessible, and user-centered web applications using React, Next.js, and Tailwind CSS. I built my first website at 19 and have since honed my skills to create clean architecture, reusable components, and intuitive designs.
+              I’m Ayoub, a self-taught frontend developer specializing in React, Next.js, and Tailwind CSS. Since building my first website at 19, I’ve focused on creating fast, accessible, and user-centered web applications with clean architecture and reusable components.
             </motion.p>
             {/* Skills */}
-            <motion.div variants={itemVariants}>
-              <h3 className="text-lg font-semibold mb-3">Tech Stack</h3>
-              <div className="flex flex-wrap gap-3 md:gap-4">
+            <motion.div variants={ANIMATION_VARIANTS.fadeInUp}>
+              <h3 className="text-lg font-semibold text-white mb-3 font-poppins">
+                Tech Stack
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {skills.map((skill, index) => (
                   <motion.div
                     key={skill.name}
                     custom={index}
-                    variants={skillVariants}
-                    className={`flex items-center gap-2 px-2 py-1 md:px-3 md:py-2 rounded-lg ${
-                      isDarkMode ? "bg-slate-800" : "bg-gray-100"
-                    } hover:shadow-md transition-shadow`}
-                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                    variants={ANIMATION_VARIANTS.skillFade}
+                    className="flex items-center gap-2 px-3 py-2 bg-slate-800/50 backdrop-blur-sm border border-slate-700/30 rounded-xl hover:border-sky-500/50 transition-all duration-300 font-poppins"
+                    whileHover={{ scale: 1.05, y: -2 }}
                   >
-                    <span className={`text-lg md:text-xl ${skill.color}`}>{skill.icon}</span>
-                    <span className="text-xs md:text-sm font-medium">{skill.name}</span>
+                    <span className={`text-lg ${skill.color}`}>{skill.icon}</span>
+                    <span className="text-sm font-medium text-slate-300">{skill.name}</span>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
             {/* Values */}
-            <motion.div variants={itemVariants}>
-              <h3 className="text-lg font-semibold mb-3">What I Care About</h3>
+            <motion.div variants={ANIMATION_VARIANTS.fadeInUp}>
+              <h3 className="text-lg font-semibold text-white mb-3 font-poppins">
+                What I Care About
+              </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {values.map((value, index) => (
                   <motion.div
                     key={value}
                     custom={index}
-                    variants={skillVariants}
-                    className={`flex items-center justify-center text-center p-2 md:p-3 rounded-lg ${
-                      isDarkMode ? "bg-slate-800" : "bg-gray-100"
-                    } hover:shadow-md transition-shadow`}
-                    whileHover={{
-                      scale: 1.05,
-                      backgroundColor: isDarkMode
-                        ? "rgba(99, 102, 241, 0.2)"
-                        : "rgba(59, 130, 246, 0.1)",
-                    }}
+                    variants={ANIMATION_VARIANTS.skillFade}
+                    className="flex items-center justify-center text-center p-3 bg-slate-800/50 backdrop-blur-sm border border-slate-700/30 rounded-xl hover:border-sky-500/50 transition-all duration-300 font-poppins"
+                    whileHover={{ scale: 1.05, y: -2 }}
                   >
-                    <span className="text-xs md:text-sm font-medium">{value}</span>
+                    <span className="text-xs md:text-sm font-medium text-slate-300">{value}</span>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
             {/* CTA Button */}
-            <motion.div variants={itemVariants} className="pt-2 md:pt-4">
+            <motion.div variants={ANIMATION_VARIANTS.fadeInUp} className="pt-4">
               <div className="flex flex-col sm:flex-row gap-4">
                 <motion.a
                   href="#contact"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`px-4 py-2 md:px-6 md:py-3 rounded-lg font-medium text-white ${
-                    isDarkMode
-                      ? "bg-gradient-to-r from-indigo-500 to-purple-600"
-                      : "bg-gradient-to-r from-blue-500 to-purple-600"
-                  } shadow-md flex items-center justify-center group relative overflow-hidden`}
+                  className="flex items-center justify-center gap-3 px-6 py-3 bg-sky-500 hover:bg-sky-600 rounded-xl text-white font-semibold text-sm shadow-lg shadow-sky-500/25 hover:shadow-[0_0_20px_rgba(14,165,233,0.3)] transition-all duration-300 font-poppins"
                 >
-                  <span className="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-[200%] transition-transform duration-700 ease-in-out" />
-                  <span className="relative">Let's work together</span>
-                  <motion.span
-                    initial={{ x: 0 }}
-                    whileHover={{ x: 5 }}
-                    className="ml-2"
-                  >
-                    →
-                  </motion.span>
+                  <Briefcase className="w-4 h-4 stroke-2" />
+                  <span>Let's work together</span>
+                  <ArrowRight className="w-4 h-4 stroke-2 group-hover:translate-x-1 transition-transform duration-300" />
                 </motion.a>
                 <motion.a
                   href="/front-end-developer-resume-ayoub-pdf.pdf"
                   download
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`px-4 py-2 md:px-6 md:py-3 rounded-lg font-medium border-2 ${
-                    isDarkMode
-                      ? "border-indigo-500 text-indigo-400 hover:bg-indigo-500/10"
-                      : "border-blue-500 text-blue-600 hover:bg-blue-50"
-                  } flex items-center justify-center transition-colors`}
+                  className="flex items-center justify-center gap-3 px-6 py-3 bg-transparent border border-slate-600 hover:border-sky-500 rounded-xl text-slate-300 hover:text-sky-400 font-medium text-sm transition-all duration-300 font-poppins"
                 >
-                  Download Resume
+                  <Download className="w-4 h-4 stroke-2" />
+                  <span>Download Resume</span>
                 </motion.a>
               </div>
             </motion.div>
           </motion.div>
         </motion.div>
       </div>
+      <motion.button
+        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        className="fixed top-4 right-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700"
+        whileHover={{ scale: 1.1 }}
+        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+      >
+        {theme === "dark" ? (
+          <Sun className="w-5 h-5 text-slate-300" />
+        ) : (
+          <Moon className="w-5 h-5 text-slate-300" />
+        )}
+      </motion.button>
     </section>
   );
 }
