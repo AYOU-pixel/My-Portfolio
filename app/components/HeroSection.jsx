@@ -235,11 +235,11 @@ export default function HeroSection() {
         {animationProps.showFloatingElements && (
           <>
             <motion.div
-              className="absolute top-1/4 -right-40 w-[500px] h-[500px] bg-gradient-to-br from-sky-500/30 to-indigo-600/30 rounded-full blur-3xl"
+              className="absolute top-1/4 -right-40 w-[300px] sm:w-[400px] lg:w-[500px] h-[300px] sm:h-[400px] lg:h-[500px] bg-gradient-to-br from-sky-500/30 to-indigo-600/30 rounded-full blur-3xl"
               animate={animationProps.backgroundFloat}
             />
             <motion.div
-              className="absolute bottom-1/4 -left-40 w-[400px] h-[400px] bg-gradient-to-tr from-indigo-500/30 to-blue-600/30 rounded-full blur-3xl"
+              className="absolute bottom-1/4 -left-40 w-[250px] sm:w-[350px] lg:w-[400px] h-[250px] sm:h-[350px] lg:h-[400px] bg-gradient-to-tr from-indigo-500/30 to-blue-600/30 rounded-full blur-3xl"
               animate={{
                 scale: [1, 1.2, 1],
                 opacity: [0.4, 0.6, 0.4],
@@ -253,14 +253,15 @@ export default function HeroSection() {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 z-10">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+            {/* Left Section */}
             <motion.div {...ANIMATION_VARIANTS.slideInLeft} className="lg:col-span-7 space-y-8">
               <div className="space-y-4">
                 <motion.h1
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.8 }}
-                  className="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-white leading-[0.9] tracking-tight font-poppins"
+                  className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight font-poppins"
                 >
                   <span className="block">Ayoub</span>
                   <span className="block text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-indigo-500 to-blue-600 animate-gradient-x">
@@ -268,7 +269,7 @@ export default function HeroSection() {
                   </span>
                 </motion.h1>
 
-                <div className="h-16 flex items-center">
+                <div className="h-12 sm:h-16 flex items-center">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={state.currentRole}
@@ -278,14 +279,14 @@ export default function HeroSection() {
                       transition={{ duration: 0.5, ease: "easeOut" }}
                       className="flex items-center gap-3"
                     >
-                      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-200">
+                      <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-200">
                         {ROLES[state.currentRole]}
                       </h2>
                       {state.isTyping && (
                         <motion.div
                           animate={{ opacity: [1, 0] }}
                           transition={{ duration: 0.8, repeat: Infinity }}
-                          className="w-1 h-8 bg-sky-400 rounded"
+                          className="w-1 h-6 sm:h-8 bg-sky-400 rounded"
                         />
                       )}
                     </motion.div>
@@ -299,13 +300,13 @@ export default function HeroSection() {
                 transition={{ delay: 0.4, duration: 0.8 }}
                 className="space-y-4"
               >
-                <h3 className="text-xl sm:text-2xl font-semibold text-white">
+                <h3 className="text-lg sm:text-xl font-semibold text-white">
                   Building Scalable Web Solutions
                 </h3>
-                <p className="text-lg text-slate-300 leading-relaxed max-w-2xl">
+                <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl">
                   I build high-performance, scalable web applications that empower businesses to achieve measurable results. With over 4 years of experience in the React ecosystem, I’ve delivered 15+ production-grade projects, including dashboards serving 50K+ monthly users and e-commerce platforms with 40% faster load times.
                 </p>
-                <p className="text-base text-slate-400 leading-relaxed max-w-xl">
+                <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-xl">
                   Using React, Next.js, and Tailwind CSS, I create intuitive, maintainable, and modern interfaces that align with business goals and user needs.
                 </p>
               </motion.div>
@@ -317,7 +318,7 @@ export default function HeroSection() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
-                className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+                className="grid grid-cols-2 sm:grid-cols-4 gap-4"
               >
                 {STATS.map((stat, index) => (
                   <motion.div
@@ -335,12 +336,12 @@ export default function HeroSection() {
                         initial={{ opacity: 0 }}
                         animate={isStatsInView ? { opacity: 1 } : {}}
                         transition={{ delay: 0.8 + index * 0.1, duration: 0.8 }}
-                        className="text-2xl font-bold text-white"
+                        className="text-xl sm:text-2xl font-bold text-white"
                       >
                         {stat.number}
                       </motion.span>
                     </div>
-                    <p className="text-sm text-slate-400 font-medium">{stat.label}</p>
+                    <p className="text-xs sm:text-sm text-slate-400 font-medium">{stat.label}</p>
                   </motion.div>
                 ))}
               </motion.div>
@@ -353,22 +354,22 @@ export default function HeroSection() {
               >
                 <motion.button
                   onClick={handleScrollToProjects}
-                  className="group relative overflow-hidden flex items-center justify-center gap-3 px-8 py-4 bg-sky-500 hover:bg-sky-600 rounded-xl text-white font-semibold text-lg shadow-2xl shadow-sky-500/25 hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-all duration-300"
+                  className="group relative overflow-hidden flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-sky-500 hover:bg-sky-600 rounded-xl text-white font-semibold text-sm sm:text-lg shadow-2xl shadow-sky-500/25 hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-all duration-300"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Briefcase className="w-5 h-5 stroke-2 z-10" />
+                  <Briefcase className="w-4 sm:w-5 h-4 sm:h-5 stroke-2 z-10" />
                   <span className="z-10">View My Work</span>
-                  <ArrowRight className="w-5 h-5 stroke-2 z-10 group-hover:translate-x-1 transition-transform duration-300" />
+                  <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 stroke-2 z-10 group-hover:translate-x-1 transition-transform duration-300" />
                 </motion.button>
 
                 <motion.button
                   onClick={handleScrollToContact}
-                  className="group flex items-center justify-center gap-3 px-8 py-4 bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white font-semibold text-lg shadow-lg transition-all duration-300"
+                  className="group flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white font-semibold text-sm sm:text-lg shadow-lg transition-all duration-300"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Send className="w-5 h-5 stroke-2" />
+                  <Send className="w-4 sm:w-5 h-4 sm:h-5 stroke-2" />
                   <span>Let's Connect</span>
                 </motion.button>
 
@@ -376,44 +377,25 @@ export default function HeroSection() {
                   href="/front-end-developer-resume-ayoub-pdf.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center justify-center gap-3 px-6 py-4 bg-transparent border border-slate-600 hover:border-yellow-400 rounded-xl text-slate-300 hover:text-yellow-400 font-medium transition-all duration-300"
+                  className="group flex items-center justify-center gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-transparent border border-slate-600 hover:border-yellow-400 rounded-xl text-slate-300 hover:text-yellow-400 font-medium text-sm sm:text-base transition-all duration-300"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Download className="w-5 h-5 stroke-2" />
+                  <Download className="w-4 sm:w-5 h-4 sm:h-5 stroke-2" />
                   <span>Resume</span>
-                  <ExternalLink className="w-4 h-4 stroke-2 opacity-60" />
+                  <ExternalLink className="w-3 sm:w-4 h-3 sm:h-4 stroke-2 opacity-60" />
                 </motion.a>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.6 }}
-                className="flex flex-wrap items-center gap-6 text-sm text-slate-400 pt-4"
-              >
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-sky-400" />
-                  <span>Rabat, Morocco</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-indigo-400" />
-                  <span>GMT+1 • Available Mon-Fri</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  <span>Open to remote work</span>
-                </div>
               </motion.div>
             </motion.div>
 
+            {/* Right Section */}
             <motion.div {...ANIMATION_VARIANTS.slideInRight} className="lg:col-span-5 space-y-8">
               <div className="relative mx-auto w-fit">
                 <motion.div
                   className="absolute -inset-4 bg-gradient-to-r from-sky-500/30 to-indigo-600/30 rounded-full blur-2xl shadow-[0_0_40px_rgba(14,165,233,0.2)]"
                   animate={animationProps.glowPulse}
                 />
-                <div className="relative w-80 h-80 lg:w-96 lg:h-96">
+                <div className="relative w-64 sm:w-80 lg:w-96 h-64 sm:h-80 lg:h-96">
                   <div className="absolute inset-0 bg-gradient-to-br from-sky-500/20 to-indigo-600/20 rounded-full p-[2px] shadow-[0_0_20px_rgba(14,165,233,0.3)]">
                     <div className="relative w-full h-full rounded-full overflow-hidden bg-slate-900/80 backdrop-blur-sm border border-slate-700/50">
                       <Image
@@ -430,13 +412,13 @@ export default function HeroSection() {
                             className="absolute top-4 right-4 p-3 bg-slate-900/90 backdrop-blur-md border border-slate-700/50 rounded-xl shadow-2xl"
                             animate={animationProps.rotating}
                           >
-                            <Terminal className="w-6 h-6 text-sky-400" />
+                            <Terminal className="w-5 sm:w-6 h-5 sm:h-6 text-sky-400" />
                           </motion.div>
                           <motion.div
                             className="absolute bottom-4 left-4 p-3 bg-slate-900/90 backdrop-blur-md border border-slate-700/50 rounded-xl shadow-2xl"
                             animate={animationProps.floating}
                           >
-                            <Sparkles className="w-6 h-6 text-indigo-400" />
+                            <Sparkles className="w-5 sm:w-6 h-5 sm:h-6 text-indigo-400" />
                           </motion.div>
                         </>
                       )}
