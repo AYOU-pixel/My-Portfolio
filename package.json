@@ -208,7 +208,6 @@
     "nanoid": "^3.3.8",
     "natural-compare": "^1.4.0",
     "next": "^15.1.4",
-    "next-themes": "^0.4.6",
     "nodemailer": "^6.10.1",
     "normalize-path": "^3.0.0",
     "object-assign": "^4.1.1",

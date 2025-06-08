@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { useTheme } from "next-themes";
 import {
   Briefcase,
   Download,
@@ -69,7 +68,6 @@ export default function AboutSection() {
   const statsRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref });
   const isStatsInView = useInView(statsRef, { once: true, margin: "-100px" });
-  const { theme, setTheme } = useTheme();
   const x = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
 
@@ -328,18 +326,6 @@ export default function AboutSection() {
           </motion.div>
         </motion.div>
       </div>
-      <motion.button
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        className="fixed top-4 right-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700"
-        whileHover={{ scale: 1.1 }}
-        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-      >
-        {theme === "dark" ? (
-          <Sun className="w-5 h-5 text-slate-300" />
-        ) : (
-          <Moon className="w-5 h-5 text-slate-300" />
-        )}
-      </motion.button>
     </section>
   );
 }

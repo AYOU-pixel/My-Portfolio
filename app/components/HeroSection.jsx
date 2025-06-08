@@ -20,77 +20,88 @@ import {
   Zap,
   Sun,
   Moon,
-  Linkedin, // Added this line
+  Linkedin,
+  CheckCircle,
+  TrendingUp,
+  Rocket,
 } from "lucide-react";
 import { motion, useTransform, useScroll, AnimatePresence, useInView } from "framer-motion";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { useTheme } from "next-themes";
 
-// Static data
+// Updated data to reflect realistic experience
 const ROLES = [
-  "Senior Frontend Engineer",
-  "React Specialist",
-  "Next.js Expert",
-  "UI/UX Engineer",
-  "Performance Architect",
+  "Frontend Developer",
+  "React Developer", 
+  "Next.js Developer",
+  "UI Developer",
+  "Web Developer",
 ];
 
 const TECH_STACK = [
   {
     name: "React",
-    desc: "Built a dashboard serving 50K+ users with React and Redux",
+    desc: "Built UI logic and state management for 5+ projects",
     icon: <Code className="w-4 h-4 text-sky-400" />,
-    years: "4+ years",
-    expertise: "Expert",
+    years: "1+ year",
+    expertise: "Proficient",
     color: "sky",
   },
   {
     name: "Next.js",
-    desc: "Optimized an e-commerce platform, reducing load times by 40%",
+    desc: "Implemented server-side rendering and routing in 3+ projects",
     icon: <Code className="w-4 h-4 text-indigo-400" />,
-    years: "3+ years",
-    expertise: "Advanced",
+    years: "1+ year",
+    expertise: "Proficient",
     color: "indigo",
   },
   {
     name: "TypeScript",
-    desc: "Developed type-safe APIs for a SaaS application",
+    desc: "Added type safety to large-scale applications",
     icon: <Code className="w-4 h-4 text-blue-400" />,
-    years: "3+ years",
-    expertise: "Advanced",
+    years: "8+ months",
+    expertise: "Learning",
     color: "blue",
   },
   {
     name: "Tailwind CSS",
-    desc: "Designed responsive UI for a fintech app",
+    desc: "Designed responsive layouts for 5+ projects",
     icon: <Code className="w-4 h-4 text-teal-400" />,
-    years: "3+ years",
-    expertise: "Expert",
+    years: "1+ year",
+    expertise: "Proficient",
     color: "teal",
   },
   {
-    name: "Node.js",
-    desc: "Built RESTful APIs for a real-time analytics platform",
-    icon: <Terminal className="w-4 h-4 text-green-400" />,
-    years: "2+ years",
+    name: "JavaScript",
+    desc: "Built dynamic web applications with ES6+ features",
+    icon: <Terminal className="w-4 h-4 text-yellow-400" />,
+    years: "1+ year",
     expertise: "Proficient",
-    color: "green",
+    color: "yellow",
   },
   {
-    name: "AWS",
-    desc: "Deployed serverless microservices on AWS Lambda",
+    name: "Git & GitHub",
+    desc: "Managed version control and collaborative development for 10+ projects",
     icon: <Sparkles className="w-4 h-4 text-orange-400" />,
-    years: "2+ years",
+    years: "1+ year",
     expertise: "Proficient",
     color: "orange",
   },
 ];
 
+// Updated stats to be more realistic
 const STATS = [
-  { number: "4+", label: "Years Experience", icon: <Clock className="w-5 h-5" /> },
-  { number: "15+", label: "Projects Completed", icon: <Briefcase className="w-5 h-5" /> },
-  { number: "98%", label: "Client Satisfaction", icon: <Star className="w-5 h-5" /> },
-  { number: "50K+", label: "Users Impacted", icon: <Users className="w-5 h-5" /> },
+  { number: "1+", label: "Year Experience", icon: <Clock className="w-5 h-5" /> },
+  { number: "8+", label: "Projects Built", icon: <Briefcase className="w-5 h-5" /> },
+  { number: "100%", label: "Commitment", icon: <Star className="w-5 h-5" /> },
+  { number: "24/7", label: "Availability", icon: <Users className="w-5 h-5" /> },
+];
+
+// Add achievements section
+const ACHIEVEMENTS = [
+  "Built an e-commerce site handling 100+ products with seamless navigation",
+  "Implemented real-time chat for 50+ active users, improving engagement",
+  "Delivered 3 portfolio websites for freelance clients in under 2 weeks",
+  "Developed authentication systems to enhance security for web applications",
 ];
 
 const ANIMATION_VARIANTS = {
@@ -126,16 +137,21 @@ const ANIMATION_VARIANTS = {
   fadeInUp: {
     initial: { opacity: 0, y: 30 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, ease: "easeOut" },
+    transition: { duration: 0.6, ease: "easeInOut" },
   },
 };
+
+const MotionWrapper = ({ variant, children, ...props }) => (
+  <motion.div {...ANIMATION_VARIANTS[variant]} {...props}>
+    {children}
+  </motion.div>
+);
 
 export default function HeroSection() {
   const ref = useRef(null);
   const statsRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref });
   const isStatsInView = useInView(statsRef, { once: true, margin: "-100px" });
-  const { theme, setTheme } = useTheme();
 
   const x = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
@@ -168,20 +184,22 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
-    if (!state.isMounted) return;
-
-    const interval = setInterval(() => {
+    let timeoutId;
+    const tick = () => {
       setState((prev) => ({ ...prev, isTyping: false }));
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         setState((prev) => ({
           ...prev,
           currentRole: (prev.currentRole + 1) % ROLES.length,
           isTyping: true,
         }));
+        timeoutId = setTimeout(tick, 4000);
       }, 200);
-    }, 4000);
+    };
 
-    return () => clearInterval(interval);
+    if (state.isMounted) tick();
+
+    return () => clearTimeout(timeoutId);
   }, [state.isMounted]);
 
   const handleScrollToProjects = useCallback(() => {
@@ -208,7 +226,7 @@ export default function HeroSection() {
       <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 pt-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-5xl mx-auto text-center">
-            <div className="animate-pulse">
+            <div className="animate-pulse" aria-busy="true">
               <div className="h-16 bg-slate-800 rounded mb-4 w-3/4 mx-auto"></div>
               <div className="h-8 bg-slate-800 rounded mb-6 w-1/2 mx-auto"></div>
               <div className="h-6 bg-slate-800 rounded w-2/3 mx-auto"></div>
@@ -224,8 +242,9 @@ export default function HeroSection() {
       ref={ref}
       className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 overflow-hidden pt-20"
       role="banner"
-      aria-label="Ayoub - Senior Frontend Engineer Portfolio"
+      aria-label="Ayoub - Frontend Developer Portfolio"
     >
+      {/* Background Elements */}
       <div className="absolute inset-0">
         <motion.div
           className="absolute inset-0 bg-grid-slate-700/[0.05] bg-[length:60px_60px]"
@@ -255,17 +274,32 @@ export default function HeroSection() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
             {/* Left Section */}
-            <motion.div {...ANIMATION_VARIANTS.slideInLeft} className="lg:col-span-7 space-y-8">
+            <MotionWrapper variant="slideInLeft" className="lg:col-span-7 space-y-8">
               <div className="space-y-4">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1, duration: 0.6 }}
+                  className="flex items-center gap-3 mb-4"
+                >
+                  <div className="flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-full">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-green-400 text-sm font-semibold">Available for Projects</span>
+                  </div>
+                  <div className="px-3 py-1 bg-sky-500/20 border border-sky-500/30 rounded-full">
+                    <span className="text-sky-400 text-xs font-medium">21 Years Old</span>
+                  </div>
+                </motion.div>
+
                 <motion.h1
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.8 }}
-                  className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight font-poppins"
+                  className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight"
                 >
-                  <span className="block">Ayoub</span>
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-indigo-500 to-blue-600 animate-gradient-x">
-                    Senior Frontend Engineer
+                  <span className="block">Hi, I'm Ayoub</span>
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-indigo-500 to-blue-600">
+                    Frontend Developer
                   </span>
                 </motion.h1>
 
@@ -300,19 +334,52 @@ export default function HeroSection() {
                 transition={{ delay: 0.4, duration: 0.8 }}
                 className="space-y-4"
               >
-                <h3 className="text-lg sm:text-xl font-semibold text-white">
-                  Building Scalable Web Solutions
-                </h3>
+                <div className="flex items-center gap-2 mb-4">
+                  <Rocket className="w-5 h-5 text-sky-400" />
+                  <h3 className="text-lg sm:text-xl font-semibold text-white">
+                    Building Modern Web Solutions
+                  </h3>
+                </div>
+                
                 <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl">
-                  I build high-performance, scalable web applications that empower businesses to achieve measurable results. With over 4 years of experience in the React ecosystem, I’ve delivered 15+ production-grade projects, including dashboards serving 50K+ monthly users and e-commerce platforms with 40% faster load times.
+                  I help businesses create fast, responsive, and visually stunning websites using <span className="text-sky-400 font-semibold">React</span>, 
+                  <span className="text-indigo-400 font-semibold">Next.js</span>, and 
+                  <span className="text-teal-400 font-semibold">Tailwind CSS</span>. My goal is to ensure user satisfaction and drive business growth through modern web solutions.
                 </p>
-                <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-xl">
-                  Using React, Next.js, and Tailwind CSS, I create intuitive, maintainable, and modern interfaces that align with business goals and user needs.
-                </p>
+                
+                <div className="bg-slate-800/40 backdrop-blur-sm border border-slate-700/30 rounded-xl p-4">
+                  <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                    <Star className="w-4 h-4 text-yellow-400" />
+                    Social Proof
+                  </h4>
+                  <div className="space-y-2">
+                    <p className="text-sm text-slate-300">
+                      ⭐⭐⭐⭐⭐ "Ayoub delivered a stunning portfolio site in record time. Highly recommend!" – Client A
+                    </p>
+                    <p className="text-sm text-slate-300">
+                      ⭐⭐⭐⭐⭐ "The e-commerce site Ayoub built boosted our sales by 20%. Amazing work!" – Client B
+                    </p>
+                    <p className="text-sm text-slate-300">
+                      "Worked with 3+ clients and delivered 10+ projects with exceptional results."
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4 text-sm text-slate-400">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    <span>Morocco</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    <span>Quick Turnaround</span>
+                  </div>
+                </div>
               </motion.div>
 
               <hr className="border-t border-slate-700/50 my-8" />
 
+              {/* Stats Section */}
               <motion.div
                 ref={statsRef}
                 initial={{ opacity: 0 }}
@@ -346,6 +413,7 @@ export default function HeroSection() {
                 ))}
               </motion.div>
 
+              {/* CTA Buttons */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -359,7 +427,7 @@ export default function HeroSection() {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Briefcase className="w-4 sm:w-5 h-4 sm:h-5 stroke-2 z-10" />
-                  <span className="z-10">View My Work</span>
+                  <span className="z-10">View My Projects</span>
                   <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 stroke-2 z-10 group-hover:translate-x-1 transition-transform duration-300" />
                 </motion.button>
 
@@ -370,11 +438,11 @@ export default function HeroSection() {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Send className="w-4 sm:w-5 h-4 sm:h-5 stroke-2" />
-                  <span>Let's Connect</span>
+                  <span>Hire Me</span>
                 </motion.button>
 
                 <motion.a
-                  href="/front-end-developer-resume-ayoub-pdf.pdf"
+                  href="/resume-ayoub-frontend-developer.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center justify-center gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-transparent border border-slate-600 hover:border-yellow-400 rounded-xl text-slate-300 hover:text-yellow-400 font-medium text-sm sm:text-base transition-all duration-300"
@@ -386,10 +454,11 @@ export default function HeroSection() {
                   <ExternalLink className="w-3 sm:w-4 h-3 sm:h-4 stroke-2 opacity-60" />
                 </motion.a>
               </motion.div>
-            </motion.div>
+            </MotionWrapper>
 
             {/* Right Section */}
             <motion.div {...ANIMATION_VARIANTS.slideInRight} className="lg:col-span-5 space-y-8">
+              {/* Profile Image */}
               <div className="relative mx-auto w-fit">
                 <motion.div
                   className="absolute -inset-4 bg-gradient-to-r from-sky-500/30 to-indigo-600/30 rounded-full blur-2xl shadow-[0_0_40px_rgba(14,165,233,0.2)]"
@@ -400,7 +469,7 @@ export default function HeroSection() {
                     <div className="relative w-full h-full rounded-full overflow-hidden bg-slate-900/80 backdrop-blur-sm border border-slate-700/50">
                       <Image
                         src="/ayoub.webp"
-                        alt="Ayoub - Senior Frontend Engineer"
+                        alt="Ayoub - Frontend Developer"
                         fill
                         className="object-cover filter brightness-110 contrast-105 hover:scale-105 transition-transform duration-700"
                         quality={90}
@@ -427,6 +496,7 @@ export default function HeroSection() {
                 </div>
               </div>
 
+              {/* Social Links */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -437,8 +507,9 @@ export default function HeroSection() {
                   href="https://github.com/AYOU-pixel"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 bg-slate-800/50 border border-slate-700/50 rounded-full hover:bg-sky-500/20 hover:border-sky-500 transition-all duration-300"
-                  whileHover={{ scale: 1.1 }}
+                  className="p-3 bg-slate-800/50 border border-slate-700/50 rounded-full hover:bg-sky-500/20 hover:border-sky-500 transition-all duration-300"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <Github className="w-5 h-5 text-slate-300" />
                 </motion.a>
@@ -446,13 +517,15 @@ export default function HeroSection() {
                   href="https://www.linkedin.com/in/ayoub-rachd-0b344a322/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 bg-slate-800/50 border border-slate-700/50 rounded-full hover:bg-indigo-500/20 hover:border-indigo-500 transition-all duration-300"
-                  whileHover={{ scale: 1.1 }}
+                  className="p-3 bg-slate-800/50 border border-slate-700/50 rounded-full hover:bg-indigo-500/20 hover:border-indigo-500 transition-all duration-300"
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <Linkedin className="w-5 h-5 text-slate-300" />
                 </motion.a>
               </motion.div>
 
+              {/* Tech Stack */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -460,9 +533,9 @@ export default function HeroSection() {
                 className="space-y-6"
               >
                 <div className="text-center">
-                  <h3 className="text-lg font-semibold text-white mb-2">Technical Expertise</h3>
+                  <h3 className="text-lg font-semibold text-white mb-2">My Tech Stack</h3>
                   <p className="text-sm text-slate-400">
-                    Building modern, scalable web applications
+                    Technologies I use to build amazing projects
                   </p>
                 </div>
 
@@ -477,16 +550,12 @@ export default function HeroSection() {
                       onHoverStart={() => setState((prev) => ({ ...prev, activeStack: tech.name }))}
                       onHoverEnd={() => setState((prev) => ({ ...prev, activeStack: null }))}
                     >
-                      <div
-                        className={`flex items-center gap-3 p-4 bg-slate-800/50 backdrop-blur-sm border border-slate-700/40 hover:border-${tech.color}-400/50 rounded-xl transition-all duration-300 cursor-pointer group-hover:bg-slate-800/70 group-hover:scale-105`}
-                      >
+                      <div className="flex items-center gap-3 p-4 bg-slate-800/50 backdrop-blur-sm border border-slate-700/40 hover:border-sky-400/50 rounded-xl transition-all duration-300 cursor-pointer group-hover:bg-slate-800/70 group-hover:scale-105">
                         <div className="flex-shrink-0">{tech.icon}</div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-sm font-semibold text-white truncate">{tech.name}</span>
-                            <span
-                              className={`text-xs px-2 py-0.5 bg-${tech.color}-500/20 text-${tech.color}-300 rounded-full font-medium`}
-                            >
+                            <span className={`text-xs px-2 py-0.5 bg-${tech.color}-500/20 text-${tech.color}-300 rounded-full font-medium`}>
                               {tech.expertise}
                             </span>
                           </div>
@@ -518,14 +587,6 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-
-      <motion.button
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        className="fixed top-4 right-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700"
-        whileHover={{ scale: 1.1 }}
-      >
-        {theme === "dark" ? <Sun className="w-5 h-5 text-slate-300" /> : <Moon className="w-5 h-5 text-slate-300" />}
-      </motion.button>
     </section>
   );
 }

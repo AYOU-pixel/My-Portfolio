@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useTheme } from "next-themes";
 import { useScroll, motion, useTransform, useInView, AnimatePresence } from "framer-motion";
 
 // PROJECTS array without tech.desc
@@ -117,7 +116,6 @@ export default function ProjectsSection() {
   const statsRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref });
   const isStatsInView = useInView(statsRef, { once: true, margin: "-100px" });
-  const { theme, setTheme } = useTheme();
   const x = useTransform(scrollYProgress, [0, 1], [0, 100]);
   const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
   const [state, setState] = useState({
@@ -292,7 +290,7 @@ export default function ProjectsSection() {
           transition={{ delay: 0.8 }}
           className="text-center"
         >
-          <Link href="/projects">
+          <Link href="/morproject">
             <motion.button
               className="group flex items-center justify-center gap-3 px-8 py-4 mx-auto bg-sky-500 hover:bg-sky-600 rounded-xl text-white font-semibold text-lg shadow-2xl shadow-sky-500/25 hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-all duration-300 font-poppins"
               whileHover={{ scale: 1.05, y: -2 }}
@@ -312,7 +310,7 @@ export default function ProjectsSection() {
           className="flex justify-center gap-4 mt-12"
         >
           <motion.a
-            href="https://github.com/YOUR_GITHUB_USERNAME" // Replace with actual GitHub profile
+            href="https://github.com/AYOU-pixel" // Replace with actual GitHub profile
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 bg-slate-800/50 border border-slate-700/50 rounded-full hover:bg-sky-500/20 hover:border-sky-500 transition-all duration-300"
@@ -322,7 +320,7 @@ export default function ProjectsSection() {
             <Github className="w-5 h-5 text-slate-300" />
           </motion.a>
           <motion.a
-            href="https://linkedin.com/in/YOUR_LINKEDIN_USERNAME" // Replace with actual LinkedIn profile
+            href="https://www.linkedin.com/in/ayoub-rachd-0b344a322/" // Replace with actual LinkedIn profile
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 bg-slate-800/50 border border-slate-700/50 rounded-full hover:bg-indigo-500/20 hover:border-indigo-500 transition-all duration-300"
@@ -361,14 +359,6 @@ export default function ProjectsSection() {
           </motion.button>
         </motion.div>
       </div>
-      <motion.button
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        className="fixed top-4 right-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700"
-        whileHover={{ scale: 1.1 }}
-        aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-      >
-        {theme === "dark" ? <Sun className="w-5 h-5 text-slate-300" /> : <Moon className="w-5 h-5 text-slate-300" />}
-      </motion.button>
     </section>
   );
 }
