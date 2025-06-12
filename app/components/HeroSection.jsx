@@ -3,589 +3,299 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-  Code,
   Briefcase,
-  Send,
-  Terminal,
-  Sparkles,
-  MapPin,
   Clock,
   Github,
   ExternalLink,
   Download,
-  Star,
-  Trophy,
   Users,
   ArrowRight,
-  Zap,
-  Sun,
-  Moon,
-  Linkedin,
-  CheckCircle,
-  TrendingUp,
-  Rocket,
+  Linkedin
 } from "lucide-react";
-import { motion, useTransform, useScroll, AnimatePresence, useInView } from "framer-motion";
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { FaReact, FaNodeJs } from "react-icons/fa";
+import { SiNextdotjs, SiTailwindcss, SiMongodb, SiExpress } from "react-icons/si";
 
-// Updated data to reflect realistic experience
+// --- CONFIGURATION & DATA CONSTANTS ---
+// KEY IMPROVEMENT: Centralized configuration for easier updates.
+const PORTFOLIO_CONFIG = {
+  name: "Ayoub",
+  resumeUrl: "/resume-ayoub-frontend-developer.pdf",
+  socials: {
+    github: "https://github.com/AYOU-pixel",
+    linkedin: "https://www.linkedin.com/in/ayoub-rachd-0b344a322/",
+  }
+};
+
 const ROLES = [
   "Frontend Developer",
-  "React Developer", 
-  "Next.js Developer",
-  "UI Developer",
-  "Web Developer",
+  "React & Next.js Expert",
+  "UI/UX Enthusiast",
+  "Creative Web Developer",
 ];
 
 const TECH_STACK = [
-  {
-    name: "React",
-    desc: "Built UI logic and state management for 5+ projects",
-    icon: <Code className="w-4 h-4 text-sky-400" />,
-    years: "1+ year",
-    expertise: "Proficient",
-    color: "sky",
-  },
-  {
-    name: "Next.js",
-    desc: "Implemented server-side rendering and routing in 3+ projects",
-    icon: <Code className="w-4 h-4 text-indigo-400" />,
-    years: "1+ year",
-    expertise: "Proficient",
-    color: "indigo",
-  },
-  {
-    name: "TypeScript",
-    desc: "Added type safety to large-scale applications",
-    icon: <Code className="w-4 h-4 text-blue-400" />,
-    years: "8+ months",
-    expertise: "Learning",
-    color: "blue",
-  },
-  {
-    name: "Tailwind CSS",
-    desc: "Designed responsive layouts for 5+ projects",
-    icon: <Code className="w-4 h-4 text-teal-400" />,
-    years: "1+ year",
-    expertise: "Proficient",
-    color: "teal",
-  },
-  {
-    name: "JavaScript",
-    desc: "Built dynamic web applications with ES6+ features",
-    icon: <Terminal className="w-4 h-4 text-yellow-400" />,
-    years: "1+ year",
-    expertise: "Proficient",
-    color: "yellow",
-  },
-  {
-    name: "Git & GitHub",
-    desc: "Managed version control and collaborative development for 10+ projects",
-    icon: <Sparkles className="w-4 h-4 text-orange-400" />,
-    years: "1+ year",
-    expertise: "Proficient",
-    color: "orange",
-  },
+  { name: "React", icon: <FaReact size={20} />, color: "text-sky-400" },
+  { name: "Next.js", icon: <SiNextdotjs size={20} />, color: "text-white" },
+  { name: "Tailwind CSS", icon: <SiTailwindcss size={20} />, color: "text-teal-400" },
+  { name: "Node.js", icon: <FaNodeJs size={20} />, color: "text-green-400" },
+  { name: "MongoDB", icon: <SiMongodb size={20} />, color: "text-green-500" },
+  { name: "Express", icon: <SiExpress size={20} />, color: "text-gray-400" },
 ];
 
-// Updated stats to be more realistic
 const STATS = [
-  { number: "1+", label: "Year Experience", icon: <Clock className="w-5 h-5" /> },
-  { number: "8+", label: "Projects Built", icon: <Briefcase className="w-5 h-5" /> },
-  { number: "100%", label: "Commitment", icon: <Star className="w-5 h-5" /> },
-  { number: "24/7", label: "Availability", icon: <Users className="w-5 h-5" /> },
+  { number: "1+", label: "Year of Experience", icon: <Clock className="w-5 h-5 text-sky-400" /> },
+  { number: "10+", label: "Projects Shipped", icon: <Briefcase className="w-5 h-5 text-sky-400" /> },
+  { number: "500+", label: "GitHub Commits", icon: <Github className="w-5 h-5 text-sky-400" /> },
+  { number: "3+", label: "Happy Clients", icon: <Users className="w-5 h-5 text-sky-400" /> },
 ];
 
-// Add achievements section
-const ACHIEVEMENTS = [
-  "Built an e-commerce site handling 100+ products with seamless navigation",
-  "Implemented real-time chat for 50+ active users, improving engagement",
-  "Delivered 3 portfolio websites for freelance clients in under 2 weeks",
-  "Developed authentication systems to enhance security for web applications",
-];
-
-const ANIMATION_VARIANTS = {
-  floating: {
-    y: [0, -12, 0],
-    transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-  },
-  rotating: {
-    rotate: [0, 5, -5, 0],
-    transition: { duration: 8, repeat: Infinity, ease: "easeInOut" },
-  },
-  glowPulse: {
-    scale: [1, 1.02, 1],
-    opacity: [0.8, 1, 0.8],
-    transition: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-  },
-  backgroundFloat: {
-    scale: [1, 1.1, 1],
-    opacity: [0.4, 0.6, 0.4],
-    rotate: [0, 180, 360],
-    transition: { duration: 20, repeat: Infinity, ease: "linear" },
-  },
-  slideInLeft: {
-    initial: { opacity: 0, x: -60, y: 20 },
-    animate: { opacity: 1, x: 0, y: 0 },
-    transition: { duration: 0.8, ease: "easeOut" },
-  },
-  slideInRight: {
-    initial: { opacity: 0, x: 60, y: 20 },
-    animate: { opacity: 1, x: 0, y: 0 },
-    transition: { duration: 0.8, ease: "easeOut" },
-  },
-  fadeInUp: {
-    initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, ease: "easeInOut" },
-  },
+// --- ANIMATION VARIANTS ---
+const FADE_IN_UP = {
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.6, ease: "easeInOut" },
 };
 
-const MotionWrapper = ({ variant, children, ...props }) => (
-  <motion.div {...ANIMATION_VARIANTS[variant]} {...props}>
-    {children}
+// --- MODULAR SUB-COMPONENTS ---
+
+const RoleSwitcher = () => {
+  const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentRoleIndex((prevIndex) => (prevIndex + 1) % ROLES.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="relative h-10 sm:h-12 overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.h2
+          key={ROLES[currentRoleIndex]}
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: "0%", opacity: 1 }}
+          exit={{ y: "-100%", opacity: 0 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="absolute inset-0 text-xl sm:text-2xl font-bold text-slate-200"
+        >
+          {ROLES[currentRoleIndex]}
+        </motion.h2>
+      </AnimatePresence>
+    </div>
+  );
+};
+
+// KEY IMPROVEMENT: Stats are now rendered using this self-animating component.
+const StatCard = ({ stat, index, reduceMotion }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-50px" }}
+    transition={{
+      duration: 0.5,
+      delay: reduceMotion ? 0 : index * 0.1,
+      ease: "easeOut"
+    }}
+    className="flex items-center gap-4 p-4 bg-slate-800/50 border border-slate-700/50 rounded-lg"
+  >
+    {stat.icon}
+    <div>
+      <p className="text-xl sm:text-2xl font-bold text-white">{stat.number}</p>
+      <p className="text-xs sm:text-sm text-slate-400">{stat.label}</p>
+    </div>
   </motion.div>
 );
 
+const TechPill = ({ skill, index, reduceMotion }) => (
+  <motion.div
+    initial={{ opacity: 0, scale: 0.8 }}
+    whileInView={{ opacity: 1, scale: 1 }}
+    viewport={{ once: true, margin: "-50px" }}
+    transition={{
+      duration: 0.5,
+      delay: reduceMotion ? 0 : index * 0.1,
+      ease: "easeOut"
+    }}
+    whileHover={{ scale: 1.05, y: -2 }}
+    className="flex items-center gap-2 px-3 py-2 bg-slate-800/50 backdrop-blur-sm border border-slate-700/30 rounded-xl hover:border-sky-500/50 transition-all duration-300"
+  >
+    <span className={skill.color}>{skill.icon}</span>
+    <span className="text-sm font-medium text-slate-300">{skill.name}</span>
+  </motion.div>
+);
+
+// --- MAIN HERO COMPONENT ---
 export default function HeroSection() {
-  const ref = useRef(null);
-  const statsRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref });
-  const isStatsInView = useInView(statsRef, { once: true, margin: "-100px" });
-
-  const x = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
-
-  const [state, setState] = useState({
-    isMounted: false,
-    activeStack: null,
-    currentRole: 0,
-    isMobile: false,
-    reduceMotionPref: false,
-    isTyping: true,
-  });
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const heroRef = useRef(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const isMobile = window.innerWidth <= 768;
+    // No need for isMounted state, Next.js handles this well.
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    setState((prev) => ({
-      ...prev,
-      isMounted: true,
-      isMobile,
-      reduceMotionPref: mediaQuery.matches,
-    }));
-
-    const handler = (e) => setState((prev) => ({ ...prev, reduceMotionPref: e.matches }));
+    setReduceMotion(mediaQuery.matches);
+    const handler = (e) => setReduceMotion(e.matches);
     mediaQuery.addEventListener("change", handler);
     return () => mediaQuery.removeEventListener("change", handler);
   }, []);
 
-  useEffect(() => {
-    let timeoutId;
-    const tick = () => {
-      setState((prev) => ({ ...prev, isTyping: false }));
-      timeoutId = setTimeout(() => {
-        setState((prev) => ({
-          ...prev,
-          currentRole: (prev.currentRole + 1) % ROLES.length,
-          isTyping: true,
-        }));
-        timeoutId = setTimeout(tick, 4000);
-      }, 200);
-    };
-
-    if (state.isMounted) tick();
-
-    return () => clearTimeout(timeoutId);
-  }, [state.isMounted]);
-
-  const handleScrollToProjects = useCallback(() => {
-    document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+  const handleScrollTo = useCallback((id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
-
-  const handleScrollToContact = useCallback(() => {
-    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-
-  const animationProps = useMemo(() => {
-    const shouldAnimate = !state.isMobile && !state.reduceMotionPref;
-    return {
-      floating: shouldAnimate ? ANIMATION_VARIANTS.floating : {},
-      rotating: shouldAnimate ? ANIMATION_VARIANTS.rotating : {},
-      glowPulse: shouldAnimate ? ANIMATION_VARIANTS.glowPulse : {},
-      backgroundFloat: shouldAnimate ? ANIMATION_VARIANTS.backgroundFloat : {},
-      showFloatingElements: shouldAnimate,
-    };
-  }, [state.isMobile, state.reduceMotionPref]);
-
-  if (!state.isMounted) {
-    return (
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 pt-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="max-w-5xl mx-auto text-center">
-            <div className="animate-pulse" aria-busy="true">
-              <div className="h-16 bg-slate-800 rounded mb-4 w-3/4 mx-auto"></div>
-              <div className="h-8 bg-slate-800 rounded mb-6 w-1/2 mx-auto"></div>
-              <div className="h-6 bg-slate-800 rounded w-2/3 mx-auto"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  
+  // KEY IMPROVEMENT: Simplified animation helper for cleaner JSX.
+  const animationProps = (delay = 0) => ({
+    ...FADE_IN_UP,
+    transition: { ...FADE_IN_UP.transition, delay: reduceMotion ? 0 : delay },
+  });
 
   return (
     <section
-      ref={ref}
-      className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 overflow-hidden pt-20"
-      role="banner"
-      aria-label="Ayoub - Frontend Developer Portfolio"
+      ref={heroRef}
+      id="home"
+      className="relative min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white overflow-hidden"
+      aria-label={`${PORTFOLIO_CONFIG.name} - Frontend Developer Portfolio Hero`}
     >
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <motion.div
-          className="absolute inset-0 bg-grid-slate-700/[0.05] bg-[length:60px_60px]"
-          style={{ x, y }}
+      {/* Background Styling */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/50"></div>
+        <div
+          className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"
           aria-hidden="true"
         />
-        {animationProps.showFloatingElements && (
-          <>
-            <motion.div
-              className="absolute top-1/4 -right-40 w-[300px] sm:w-[400px] lg:w-[500px] h-[300px] sm:h-[400px] lg:h-[500px] bg-gradient-to-br from-sky-500/30 to-indigo-600/30 rounded-full blur-3xl"
-              animate={animationProps.backgroundFloat}
-            />
-            <motion.div
-              className="absolute bottom-1/4 -left-40 w-[250px] sm:w-[350px] lg:w-[400px] h-[250px] sm:h-[350px] lg:h-[400px] bg-gradient-to-tr from-indigo-500/30 to-blue-600/30 rounded-full blur-3xl"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.4, 0.6, 0.4],
-                rotate: [0, -180, -360],
-                transition: { duration: 25, repeat: Infinity, ease: "linear" },
-              }}
-            />
-          </>
-        )}
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
-            {/* Left Section */}
-            <MotionWrapper variant="slideInLeft" className="lg:col-span-7 space-y-8">
-              <div className="space-y-4">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1, duration: 0.6 }}
-                  className="flex items-center gap-3 mb-4"
-                >
-                  <div className="flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-full">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-green-400 text-sm font-semibold">Available for Projects</span>
-                  </div>
-                  <div className="px-3 py-1 bg-sky-500/20 border border-sky-500/30 rounded-full">
-                    <span className="text-sky-400 text-xs font-medium">21 Years Old</span>
-                  </div>
-                </motion.div>
-
-                <motion.h1
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.8 }}
-                  className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tight"
-                >
-                  <span className="block">Hi, I'm Ayoub</span>
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-sky-500 via-indigo-500 to-blue-600">
-                    Frontend Developer
-                  </span>
-                </motion.h1>
-
-                <div className="h-12 sm:h-16 flex items-center">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={state.currentRole}
-                      initial={{ opacity: 0, y: 20, rotateX: 90 }}
-                      animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                      exit={{ opacity: 0, y: -20, rotateX: -90 }}
-                      transition={{ duration: 0.5, ease: "easeOut" }}
-                      className="flex items-center gap-3"
-                    >
-                      <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-200">
-                        {ROLES[state.currentRole]}
-                      </h2>
-                      {state.isTyping && (
-                        <motion.div
-                          animate={{ opacity: [1, 0] }}
-                          transition={{ duration: 0.8, repeat: Infinity }}
-                          className="w-1 h-6 sm:h-8 bg-sky-400 rounded"
-                        />
-                      )}
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 z-10 pt-24 sm:pt-32 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-16 items-center">
+          {/* Left Column: Text Content */}
+          <div className="lg:col-span-7 text-center lg:text-left">
+            <motion.div {...animationProps(0)}>
+              <div className="inline-flex items-center gap-3 mb-4 py-1 px-3 bg-green-500/10 border border-green-500/30 rounded-full">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                </span>
+                <span className="text-sm text-green-300 font-medium">Available for Projects</span>
               </div>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="space-y-4"
-              >
-                <div className="flex items-center gap-2 mb-4">
-                  <Rocket className="w-5 h-5 text-sky-400" />
-                  <h3 className="text-lg sm:text-xl font-semibold text-white">
-                    Building Modern Web Solutions
-                  </h3>
-                </div>
-                
-                <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl">
-                  I help businesses create fast, responsive, and visually stunning websites using <span className="text-sky-400 font-semibold">React</span>, 
-                  <span className="text-indigo-400 font-semibold">Next.js</span>, and 
-                  <span className="text-teal-400 font-semibold">Tailwind CSS</span>. My goal is to ensure user satisfaction and drive business growth through modern web solutions.
-                </p>
-                
-                <div className="bg-slate-800/40 backdrop-blur-sm border border-slate-700/30 rounded-xl p-4">
-                  <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
-                    <Star className="w-4 h-4 text-yellow-400" />
-                    Social Proof
-                  </h4>
-                  <div className="space-y-2">
-                    <p className="text-sm text-slate-300">
-                      ⭐⭐⭐⭐⭐ "Ayoub delivered a stunning portfolio site in record time. Highly recommend!" – Client A
-                    </p>
-                    <p className="text-sm text-slate-300">
-                      ⭐⭐⭐⭐⭐ "The e-commerce site Ayoub built boosted our sales by 20%. Amazing work!" – Client B
-                    </p>
-                    <p className="text-sm text-slate-300">
-                      "Worked with 3+ clients and delivered 10+ projects with exceptional results."
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-4 text-sm text-slate-400">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4" />
-                    <span>Morocco</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>Quick Turnaround</span>
-                  </div>
-                </div>
-              </motion.div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tighter">
+                Hi, I'm {PORTFOLIO_CONFIG.name} — <br className="hidden lg:block" />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-500">
+                  Creative Frontend Developer
+                </span>
+              </h1>
 
-              <hr className="border-t border-slate-700/50 my-8" />
-
-              {/* Stats Section */}
-              <motion.div
-                ref={statsRef}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.8 }}
-                className="grid grid-cols-2 sm:grid-cols-4 gap-4"
-              >
-                {STATS.map((stat, index) => (
-                  <motion.div
-                    key={stat.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isStatsInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.6 + index * 0.1, duration: 0.6 }}
-                    className="group p-4 bg-slate-800/40 backdrop-blur-sm border border-slate-700/30 rounded-xl hover:border-sky-500/30 transition-all duration-300"
-                  >
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="text-sky-400 group-hover:scale-110 transition-transform duration-300">
-                        {stat.icon}
-                      </div>
-                      <motion.span
-                        initial={{ opacity: 0 }}
-                        animate={isStatsInView ? { opacity: 1 } : {}}
-                        transition={{ delay: 0.8 + index * 0.1, duration: 0.8 }}
-                        className="text-xl sm:text-2xl font-bold text-white"
-                      >
-                        {stat.number}
-                      </motion.span>
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-400 font-medium">{stat.label}</p>
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              {/* CTA Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.8 }}
-                className="flex flex-col sm:flex-row gap-4 pt-4"
-              >
-                <motion.button
-                  onClick={handleScrollToProjects}
-                  className="group relative overflow-hidden flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-sky-500 hover:bg-sky-600 rounded-xl text-white font-semibold text-sm sm:text-lg shadow-2xl shadow-sky-500/25 hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] transition-all duration-300"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Briefcase className="w-4 sm:w-5 h-4 sm:h-5 stroke-2 z-10" />
-                  <span className="z-10">View My Projects</span>
-                  <ArrowRight className="w-4 sm:w-5 h-4 sm:h-5 stroke-2 z-10 group-hover:translate-x-1 transition-transform duration-300" />
-                </motion.button>
-
-                <motion.button
-                  onClick={handleScrollToContact}
-                  className="group flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white font-semibold text-sm sm:text-lg shadow-lg transition-all duration-300"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Send className="w-4 sm:w-5 h-4 sm:h-5 stroke-2" />
-                  <span>Hire Me</span>
-                </motion.button>
-
-                <motion.a
-                  href="/resume-ayoub-frontend-developer.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center justify-center gap-3 px-4 sm:px-6 py-3 sm:py-4 bg-transparent border border-slate-600 hover:border-yellow-400 rounded-xl text-slate-300 hover:text-yellow-400 font-medium text-sm sm:text-base transition-all duration-300"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Download className="w-4 sm:w-5 h-4 sm:h-5 stroke-2" />
-                  <span>Resume</span>
-                  <ExternalLink className="w-3 sm:w-4 h-3 sm:h-4 stroke-2 opacity-60" />
-                </motion.a>
-              </motion.div>
-            </MotionWrapper>
-
-            {/* Right Section */}
-            <motion.div {...ANIMATION_VARIANTS.slideInRight} className="lg:col-span-5 space-y-8">
-              {/* Profile Image */}
-              <div className="relative mx-auto w-fit">
-                <motion.div
-                  className="absolute -inset-4 bg-gradient-to-r from-sky-500/30 to-indigo-600/30 rounded-full blur-2xl shadow-[0_0_40px_rgba(14,165,233,0.2)]"
-                  animate={animationProps.glowPulse}
-                />
-                <div className="relative w-64 sm:w-80 lg:w-96 h-64 sm:h-80 lg:h-96">
-                  <div className="absolute inset-0 bg-gradient-to-br from-sky-500/20 to-indigo-600/20 rounded-full p-[2px] shadow-[0_0_20px_rgba(14,165,233,0.3)]">
-                    <div className="relative w-full h-full rounded-full overflow-hidden bg-slate-900/80 backdrop-blur-sm border border-slate-700/50">
-                      <Image
-                        src="/ayoub.webp"
-                        alt="Ayoub - Frontend Developer"
-                        fill
-                        className="object-cover filter brightness-110 contrast-105 hover:scale-105 transition-transform duration-700"
-                        quality={90}
-                        priority
-                      />
-                      {animationProps.showFloatingElements && (
-                        <>
-                          <motion.div
-                            className="absolute top-4 right-4 p-3 bg-slate-900/90 backdrop-blur-md border border-slate-700/50 rounded-xl shadow-2xl"
-                            animate={animationProps.rotating}
-                          >
-                            <Terminal className="w-5 sm:w-6 h-5 sm:h-6 text-sky-400" />
-                          </motion.div>
-                          <motion.div
-                            className="absolute bottom-4 left-4 p-3 bg-slate-900/90 backdrop-blur-md border border-slate-700/50 rounded-xl shadow-2xl"
-                            animate={animationProps.floating}
-                          >
-                            <Sparkles className="w-5 sm:w-6 h-5 sm:h-6 text-indigo-400" />
-                          </motion.div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
+              <div className="mt-4">
+                <RoleSwitcher />
               </div>
 
+              <p className="mt-6 max-w-xl mx-auto lg:mx-0 text-lg text-slate-300 leading-relaxed">
+                I build fast, responsive, and beautiful web applications that provide exceptional user experiences. Turning complex problems into elegant, modern solutions is my passion.
+              </p>
+            </motion.div>
+
+            <motion.div {...animationProps(0.2)} className="mt-10 flex flex-wrap justify-center lg:justify-start gap-4">
+              <button
+                onClick={() => handleScrollTo('projects')}
+                className="group inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 transform hover:scale-105"
+              >
+                <Briefcase className="w-5 h-5" />
+                View My Work
+                <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+              </button>
+              <a
+                href={PORTFOLIO_CONFIG.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-800/70 border border-slate-700 text-slate-300 font-medium rounded-lg hover:bg-slate-700/80 hover:text-white transition-colors duration-300"
+              >
+                <Download className="w-5 h-5" />
+                Download Resume
+                <ExternalLink className="w-4 h-4 opacity-70" />
+              </a>
+            </motion.div>
+          </div>
+
+          {/* Right Column: Image & Socials */}
+          <motion.div {...animationProps(0.1)} className="lg:col-span-5 mt-16 lg:mt-0">
+            <div className="relative mx-auto w-fit">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: reduceMotion ? 0 : 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="relative w-64 h-64 sm:w-80 sm:h-80 group"
+              >
+                <div className="absolute -inset-2.5 bg-gradient-to-br from-sky-500 to-indigo-600 rounded-full opacity-30 blur-xl transition-all duration-1000 group-hover:opacity-50 group-hover:blur-2xl animate-pulse group-hover:animate-none"></div>
+                <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-slate-700/50 shadow-2xl">
+                  <Image
+                    src="/ayoub.webp"
+                    alt={`${PORTFOLIO_CONFIG.name} - Frontend Developer`}
+                    fill
+                    sizes="(max-width: 768px) 16rem, 20rem"
+                    className="object-cover scale-105"
+                    quality={95}
+                    priority
+                  />
+                </div>
+              </motion.div>
               {/* Social Links */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.9, duration: 0.8 }}
-                className="flex justify-center gap-4 mt-4"
+                transition={{ delay: reduceMotion ? 0 : 0.8, duration: 0.5 }}
+                className="mt-6 flex justify-center gap-4"
               >
-                <motion.a
-                  href="https://github.com/AYOU-pixel"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-slate-800/50 border border-slate-700/50 rounded-full hover:bg-sky-500/20 hover:border-sky-500 transition-all duration-300"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
+                <a href={PORTFOLIO_CONFIG.socials.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile" className="p-3 bg-slate-800/70 border border-slate-700/50 rounded-full hover:bg-sky-500/10 hover:border-sky-500/50 transition-all duration-300">
                   <Github className="w-5 h-5 text-slate-300" />
-                </motion.a>
-                <motion.a
-                  href="https://www.linkedin.com/in/ayoub-rachd-0b344a322/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-slate-800/50 border border-slate-700/50 rounded-full hover:bg-indigo-500/20 hover:border-indigo-500 transition-all duration-300"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
+                </a>
+                <a href={PORTFOLIO_CONFIG.socials.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" className="p-3 bg-slate-800/70 border border-slate-700/50 rounded-full hover:bg-sky-500/10 hover:border-sky-500/50 transition-all duration-300">
                   <Linkedin className="w-5 h-5 text-slate-300" />
-                </motion.a>
+                </a>
               </motion.div>
+            </div>
+          </motion.div>
+        </div>
 
-              {/* Tech Stack */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.9, duration: 0.8 }}
-                className="space-y-6"
-              >
-                <div className="text-center">
-                  <h3 className="text-lg font-semibold text-white mb-2">My Tech Stack</h3>
-                  <p className="text-sm text-slate-400">
-                    Technologies I use to build amazing projects
-                  </p>
-                </div>
+        {/* --- KEY IMPROVEMENT: Career Snapshot Section --- */}
+        {/* This section now logically flows from the intro and effectively uses the STATS constant */}
+        <motion.div {...animationProps(0.4)} className="mt-24 sm:mt-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-12 gap-x-16 items-start">
+            
+            {/* Left Column: Stats & Narrative */}
+            <div className="space-y-8">
+              <h3 className="text-2xl font-bold text-center lg:text-left text-white">
+                Career Snapshot
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                {STATS.map((stat, index) => (
+                  <StatCard key={stat.label} stat={stat} index={index} reduceMotion={reduceMotion} />
+                ))}
+              </div>
+               <p className="text-slate-300 leading-relaxed text-center lg:text-left pt-4">
+                I architect digital experiences, not just websites. As a React and Next.js specialist, I focus on the details that create an unforgettable user journey. In just over a year, I've transformed complex problems into elegant, high-performance front-end interfaces, shipping over 10 projects and bringing ideas to life with precision and passion.
+              </p>
+            </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  {TECH_STACK.map((tech, index) => (
-                    <motion.div
-                      key={tech.name}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 1 + index * 0.1, duration: 0.5 }}
-                      className="relative group"
-                      onHoverStart={() => setState((prev) => ({ ...prev, activeStack: tech.name }))}
-                      onHoverEnd={() => setState((prev) => ({ ...prev, activeStack: null }))}
-                    >
-                      <div className="flex items-center gap-3 p-4 bg-slate-800/50 backdrop-blur-sm border border-slate-700/40 hover:border-sky-400/50 rounded-xl transition-all duration-300 cursor-pointer group-hover:bg-slate-800/70 group-hover:scale-105">
-                        <div className="flex-shrink-0">{tech.icon}</div>
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm font-semibold text-white truncate">{tech.name}</span>
-                            <span className={`text-xs px-2 py-0.5 bg-${tech.color}-500/20 text-${tech.color}-300 rounded-full font-medium`}>
-                              {tech.expertise}
-                            </span>
-                          </div>
-                          <p className="text-xs text-slate-400">{tech.years}</p>
-                        </div>
-                      </div>
-
-                      <AnimatePresence>
-                        {state.activeStack === tech.name && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 5, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 5, scale: 0.95 }}
-                            transition={{ duration: 0.2 }}
-                            className="absolute top-full mt-2 left-0 right-0 bg-slate-900/95 backdrop-blur-md border border-slate-700/50 rounded-lg p-3 shadow-2xl z-20"
-                          >
-                            <div className="text-xs text-sky-400 font-semibold mb-1">
-                              {tech.expertise} Level • {tech.years}
-                            </div>
-                            <div className="text-xs text-slate-300 leading-relaxed">{tech.desc}</div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
+            {/* Right Column: Tech Stack */}
+            <div className="space-y-8">
+                <h3 className="text-2xl font-bold text-center lg:text-left text-white">Core Tech Stack</h3>
+                <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                  {TECH_STACK.map((skill, index) => (
+                    <TechPill
+                      key={skill.name}
+                      skill={skill}
+                      index={index}
+                      reduceMotion={reduceMotion}
+                    />
                   ))}
                 </div>
-              </motion.div>
-            </motion.div>
+            </div>
+
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
