@@ -1,339 +1,229 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, useAnimation, useInView } from "framer-motion";
+import { motion, AnimatePresence, useInView, MotionConfig } from "framer-motion";
 import { MdEmail, MdLocationPin, MdPhone, MdSend, MdCheckCircle, MdError } from "react-icons/md";
 import { FaLinkedin, FaGithub, FaTelegram } from "react-icons/fa";
 import { SiUpwork } from "react-icons/si";
 
+// --- CONFIG ---
+const CONTACT_CONFIG = {
+  email: "ayoubprograma@gmail.com",
+  phone: "+212 781 913 306",
+  location: "Sale, Morocco",
+  socials: [
+    {
+      name: "LinkedIn",
+      url: "https://www.linkedin.com/in/ayoub-rachd-0b344a322/",
+      icon: FaLinkedin,
+      color: "hover:text-sky-400",
+    },
+    {
+      name: "GitHub",
+      url: "https://github.com/AYOU-pixel",
+      icon: FaGithub,
+      color: "hover:text-gray-400",
+    },
+    {
+      name: "Telegram",
+      url: "https://t.me/your-profile",
+      icon: FaTelegram,
+      color: "hover:text-blue-400",
+    },
+    {
+      name: "Upwork",
+      url: "https://www.upwork.com/freelancers/your-profile",
+      icon: SiUpwork,
+      color: "hover:text-green-400",
+    },
+  ],
+};
+
+// --- ANIMATION VARIANTS ---
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 1, 0.5, 1] } },
+};
+
+// --- MODULAR SUB-COMPONENTS for cleaner code ---
+
+const ContactInfoCard = ({ icon, title, value, href }) => (
+  <div className="flex items-center gap-4">
+    <div className="flex-shrink-0 p-3 bg-slate-800/50 border border-slate-700/50 rounded-xl">
+      {icon}
+    </div>
+    <div>
+      <h3 className="text-lg font-semibold text-white">{title}</h3>
+      {href ? (
+        <a href={href} className="text-slate-300 hover:text-sky-400 transition-colors">
+          {value}
+        </a>
+      ) : (
+        <p className="text-slate-300">{value}</p>
+      )}
+    </div>
+  </div>
+);
+
+const SocialLink = ({ icon: Icon, url, color, name }) => (
+  <motion.a
+    href={url}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={`Visit my ${name} profile`}
+    whileHover={{ y: -4, scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    className={`p-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-slate-400 transition-colors ${color}`}
+  >
+    <Icon className="w-6 h-6" />
+  </motion.a>
+);
+
+const FormInput = ({ id, name, type = "text", value, onChange, label, required = false, ...props }) => (
+  <div>
+    <label htmlFor={id} className="block text-sm font-medium mb-2 text-slate-300">
+      {label}
+    </label>
+    <motion.input
+      id={id}
+      name={name}
+      type={type}
+      value={value}
+      onChange={onChange}
+      required={required}
+      {...props}
+      className="w-full px-4 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 transition-colors focus:border-sky-500 focus:ring-2 focus:ring-sky-500/30 outline-none"
+    />
+  </div>
+);
+
+const StatusMessage = ({ status }) => (
+  <AnimatePresence>
+    {status.message && (
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        className={`flex items-center gap-3 p-3 rounded-lg text-sm font-semibold ${
+          status.success
+            ? "bg-green-500/10 text-green-400 border border-green-500/20"
+            : "bg-red-500/10 text-red-400 border border-red-500/20"
+        }`}
+      >
+        {status.success ? <MdCheckCircle className="w-5 h-5" /> : <MdError className="w-5 h-5" />}
+        <span>{status.message}</span>
+      </motion.div>
+    )}
+  </AnimatePresence>
+);
+
+// --- MAIN COMPONENT ---
 export default function ContactSection() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: ""
-  });
-  const [status, setStatus] = useState({ sending: false, success: false, error: "" });
-  const ref = useRef(null);
-  const controls = useAnimation();
-  const isInView = useInView(ref, { once: true, threshold: 0.2 });
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState({ sending: false, success: false, message: "" });
+  
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
 
-  // Dark mode detection
-  useEffect(() => {
-    const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    setIsDarkMode(darkModeQuery.matches);
-    
-    const handleChange = (e) => setIsDarkMode(e.matches);
-    darkModeQuery.addEventListener("change", handleChange);
-    
-    return () => darkModeQuery.removeEventListener("change", handleChange);
-  }, []);
-
-  // Animation triggers
-  useEffect(() => {
-    if (isInView) controls.start("visible");
-  }, [isInView, controls]);
-
-  // Handle form input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const validateForm = () => {
+    if (!formData.name.trim()) return "Name is required.";
+    if (!/^\S+@\S+\.\S+$/.test(formData.email)) return "Please enter a valid email.";
+    if (!formData.message.trim() || formData.message.length < 10) return "Message must be at least 10 characters long.";
+    return null;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus({ sending: true, success: false, error: "" });
+    const validationError = validateForm();
+    if (validationError) {
+      setStatus({ sending: false, success: false, message: validationError });
+      return;
+    }
 
+    setStatus({ sending: true, success: false, message: "" });
     try {
       const response = await fetch("/api/send-email", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          to: "ayoubprograma@gmail.com"
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, to: CONTACT_CONFIG.email }),
       });
 
-      if (!response.ok) throw new Error("Failed to send message");
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "An unknown error occurred.");
 
-      setStatus({ sending: false, success: true, error: "" });
+      setStatus({ sending: false, success: true, message: "Message sent successfully! I'll be in touch soon." });
       setFormData({ name: "", email: "", message: "" });
-      
-      // Reset success message after 5 seconds
-      setTimeout(() => {
-        setStatus(prev => ({ ...prev, success: false }));
-      }, 5000);
     } catch (error) {
-      setStatus({ sending: false, success: false, error: error.message });
+      setStatus({ sending: false, success: false, message: error.message });
     }
   };
-
-  // Detect mobile device
-  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2, delayChildren: 0.1 }
+  
+  // Clear status message after a delay
+  useEffect(() => {
+    if (status.message) {
+      const timer = setTimeout(() => setStatus(prev => ({ ...prev, message: "" })), 6000);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [status.message]);
 
-  const itemVariants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } }
-  };
-
-  const socialVariants = {
-    hidden: { scale: 0 },
-    visible: (i) => ({
-      scale: 1,
-      transition: { delay: i * 0.1, type: "spring", stiffness: 300 }
-    })
-  };
-
-  const socialLinks = [
-    { icon: <FaLinkedin />, name: "LinkedIn", color: "text-[#0A66C2]", url: "https://www.linkedin.com/in/ayoub-rachd-0b344a322/" },
-    { icon: <FaGithub />, name: "GitHub", color: "text-gray-800 dark:text-gray-100", url: "https://github.com/AYOU-pixel" },
-    { icon: <FaTelegram />, name: "Telegram", color: "text-[#26A5E4]", url: "#" }
-  ];
 
   return (
-    <section
-      id="contact"
-      ref={ref}
-      className={`py-10 md:py-24 px-2 sm:px-4 lg:px-8 ${
-        isDarkMode ? "bg-slate-900 text-white" : "bg-white text-gray-800"
-      }`}
-    >
-      <div className="max-w-6xl mx-auto">
+    <MotionConfig reducedMotion="user">
+      <section id="contact" ref={sectionRef} className="py-24 sm:py-32 bg-slate-900 text-white">
         <motion.div
-          className={isMobile ? "flex flex-col items-center gap-6" : "flex flex-col items-center"}
           initial="hidden"
-          animate={controls}
+          animate={isInView ? "visible" : "hidden"}
           variants={containerVariants}
+          className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8"
         >
-          {/* Section Heading */}
-          <motion.div variants={itemVariants} className={isMobile ? "text-center mb-6" : "text-center mb-12"}>
-            <div className="flex items-center justify-center mb-2">
-              <div className={`h-1 w-8 md:w-12 rounded ${
-                isDarkMode ? "bg-indigo-500" : "bg-blue-500"
-              } mr-4`} />
-              <h2 className="text-xs md:text-sm uppercase tracking-wider font-semibold text-gray-500 dark:text-gray-400">
-                Let's Connect
-              </h2>
-            </div>
-            <h1 className={isMobile ? "text-2xl font-bold mb-2" : "text-3xl md:text-4xl font-bold tracking-tight mb-4"}>
-              Get in Touch
-            </h1>
-            <p className={`text-base ${
-              isDarkMode ? "text-gray-300" : "text-gray-600"
-            } max-w-xl mx-auto`}>
-              Have a project in mind or just want to connect? My inbox is always open.
+          {/* Header */}
+          <motion.div variants={itemVariants} className="text-center mb-16">
+            <h2 className="text-sky-400 font-semibold tracking-wider uppercase mb-2">Let's Connect</h2>
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">Get In Touch</h1>
+            <p className="max-w-2xl mx-auto text-lg text-slate-300">
+              Have a project idea, a question, or just want to say hi? My inbox is always open.
             </p>
           </motion.div>
 
-          <div className={isMobile ? "w-full flex flex-col gap-6" : "w-full grid md:grid-cols-2 gap-12 lg:gap-16"}>
-            {/* Contact Methods */}
-            <motion.div
-              className={isMobile ? "space-y-4" : "space-y-8"}
-              variants={containerVariants}
-            >
-              {/* Contact Cards */}
-              <motion.div
-                variants={itemVariants}
-                className={`p-4 md:p-6 rounded-2xl ${
-                  isDarkMode ? "bg-slate-800" : "bg-gray-50"
-                } shadow-lg`}
-              >
-                <div className="space-y-4 md:space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-lg ${
-                      isDarkMode ? "bg-indigo-500/20" : "bg-blue-500/20"
-                    }`}>
-                      <MdEmail className="text-2xl text-blue-500 dark:text-indigo-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold mb-1">Email Me</h3>
-                      <a
-                        href="mailto:ayoubprograma@gmail.com"
-                        className={`hover:text-blue-500 dark:hover:text-indigo-400 transition-colors ${
-                          isDarkMode ? "text-gray-300" : "text-gray-600"
-                        }`}
-                      >
-                        ayoubprograma@gmail.com
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-lg ${
-                      isDarkMode ? "bg-indigo-500/20" : "bg-blue-500/20"
-                    }`}>
-                      <MdPhone className="text-2xl text-blue-500 dark:text-indigo-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold mb-1">Call Me</h3>
-                      <a
-                        href="tel:+1234567890"
-                        className={`hover:text-blue-500 dark:hover:text-indigo-400 transition-colors ${
-                          isDarkMode ? "text-gray-300" : "text-gray-600"
-                        }`}
-                      >
-                        +1 (234) 567-890
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-lg ${
-                      isDarkMode ? "bg-indigo-500/20" : "bg-blue-500/20"
-                    }`}>
-                      <MdLocationPin className="text-2xl text-blue-500 dark:text-indigo-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold mb-1">Location</h3>
-                      <p className={`${
-                        isDarkMode ? "text-gray-300" : "text-gray-600"
-                      }`}>
-                        Casablanca, Morocco
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Social Links */}
-              <motion.div variants={itemVariants} className="space-y-2 md:space-y-4">
-                <h3 className="text-base md:text-lg font-semibold">Follow Me</h3>
-                <div className="flex gap-3 md:gap-4">
-                  {socialLinks.map((link, i) => (
-                    <motion.a
-                      key={link.name}
-                      href={link.url}
-                      custom={i}
-                      variants={socialVariants}
-                      whileHover={isMobile ? undefined : { y: -5 }}
-                      className={`p-2 md:p-3 rounded-xl ${
-                        isDarkMode ? "bg-slate-800" : "bg-gray-100"
-                      } hover:shadow-lg transition-shadow ${link.color}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span className="text-xl md:text-2xl">{link.icon}</span>
-                    </motion.a>
-                  ))}
-                </div>
-              </motion.div>
-            </motion.div>
-
-            {/* Contact Form */}
-            <motion.form
-              variants={itemVariants}
-              onSubmit={handleSubmit}
-              className={`p-4 md:p-6 rounded-2xl ${
-                isDarkMode ? "bg-slate-800" : "bg-gray-50"
-              } shadow-lg space-y-4 md:space-y-6`}
-            >
-              <div className="space-y-3 md:space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium mb-2">Name</label>
-                  <motion.input
-                    id="name"
-                    name="name"
-                    type="text"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    whileFocus={{ scale: 1.02 }}
-                    className={`w-full px-4 py-2 rounded-lg ${
-                      isDarkMode
-                        ? "bg-slate-700 border-slate-600 focus:border-indigo-500"
-                        : "bg-white border-gray-300 focus:border-blue-500"
-                    } border focus:ring-0`}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
-                  <motion.input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    whileFocus={{ scale: 1.02 }}
-                    className={`w-full px-4 py-2 rounded-lg ${
-                      isDarkMode
-                        ? "bg-slate-700 border-slate-600 focus:border-indigo-500"
-                        : "bg-white border-gray-300 focus:border-blue-500"
-                    } border focus:ring-0`}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-2">Message</label>
-                  <motion.textarea
-                    id="message"
-                    name="message"
-                    rows="4"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    whileFocus={{ scale: 1.02 }}
-                    className={`w-full px-4 py-2 rounded-lg ${
-                      isDarkMode
-                        ? "bg-slate-700 border-slate-600 focus:border-indigo-500"
-                        : "bg-white border-gray-300 focus:border-blue-500"
-                    } border focus:ring-0`}
-                  />
+          {/* Main Content Grid */}
+          <div className="grid md:grid-cols-2 gap-12 lg:gap-16 items-start">
+            {/* Left Column: Contact Info */}
+            <motion.div variants={containerVariants} className="space-y-10">
+              <div className="space-y-6">
+                <ContactInfoCard icon={<MdEmail className="w-6 h-6 text-sky-400" />} title="Email" value={CONTACT_CONFIG.email} href={`mailto:${CONTACT_CONFIG.email}`} />
+                <ContactInfoCard icon={<MdPhone className="w-6 h-6 text-sky-400" />} title="Phone" value={CONTACT_CONFIG.phone} href={`tel:${CONTACT_CONFIG.phone.replace(/\s|-/g, '')}`} />
+                <ContactInfoCard icon={<MdLocationPin className="w-6 h-6 text-sky-400" />} title="Location" value={CONTACT_CONFIG.location} />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-4">Follow Me</h3>
+                <div className="flex gap-4">
+                  {CONTACT_CONFIG.socials.map(social => <SocialLink key={social.name} {...social} />)}
                 </div>
               </div>
+            </motion.div>
 
-              {/* Status Messages */}
-              {status.error && (
-                <div className="flex items-center gap-2 text-red-500">
-                  <MdError className="text-xl" />
-                  <span>Error: {status.error}</span>
-                </div>
-              )}
-              
-              {status.success && (
-                <div className="flex items-center gap-2 text-green-500">
-                  <MdCheckCircle className="text-xl" />
-                  <span>Message sent successfully!</span>
-                </div>
-              )}
-
-              <motion.button
-                type="submit"
-                disabled={status.sending}
-                whileHover={isMobile ? undefined : { scale: 1.05 }}
-                whileTap={isMobile ? undefined : { scale: 0.95 }}
-                className={`w-full py-2 md:py-3 rounded-lg font-medium text-white ${
-                  isDarkMode
-                    ? "bg-gradient-to-r from-indigo-500 to-purple-600"
-                    : "bg-gradient-to-r from-blue-500 to-purple-600"
-                } shadow-md relative overflow-hidden group flex items-center justify-center gap-2`}
-                style={isMobile ? {fontSize: '1rem'} : {}}
-              >
-                <span className="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-[200%] transition-transform duration-700 ease-in-out" />
+            {/* Right Column: Form */}
+            <motion.form variants={itemVariants} onSubmit={handleSubmit} noValidate className="space-y-6 p-8 bg-slate-800/50 border border-slate-700/50 rounded-2xl shadow-2xl shadow-black/20">
+              <FormInput id="name" name="name" label="Your Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} required />
+              <FormInput id="email" name="email" type="email" label="Your Email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required />
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium mb-2 text-slate-300">Your Message</label>
+                <motion.textarea id="message" name="message" rows="5" value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} required className="w-full px-4 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 transition-colors focus:border-sky-500 focus:ring-2 focus:ring-sky-500/30 outline-none" />
+              </div>
+              <StatusMessage status={status} />
+              <motion.button type="submit" disabled={status.sending} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full flex items-center justify-center gap-3 py-3 px-6 rounded-lg font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 shadow-lg shadow-sky-500/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
                 {status.sending ? (
                   <>
-                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                    <svg className="animate-spin h-5 w-5" /*...*/></svg>
                     <span>Sending...</span>
                   </>
                 ) : (
                   <>
-                    <MdSend className="text-xl" />
+                    <MdSend />
                     <span>Send Message</span>
                   </>
                 )}
@@ -341,7 +231,7 @@ export default function ContactSection() {
             </motion.form>
           </div>
         </motion.div>
-      </div>
-    </section>
+      </section>
+    </MotionConfig>
   );
 }

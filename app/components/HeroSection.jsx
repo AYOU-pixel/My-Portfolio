@@ -207,9 +207,8 @@ export default function HeroSection() {
                 <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
               </button>
               <a
-                href={PORTFOLIO_CONFIG.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/front-end-developer-resume-ayoub-pdf.pdf"
+                download="front-end-developer-resume-ayoub-pdf.pdf"
                 className="group inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-800/70 border border-slate-700 text-slate-300 font-medium rounded-lg hover:bg-slate-700/80 hover:text-white transition-colors duration-300"
               >
                 <Download className="w-5 h-5" />
