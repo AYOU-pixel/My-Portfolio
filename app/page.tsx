@@ -1,9 +1,9 @@
 import Navbar from "./components/Navbar"
 import HeroSection from "./components/HeroSection"
 import Project from "./components/Projects"
-import Footer from "./components/Footer"
-import About from "./components/About"
-import Skills from "./components/Skills"
+import FooterSection from "./components/ui/Footer"
+import About from "@/app/components/About"
+
 import Contact from "./components/Contact"
 export default function Home() {
   return (
@@ -12,9 +12,8 @@ export default function Home() {
     <HeroSection/>
     <Project/>
     <About/>
-    <Skills/>
     <Contact/>
-    <Footer/>
+    <FooterSection/>
     </>
   );
 }

@@ -122,7 +122,7 @@ const StatusMessage = ({ status }) => (
 );
 
 // --- MAIN COMPONENT ---
-export default function ContactSection() {
+export default function Contact() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState({ sending: false, success: false, message: "" });
   

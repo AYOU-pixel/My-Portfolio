@@ -1,331 +1,683 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import {
   Briefcase,
   Download,
   ArrowRight,
-  Sun,
-  Moon,
+  Github,
+  Linkedin,
+  ExternalLink,
+  Code,
+  Database,
+  Wrench,
+  Calendar,
+  Users,
+  Trophy,
+  Clock,
+  Star,
+  MapPin,
+  Mail,
 } from "lucide-react";
-import { FaReact, FaNodeJs } from "react-icons/fa";
-import { SiNextdotjs, SiTailwindcss, SiMongodb, SiExpress } from "react-icons/si";
+import { FaReact, FaNodeJs, FaGitAlt } from "react-icons/fa";
+import { 
+  SiNextdotjs, 
+  SiTailwindcss, 
+  SiMongodb, 
+  SiExpress, 
+  SiTypescript, 
+  SiJavascript,
+  SiPostgresql,
+  SiFirebase,
+  SiVercel,
+  SiFigma
+} from "react-icons/si";
+import { VscCode } from "react-icons/vsc";
+import { Button } from "@/app/components/ui/button";
+import { Card, CardContent } from "@/app/components/ui/card";
+import { Badge } from "@/app/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/app/components/ui/tooltip";
+import { Progress } from "@/app/components/ui/progress";
 
-// Shared animation variants from HeroSection and ProjectsSection
-const ANIMATION_VARIANTS = {
-  floating: {
-    y: [0, -12, 0],
-    transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-  },
-  glowPulse: {
-    scale: [1, 1.02, 1],
-    opacity: [0.8, 1, 0.8],
-    transition: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-  },
-  backgroundFloat: {
-    scale: [1, 1.1, 1],
-    opacity: [0.4, 0.6, 0.4],
-    rotate: [0, 180, 360],
-    transition: { duration: 20, repeat: Infinity, ease: "linear" },
-  },
-  slideInLeft: {
-    initial: { opacity: 0, x: -60, y: 20 },
-    animate: { opacity: 1, x: 0, y: 0 },
-    transition: { duration: 0.8, ease: "easeOut" },
-  },
-  fadeInUp: {
-    initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, ease: "easeOut" },
-  },
-  skillFade: {
-    initial: { opacity: 0, scale: 0.8 },
-    animate: { opacity: 1, scale: 1 },
-    transition: { duration: 0.5, ease: "easeOut" },
+// --- CONFIGURATION ---
+const PORTFOLIO_CONFIG = {
+  name: "Ayoub Rachd",
+  title: "Full-Stack Developer",
+  resumeUrl: "/front-end-developer-resume-ayoub-pdf.pdf",
+  socials: {
+    github: "https://github.com/AYOU-pixel",
+    linkedin: "https://www.linkedin.com/in/ayoub-rachd-0b344a322/",
   },
 };
 
-const skills = [
-  { name: "React", icon: <FaReact className="w-5 h-5 text-sky-400" />, color: "sky" },
-  { name: "Next.js", icon: <SiNextdotjs className="w-5 h-5 text-indigo-400" />, color: "indigo" },
-  { name: "Tailwind CSS", icon: <SiTailwindcss className="w-5 h-5 text-teal-400" />, color: "teal" },
-  { name: "Node.js", icon: <FaNodeJs className="w-5 h-5 text-green-400" />, color: "green" },
-  { name: "MongoDB", icon: <SiMongodb className="w-5 h-5 text-green-500" />, color: "green" },
-  { name: "Express", icon: <SiExpress className="w-5 h-5 text-gray-400" />, color: "gray" },
+// --- SKILLS DATA ---
+const SKILLS = {
+  frontend: [
+    { name: "React", icon: <FaReact />, level: 90, color: "text-sky-400" },
+    { name: "Next.js", icon: <SiNextdotjs />, level: 85, color: "text-indigo-400" },
+    { name: "TypeScript", icon: <SiTypescript />, level: 80, color: "text-blue-400" },
+    { name: "JavaScript", icon: <SiJavascript />, level: 90, color: "text-yellow-400" },
+    { name: "Tailwind CSS", icon: <SiTailwindcss />, level: 95, color: "text-teal-400" },
+  ],
+  backend: [
+    { name: "Node.js", icon: <FaNodeJs />, level: 75, color: "text-green-400" },
+    { name: "Express", icon: <SiExpress />, level: 70, color: "text-gray-400" },
+    { name: "MongoDB", icon: <SiMongodb />, level: 80, color: "text-emerald-500" },
+    { name: "PostgreSQL", icon: <SiPostgresql />, level: 65, color: "text-blue-500" },
+    { name: "Firebase", icon: <SiFirebase />, level: 70, color: "text-orange-400" },
+  ],
+  tools: [
+    { name: "Git", icon: <FaGitAlt />, level: 85, color: "text-orange-500" },
+    { name: "VS Code", icon: <VscCode />, level: 95, color: "text-blue-400" },
+    { name: "Vercel", icon: <SiVercel />, level: 90, color: "text-gray-400" },
+    { name: "Figma", icon: <SiFigma />, level: 75, color: "text-purple-400" },
+  ],
+};
+
+// --- EXPERIENCE DATA ---
+const EXPERIENCE = [
+  {
+    year: "2024 – Present",
+    title: "Freelance Frontend Developer",
+    company: "Self-Employed",
+    location: "Morocco",
+    description: "Building custom web applications for clients worldwide, specializing in React/Next.js solutions with focus on performance and user experience.",
+    achievements: ["Delivered 10+ successful projects", "98% client satisfaction rate", "Reduced loading times by 40% on average"],
+  },
+  {
+    year: "2023 – 2024",
+    title: "Frontend Development Journey",
+    company: "Self-Learning",
+    location: "Remote",
+    description: "Intensive self-study and hands-on project development, mastering modern frontend technologies and best practices.",
+    achievements: ["Completed 15+ personal projects", "Built comprehensive portfolio", "Mastered React ecosystem"],
+  },
+  {
+    year: "2023",
+    title: "Web Development Bootcamp",
+    company: "Online Learning",
+    location: "Remote",
+    description: "Completed intensive web development program covering full-stack JavaScript, focusing on modern frameworks and industry best practices.",
+    achievements: ["Full-stack JavaScript certification", "Built first commercial project", "Established coding fundamentals"],
+  },
 ];
 
-const values = [
-  "Writing scalable, maintainable codebases",
-  "Designing UI that feels native and intuitive",
-  "Optimizing for real performance, not just metrics",
-  "Understanding the problem before writing code",
+// --- STATS DATA ---
+const STATS = [
+  { number: "15+", label: "Projects Completed", icon: <Briefcase className="w-5 h-5 text-emerald-400" /> },
+  { number: "10+", label: "Happy Clients", icon: <Users className="w-5 h-5 text-emerald-400" /> },
+  { number: "2+", label: "Years Coding", icon: <Clock className="w-5 h-5 text-emerald-400" /> },
+  { number: "98%", label: "Client Satisfaction", icon: <Star className="w-5 h-5 text-emerald-400" /> },
 ];
 
-export default function AboutSection() {
-  const ref = useRef(null);
-  const statsRef = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref });
-  const isStatsInView = useInView(statsRef, { once: true, margin: "-100px" });
-  const x = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
+// --- ANIMATION VARIANTS ---
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
+  },
+};
 
-  const [state, setState] = useState({
-    isMounted: false,
-    isMobile: false,
-    reduceMotionPref: false,
-  });
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+// --- BACKGROUND COMPONENT ---
+const BackgroundAurora = () => (
+  <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0" aria-hidden="true">
+    <div className="absolute w-[600px] h-[600px] bg-gradient-to-br from-emerald-600/15 to-sky-500/15 rounded-full blur-3xl animate-[aurora_25s_infinite_alternate] top-1/4 left-1/4"></div>
+    <div className="absolute w-[400px] h-[400px] bg-gradient-to-tr from-sky-500/10 to-indigo-500/10 rounded-full blur-3xl animate-[aurora_30s_infinite_alternate_reverse] bottom-1/4 right-1/4"></div>
+    <style jsx>{`
+      @keyframes aurora {
+        0% { transform: translate(0, 0); }
+        50% { transform: translate(100px, 80px); }
+        100% { transform: translate(0, 0); }
+      }
+    `}</style>
+  </div>
+);
+
+// --- MAIN COMPONENT ---
+export default function About() {
+  const sectionRef = useRef(null);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const bgX = useTransform(scrollYProgress, [0, 1], [0, 50]);
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, -50]);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduceMotion(mq.matches);
 
-    const isMobile = window.innerWidth <= 768;
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    setState((prev) => ({
-      ...prev,
-      isMounted: true,
-      isMobile,
-      reduceMotionPref: mediaQuery.matches,
-    }));
-
-    const handler = (e) => setState((prev) => ({ ...prev, reduceMotionPref: e.matches }));
-    mediaQuery.addEventListener("change", handler);
-    return () => mediaQuery.removeEventListener("change", handler);
+    const handler = (e) => setReduceMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
 
-  const animationProps = useMemo(() => {
-    const shouldAnimate = !state.isMobile && !state.reduceMotionPref;
-    return {
-      floating: shouldAnimate ? ANIMATION_VARIANTS.floating : {},
-      glowPulse: shouldAnimate ? ANIMATION_VARIANTS.glowPulse : {},
-      backgroundFloat: shouldAnimate ? ANIMATION_VARIANTS.backgroundFloat : {},
-      showFloatingElements: shouldAnimate,
-    };
-  }, [state.isMobile, state.reduceMotionPref]);
-
-  if (!state.isMounted) {
-    return (
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 pt-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="max-w-5xl mx-auto text-center">
-            <div className="animate-pulse">
-              <div className="h-16 bg-slate-800 rounded mb-4 w-3/4 mx-auto"></div>
-              <div className="h-8 bg-slate-800 rounded mb-6 w-1/2 mx-auto"></div>
-              <div className="h-6 bg-slate-800 rounded w-2/3 mx-auto"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const animationProps = (delay = 0) => ({
+    ...itemVariants,
+    transition: { ...itemVariants.transition, delay: reduceMotion ? 0 : delay },
+  });
 
   return (
-    <section
-      id="about"
-      ref={ref}
-      className="relative py-20 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 overflow-hidden"
-      role="region"
-      aria-label="About Me Section"
+    <div
+      ref={sectionRef}
+      className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white overflow-hidden"
     >
-      {animationProps.showFloatingElements && (
-        <>
-          <motion.div
-            className="absolute inset-0 bg-grid-slate-700/[0.05] bg-[length:60px_60px]"
-            style={{ x, y }}
-            aria-hidden="true"
-          />
-          <motion.div
-            className="absolute top-1/4 -right-40 w-[500px] h-[500px] bg-gradient-to-br from-sky-500/30 to-indigo-600/30 rounded-full blur-3xl"
-            animate={animationProps.backgroundFloat}
-            aria-hidden="true"
-          />
-          <motion.div
-            className="absolute bottom-1/4 -left-40 w-[400px] h-[400px] bg-gradient-to-tr from-indigo-500/30 to-blue-600/30 rounded-full blur-3xl"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.4, 0.6, 0.4],
-              rotate: [0, -180, -360],
-              transition: { duration: 25, repeat: Infinity, ease: "linear" },
-            }}
-            aria-hidden="true"
-          />
-        </>
-      )}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div {...ANIMATION_VARIANTS.slideInLeft} className="text-center mb-16">
-          <motion.h2
-            className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-6 font-poppins"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            About{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-indigo-500">
-              Me
-            </span>
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="text-base text-slate-300 leading-relaxed max-w-3xl mx-auto font-poppins"
-          >
-            A glimpse into my journey as a self-taught frontend developer, passionate about building scalable, user-focused web applications.
-          </motion.p>
-        </motion.div>
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: { staggerChildren: 0.2, delayChildren: 0.1 },
-            },
-          }}
-        >
-          {/* Left Column - Portrait */}
-          <motion.div
-            className="relative overflow-hidden rounded-2xl"
-            variants={ANIMATION_VARIANTS.fadeInUp}
-          >
-            <motion.div
-              className="absolute -inset-4 bg-gradient-to-r from-sky-500/30 to-indigo-600/30 rounded-full blur-2xl shadow-[0_0_40px_rgba(14,165,233,0.2)]"
-              animate={animationProps.glowPulse}
-            />
-            <div className="relative p-4 md:p-0">
-              <motion.div
-                className="relative rounded-2xl overflow-hidden shadow-xl"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <Image
-                  src="/ayoub.webp"
-                  alt="Ayoub - Frontend Developer"
-                  width={600}
-                  height={600}
-                  className="w-full h-auto object-cover"
-                  priority
-                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                  quality={80}
-                  placeholder="blur"
-                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xg"
-                />
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-slate-900/80 backdrop-blur-sm">
-                  <div className="flex items-center space-x-2">
-                    <span className="inline-block w-3 h-3 rounded-full bg-green-400 animate-pulse" />
-                    <span className="text-sm font-medium text-slate-300 font-poppins">
-                      Available for projects
-                    </span>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-          {/* Right Column - Content */}
-          <motion.div
-            className="space-y-6 md:space-y-8"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: { staggerChildren: 0.2, delayChildren: 0.3 },
-              },
-            }}
-          >
-            {/* Heading */}
-            <motion.div variants={ANIMATION_VARIANTS.fadeInUp}>
-              <div className="flex items-center mb-2">
-                <div className="h-1 w-8 md:w-12 rounded bg-sky-500 mr-4" />
-                <h2 className="text-xs md:text-sm uppercase tracking-wider font-semibold text-slate-400">
-                  About Me
-                </h2>
-                <div className="h-1 w-8 md:w-12 rounded bg-sky-500 ml-4 hidden md:block" />
-              </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white font-poppins">
-                Ayoub
-              </h1>
-              <p className="text-lg mt-2 text-sky-400 font-medium font-poppins">
-                UX-Focused Frontend Developer
-              </p>
-            </motion.div>
-            {/* Introduction */}
-            <motion.p
-              variants={ANIMATION_VARIANTS.fadeInUp}
-              className="text-base md:text-lg text-slate-300 leading-relaxed font-poppins"
-            >
-              I’m Ayoub, a self-taught frontend developer specializing in React, Next.js, and Tailwind CSS. Since building my first website at 19, I’ve focused on creating fast, accessible, and user-centered web applications with clean architecture and reusable components.
-            </motion.p>
-            {/* Skills */}
-            <motion.div variants={ANIMATION_VARIANTS.fadeInUp}>
-              <h3 className="text-lg font-semibold text-white mb-3 font-poppins">
-                Tech Stack
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {skills.map((skill, index) => (
-                  <motion.div
-                    key={skill.name}
-                    custom={index}
-                    variants={ANIMATION_VARIANTS.skillFade}
-                    className="flex items-center gap-2 px-3 py-2 bg-slate-800/50 backdrop-blur-sm border border-slate-700/30 rounded-xl hover:border-sky-500/50 transition-all duration-300 font-poppins"
-                    whileHover={{ scale: 1.05, y: -2 }}
-                  >
-                    <span className={`text-lg ${skill.color}`}>{skill.icon}</span>
-                    <span className="text-sm font-medium text-slate-300">{skill.name}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-            {/* Values */}
-            <motion.div variants={ANIMATION_VARIANTS.fadeInUp}>
-              <h3 className="text-lg font-semibold text-white mb-3 font-poppins">
-                What I Care About
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {values.map((value, index) => (
-                  <motion.div
-                    key={value}
-                    custom={index}
-                    variants={ANIMATION_VARIANTS.skillFade}
-                    className="flex items-center justify-center text-center p-3 bg-slate-800/50 backdrop-blur-sm border border-slate-700/30 rounded-xl hover:border-sky-500/50 transition-all duration-300 font-poppins"
-                    whileHover={{ scale: 1.05, y: -2 }}
-                  >
-                    <span className="text-xs md:text-sm font-medium text-slate-300">{value}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-            {/* CTA Button */}
-            <motion.div variants={ANIMATION_VARIANTS.fadeInUp} className="pt-4">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <motion.a
-                  href="#contact"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center justify-center gap-3 px-6 py-3 bg-sky-500 hover:bg-sky-600 rounded-xl text-white font-semibold text-sm shadow-lg shadow-sky-500/25 hover:shadow-[0_0_20px_rgba(14,165,233,0.3)] transition-all duration-300 font-poppins"
-                >
-                  <Briefcase className="w-4 h-4 stroke-2" />
-                  <span>Let's work together</span>
-                  <ArrowRight className="w-4 h-4 stroke-2 group-hover:translate-x-1 transition-transform duration-300" />
-                </motion.a>
-                <motion.a
-                  href="/front-end-developer-resume-ayoub-pdf.pdf"
-                  download
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center justify-center gap-3 px-6 py-3 bg-transparent border border-slate-600 hover:border-sky-500 rounded-xl text-slate-300 hover:text-sky-400 font-medium text-sm transition-all duration-300 font-poppins"
-                >
-                  <Download className="w-4 h-4 stroke-2" />
-                  <span>Download Resume</span>
-                </motion.a>
-              </div>
-            </motion.div>
-          </motion.div>
-        </motion.div>
+      <BackgroundAurora />
+      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(ellipse_at_center,white_10%,transparent_70%)] opacity-20" aria-hidden="true" />
+      
+      <motion.div
+        className="absolute inset-0 bg-grid-slate-700/[0.03] bg-[length:60px_60px]"
+        style={{ x: bgX, y: bgY }}
+        aria-hidden="true"
+      />
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
+        {/* Header Section */}
+        <HeaderSection animationProps={animationProps} />
+
+        {/* Profile Section */}
+        <ProfileSection animationProps={animationProps} />
+
+        {/* Skills Section */}
+        <SkillsSection animationProps={animationProps} />
+
+        {/* Experience Timeline */}
+        <ExperienceSection animationProps={animationProps} />
+
+        {/* Stats Section */}
+        <StatsSection animationProps={animationProps} />
+
+        {/* Call to Action */}
+        <CTASection animationProps={animationProps} />
       </div>
-    </section>
+    </div>
   );
 }
+
+// --- HEADER SECTION ---
+const HeaderSection = ({ animationProps }) => (
+  <motion.section
+    initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true, amount: 0.3 }}
+    variants={containerVariants}
+    className="text-center mb-20 max-w-4xl mx-auto"
+  >
+    <motion.h1
+      variants={animationProps()}
+      className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6"
+    >
+      About{" "}
+      <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-500">
+        Me
+      </span>
+    </motion.h1>
+    <motion.p
+      variants={animationProps(0.1)}
+      className="text-lg text-slate-300 leading-relaxed"
+    >
+      Full-Stack Developer passionate about building interactive web applications with clean UI & scalable backend.
+    </motion.p>
+  </motion.section>
+);
+
+// --- PROFILE SECTION ---
+const ProfileSection = ({ animationProps }) => (
+  <motion.section
+    initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true, amount: 0.2 }}
+    variants={containerVariants}
+    className="mb-20"
+  >
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+      {/* Profile Image */}
+      <motion.div variants={animationProps()} className="relative">
+        <Card className="bg-gradient-to-br from-slate-800/70 to-slate-900/50 border border-slate-700/50 rounded-2xl backdrop-blur-sm overflow-hidden shadow-2xl shadow-emerald-500/10">
+          <CardContent className="p-6">
+            <div className="relative">
+              <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500/30 to-sky-500/30 rounded-full blur-xl opacity-70"></div>
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden">
+                <Image
+                  src="/ayoub.webp"
+                  alt={`${PORTFOLIO_CONFIG.name} - Professional headshot`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  quality={95}
+                  priority
+                />
+              </div>
+              <div className="absolute bottom-4 left-4 right-4">
+                <div className="flex items-center gap-2 px-3 py-2 bg-slate-900/80 backdrop-blur-sm rounded-lg border border-slate-700/50">
+                  <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                  <span className="text-sm text-slate-300">Available for projects</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Profile Content */}
+      <motion.div variants={animationProps(0.2)} className="space-y-6">
+        <div>
+          <div className="flex items-center mb-4">
+            <div className="h-1 w-12 rounded bg-gradient-to-r from-emerald-400 to-sky-500 mr-4" />
+            <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-400">
+              Who I Am
+            </h2>
+          </div>
+          <h3 className="text-3xl font-bold text-white mb-2">{PORTFOLIO_CONFIG.name}</h3>
+          <p className="text-lg text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-500 font-medium">
+            {PORTFOLIO_CONFIG.title}
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <p className="text-base text-slate-300 leading-relaxed">
+            I'm a passionate self-taught developer from Morocco, specializing in creating modern, 
+            responsive web applications. My journey began with curiosity about how websites work, 
+            and evolved into a deep love for crafting digital experiences that users enjoy.
+          </p>
+          <p className="text-base text-slate-300 leading-relaxed">
+            I focus on writing clean, maintainable code and building user interfaces that feel 
+            intuitive and performant. Every project is an opportunity to solve real problems 
+            and create value for users and businesses.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 text-sm text-slate-400">
+          <MapPin className="w-4 h-4" />
+          <span>Morocco</span>
+          <span className="mx-2">•</span>
+          <Mail className="w-4 h-4" />
+          <span>Available for remote work</span>
+        </div>
+
+        {/* تحسين الأزرار */}
+        <TooltipProvider>
+          <div className="flex flex-wrap gap-4 pt-6">
+            {/* زر GitHub محسن */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <motion.a
+                  href={PORTFOLIO_CONFIG.socials.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub Profile"
+                  className="group relative overflow-hidden"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="relative flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 rounded-xl border border-gray-700 hover:border-gray-500 shadow-lg shadow-gray-900/25 transition-all duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                    <Github className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors duration-300 relative z-10" />
+                    <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors duration-300 relative z-10 hidden sm:inline">
+                      GitHub
+                    </span>
+                    <ExternalLink className="w-3 h-3 text-gray-500 group-hover:text-gray-300 transition-all duration-300 relative z-10 opacity-0 group-hover:opacity-100 transform translate-x-[-5px] group-hover:translate-x-0" />
+                  </div>
+                </motion.a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>View my GitHub profile</p>
+              </TooltipContent>
+            </Tooltip>
+
+            {/* زر LinkedIn محسن */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <motion.a
+                  href={PORTFOLIO_CONFIG.socials.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn Profile"
+                  className="group relative overflow-hidden"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="relative flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-800 to-blue-900 hover:from-blue-700 hover:to-blue-800 rounded-xl border border-blue-700 hover:border-blue-500 shadow-lg shadow-blue-900/25 transition-all duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                    <Linkedin className="w-5 h-5 text-blue-300 group-hover:text-white transition-colors duration-300 relative z-10" />
+                    <span className="text-sm font-medium text-blue-300 group-hover:text-white transition-colors duration-300 relative z-10 hidden sm:inline">
+                      LinkedIn
+                    </span>
+                    <ExternalLink className="w-3 h-3 text-blue-500 group-hover:text-blue-300 transition-all duration-300 relative z-10 opacity-0 group-hover:opacity-100 transform translate-x-[-5px] group-hover:translate-x-0" />
+                  </div>
+                </motion.a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Connect with me on LinkedIn</p>
+              </TooltipContent>
+            </Tooltip>
+
+            {/* زر التحميل محسن */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <motion.a
+                  href={PORTFOLIO_CONFIG.resumeUrl}
+                  download
+                  aria-label="Download Resume"
+                  className="group relative overflow-hidden"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="relative flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 rounded-xl border border-emerald-500 hover:border-emerald-400 shadow-lg shadow-emerald-900/25 transition-all duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                    <Download className="w-5 h-5 text-emerald-100 group-hover:text-white transition-all duration-300 relative z-10 group-hover:animate-bounce" />
+                    <span className="text-sm font-medium text-emerald-100 group-hover:text-white transition-colors duration-300 relative z-10 hidden sm:inline">
+                      Resume
+                    </span>
+                    <motion.div
+                      className="w-2 h-2 bg-emerald-300 rounded-full relative z-10"
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    ></motion.div>
+                  </div>
+                </motion.a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Download my resume (PDF)</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </TooltipProvider>
+      </motion.div>
+    </div>
+  </motion.section>
+);
+
+// --- SKILLS SECTION ---
+const SkillsSection = ({ animationProps }) => {
+  const skillsRef = useRef(null);
+  const isInView = useInView(skillsRef, { once: true, margin: "-100px" });
+
+  return (
+    <motion.section
+      ref={skillsRef}
+      className="mb-20 max-w-6xl mx-auto"
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={containerVariants}
+    >
+      <motion.div variants={animationProps()} className="text-center mb-12">
+        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-500 mb-4">
+          Skills & Technologies
+        </h2>
+        <p className="text-base text-slate-300 leading-relaxed">
+          Technologies I work with to bring ideas to life
+        </p>
+      </motion.div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Frontend Skills */}
+        <SkillCategory
+          title="Frontend"
+          icon={<Code className="w-5 h-5" />}
+          skills={SKILLS.frontend}
+          animationProps={animationProps}
+          delay={0.1}
+        />
+
+        {/* Backend Skills */}
+        <SkillCategory
+          title="Backend"
+          icon={<Database className="w-5 h-5" />}
+          skills={SKILLS.backend}
+          animationProps={animationProps}
+          delay={0.2}
+        />
+
+        {/* Tools & Other */}
+        <SkillCategory
+          title="Tools"
+          icon={<Wrench className="w-5 h-5" />}
+          skills={SKILLS.tools}
+          animationProps={animationProps}
+          delay={0.3}
+        />
+      </div>
+    </motion.section>
+  );
+};
+
+// --- SKILL CATEGORY COMPONENT ---
+const SkillCategory = ({ title, icon, skills, animationProps, delay }) => (
+  <motion.div variants={animationProps(delay)}>
+    <Card className="h-full bg-gradient-to-br from-slate-800/70 to-slate-900/50 border border-slate-700/50 rounded-2xl backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300">
+      <CardContent className="p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="text-emerald-400">{icon}</div>
+          <h3 className="text-xl font-bold text-white">{title}</h3>
+        </div>
+        
+        <div className="space-y-4">
+          {skills.map((skill, index) => (
+            <TooltipProvider key={skill.name}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <motion.div
+                    className="group cursor-pointer"
+                    whileHover={{ scale: 1.02 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: delay + (index * 0.1), duration: 0.5 }}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <span className={`text-lg ${skill.color} group-hover:scale-110 transition-transform duration-200`}>
+                          {skill.icon}
+                        </span>
+                        <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors duration-200">
+                          {skill.name}
+                        </span>
+                      </div>
+                      <span className="text-xs text-slate-500">{skill.level}%</span>
+                    </div>
+                    <Progress 
+                      value={skill.level} 
+                      className="h-2 bg-slate-700/50"
+                    />
+                  </motion.div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{skill.name} - {skill.level}% proficiency</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  </motion.div>
+);
+
+// --- EXPERIENCE SECTION ---
+const ExperienceSection = ({ animationProps }) => {
+  const timelineRef = useRef(null);
+  const isInView = useInView(timelineRef, { once: true, margin: "-100px" });
+
+  return (
+    <motion.section
+      ref={timelineRef}
+      className="mb-20 max-w-4xl mx-auto"
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={containerVariants}
+    >
+      <motion.div variants={animationProps()} className="text-center mb-12">
+        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-500 mb-4">
+          My Journey
+        </h2>
+        <p className="text-base text-slate-300 leading-relaxed">
+          The path that led me to where I am today
+        </p>
+      </motion.div>
+
+      <div className="relative">
+        {/* Timeline Line */}
+        <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-500/50 to-sky-500/50"></div>
+
+        <div className="space-y-8">
+          {EXPERIENCE.map((item, index) => (
+            <motion.div
+              key={index}
+              variants={animationProps(index * 0.2)}
+              className="relative flex gap-6"
+            >
+              {/* Timeline Dot */}
+              <div className="flex-shrink-0 relative">
+                <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/25">
+                  <Calendar className="w-4 h-4 text-white" />
+                </div>
+              </div>
+
+              {/* Content */}
+              <Card className="flex-1 bg-gradient-to-br from-slate-800/70 to-slate-900/50 border border-slate-700/50 rounded-lg backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300">
+                <CardContent className="p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3">
+                    <div>
+                      <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
+                      <div className="flex items-center gap-2 text-sm text-slate-400 mb-2">
+                        <span className="text-emerald-400 font-medium">{item.company}</span>
+                        <span>•</span>
+                        <span>{item.location}</span>
+                      </div>
+                    </div>
+                    <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs whitespace-nowrap">
+                      {item.year}
+                    </Badge>
+                  </div>
+                  
+                  <p className="text-sm text-slate-300 leading-relaxed mb-4">
+                    {item.description}
+                  </p>
+
+                  <div className="space-y-2">
+                    {item.achievements.map((achievement, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <Trophy className="w-3 h-3 text-emerald-400 flex-shrink-0" />
+                        <span className="text-xs text-slate-400">{achievement}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </motion.section>
+  );
+};
+
+// --- STATS SECTION ---
+const StatsSection = ({ animationProps }) => {
+  const statsRef = useRef(null);
+  const isInView = useInView(statsRef, { once: true, margin: "-100px" });
+
+  return (
+    <motion.section
+      ref={statsRef}
+      className="mb-20 max-w-6xl mx-auto"
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={containerVariants}
+    >
+      <motion.div variants={animationProps()} className="text-center mb-12">
+        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-500 mb-4">
+          Achievements
+        </h2>
+        <p className="text-base text-slate-300 leading-relaxed">
+          Numbers that represent my journey so far
+        </p>
+      </motion.div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {STATS.map((stat, index) => (
+          <motion.div
+            key={stat.label}
+            variants={animationProps(index * 0.1)}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Card className="bg-gradient-to-br from-slate-800/70 to-slate-900/50 border border-slate-700/50 rounded-lg backdrop-blur-sm hover:border-emerald-500/50 transition-all duration-300">
+              <CardContent className="flex items-center gap-4 p-6">
+                {stat.icon}
+                <div>
+                  <p className="text-2xl font-bold text-white">{stat.number}</p>
+                  <p className="text-sm text-slate-400">{stat.label}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+    </motion.section>
+  );
+};
+
+// --- CTA SECTION ---
+const CTASection = ({ animationProps }) => (
+  <motion.section
+    className="text-center max-w-4xl mx-auto"
+    initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true, amount: 0.3 }}
+    variants={containerVariants}
+  >
+    <motion.div variants={animationProps()} className="space-y-8">
+      <div>
+        <h2 className="text-3xl font-bold text-white mb-4">
+          Ready to work together?
+        </h2>
+        <p className="text-base text-slate-300 leading-relaxed">
+          Let's create something amazing. I'm always excited to take on new challenges and help bring your ideas to life.
+        </p>
+      </div>
+
+      {/* تحسين أزرار CTA */}
+      <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+        <motion.a
+          href="#contact"
+          className="group relative overflow-hidden"
+          whileHover={{ scale: 1.05, y: -3 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-sky-600 rounded-xl blur-lg opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
+          <div className="relative flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-500 to-sky-600 text-white font-semibold text-lg rounded-xl shadow-xl shadow-emerald-500/25 hover:shadow-2xl hover:shadow-emerald-500/40 transition-all duration-300 border border-emerald-400/20">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+            <Briefcase className="w-6 h-6 transition-all duration-300 group-hover:rotate-[-5deg] group-hover:scale-110 relative z-10" />
+            <span className="relative z-10">Let's Work Together</span>
+            <ArrowRight className="w-5 h-5 transform transition-all duration-300 group-hover:translate-x-2 group-hover:scale-110 relative z-10" />
+          </div>
+        </motion.a>
+
+        <motion.a
+          href={PORTFOLIO_CONFIG.resumeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          download
+          className="group relative overflow-hidden"
+          whileHover={{ scale: 1.05, y: -3 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <div className="relative flex items-center justify-center gap-3 px-6 py-3 bg-gradient-to-r from-slate-800/90 to-slate-700/90 backdrop-blur-sm border border-slate-600/50 text-slate-300 font-medium rounded-xl hover:bg-gradient-to-r hover:from-slate-700/90 hover:to-slate-600/90 hover:text-white hover:border-slate-500/70 transition-all duration-300 shadow-lg shadow-slate-900/25">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+            <Download className="w-5 h-5 transition-all duration-300 group-hover:-translate-y-1 group-hover:scale-110 relative z-10" />
+            <span className="relative z-10">Download Resume</span>
+            <ExternalLink className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-all duration-300 relative z-10" />
+          </div>
+        </motion.a>
+      </div>
+    </motion.div>
+  </motion.section>
+);
