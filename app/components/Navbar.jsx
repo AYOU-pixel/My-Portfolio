@@ -12,8 +12,8 @@ const cn = clsx;
 
 const NAV_LINKS = [
   { href: "#home", label: "Home", icon: FiUser },
-  { href: "#about", label: "About", icon: FiUser },
   { href: "#projects", label: "Projects", icon: FiBriefcase },
+  { href: "#about", label: "About", icon: FiUser },
   { href: "#contact", label: "Contact", icon: FiMail },
 ];
 
@@ -46,7 +46,9 @@ function useActiveSection(sectionIds, rootMargin = "-25% 0px -75% 0px") {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(`#${entry.target.id}`);
+          if (entry.isIntersecting) {
+            setActiveSection(`#${entry.target.id}`);
+          }
         });
       },
       { rootMargin }

@@ -204,6 +204,7 @@ export default function About() {
 // --- HEADER SECTION ---
 const HeaderSection = ({ animationProps }) => (
   <motion.section
+    id="about" // Added ID for scrolling
     initial="hidden"
     whileInView="visible"
     viewport={{ once: true, amount: 0.3 }}
