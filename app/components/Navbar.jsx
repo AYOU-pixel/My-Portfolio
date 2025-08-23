@@ -77,7 +77,7 @@ const Logo = memo(({ onClick }) => (
       transition={{ type: "spring", stiffness: 400, damping: 15 }}
     >
       <Image
-        src="/logos.png"
+        src="/logo.png"
         alt="Ayoub's Logo"
         width={48}
         height={48}
