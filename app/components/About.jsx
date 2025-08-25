@@ -32,7 +32,8 @@ import {
   SiPostgresql,
   SiFirebase,
   SiVercel,
-  SiFigma
+  SiFigma,
+  SiPrisma
 } from "react-icons/si";
 import { VscCode } from "react-icons/vsc";
 import { Button } from "@/app/components/ui/button";
@@ -66,7 +67,7 @@ const SKILLS = {
     { name: "Express", icon: <SiExpress />, level: 70, color: "text-gray-400" },
     { name: "MongoDB", icon: <SiMongodb />, level: 80, color: "text-emerald-500" },
     { name: "PostgreSQL", icon: <SiPostgresql />, level: 65, color: "text-blue-500" },
-    { name: "Firebase", icon: <SiFirebase />, level: 70, color: "text-orange-400" },
+    { name: "Prisma", icon: <SiPrisma />, level: 80, color: "text-purple-500" },
   ],
   tools: [
     { name: "Git", icon: <FaGitAlt />, level: 85, color: "text-orange-500" },
@@ -80,36 +81,36 @@ const SKILLS = {
 const EXPERIENCE = [
   {
     year: "2024 – Present",
-    title: "Freelance Frontend Developer",
+    title: "Freelance Full-Stack Developer",
     company: "Self-Employed",
     location: "Morocco",
-    description: "Building custom web applications for clients worldwide, specializing in React/Next.js solutions with focus on performance and user experience.",
-    achievements: ["Delivered 10+ successful projects", "98% client satisfaction rate", "Reduced loading times by 40% on average"],
+    description: "Developing scalable full-stack applications using React, Next.js, Node.js, and Prisma, delivering high-performance solutions for global clients.",
+    achievements: ["Completed 12+ full-stack projects", "Achieved 95% client satisfaction", "Optimized backend performance by 35%"],
   },
   {
     year: "2023 – 2024",
-    title: "Frontend Development Journey",
+    title: "Full-Stack Learning Path",
     company: "Self-Learning",
     location: "Remote",
-    description: "Intensive self-study and hands-on project development, mastering modern frontend technologies and best practices.",
-    achievements: ["Completed 15+ personal projects", "Built comprehensive portfolio", "Mastered React ecosystem"],
+    description: "Dedicated self-study in full-stack development, mastering React, Next.js, Tailwind CSS, Node.js, Express, MongoDB, and Prisma.",
+    achievements: ["Built 20+ diverse projects", "Developed robust portfolio", "Integrated Prisma for efficient database management"],
   },
   {
     year: "2023",
-    title: "Web Development Bootcamp",
+    title: "Full-Stack Development Bootcamp",
     company: "Online Learning",
     location: "Remote",
-    description: "Completed intensive web development program covering full-stack JavaScript, focusing on modern frameworks and industry best practices.",
-    achievements: ["Full-stack JavaScript certification", "Built first commercial project", "Established coding fundamentals"],
+    description: "Completed an intensive bootcamp focused on full-stack JavaScript, covering modern frameworks, databases, and deployment practices.",
+    achievements: ["Earned full-stack certification", "Deployed first scalable application", "Mastered Prisma ORM"],
   },
 ];
 
 // --- STATS DATA ---
 const STATS = [
-  { number: "15+", label: "Projects Completed", icon: <Briefcase className="w-5 h-5 text-emerald-400" /> },
-  { number: "10+", label: "Happy Clients", icon: <Users className="w-5 h-5 text-emerald-400" /> },
-  { number: "2+", label: "Years Coding", icon: <Clock className="w-5 h-5 text-emerald-400" /> },
-  { number: "98%", label: "Client Satisfaction", icon: <Star className="w-5 h-5 text-emerald-400" /> },
+  { number: "20+", label: "Projects Completed", icon: <Briefcase className="w-5 h-5 text-emerald-400" /> },
+  { number: "12+", label: "Satisfied Clients", icon: <Users className="w-5 h-5 text-emerald-400" /> },
+  { number: "3+", label: "Years Coding", icon: <Clock className="w-5 h-5 text-emerald-400" /> },
+  { number: "95%", label: "Client Satisfaction", icon: <Star className="w-5 h-5 text-emerald-400" /> },
 ];
 
 // --- ANIMATION VARIANTS ---
@@ -204,7 +205,7 @@ export default function About() {
 // --- HEADER SECTION ---
 const HeaderSection = ({ animationProps }) => (
   <motion.section
-    id="about" // Added ID for scrolling
+    id="about"
     initial="hidden"
     whileInView="visible"
     viewport={{ once: true, amount: 0.3 }}
@@ -224,7 +225,7 @@ const HeaderSection = ({ animationProps }) => (
       variants={animationProps(0.1)}
       className="text-lg text-slate-300 leading-relaxed"
     >
-      Full-Stack Developer passionate about building interactive web applications with clean UI & scalable backend.
+      A passionate self-taught web developer specializing in building full-stack applications that are clean, responsive, and efficient.
     </motion.p>
   </motion.section>
 );
@@ -284,14 +285,10 @@ const ProfileSection = ({ animationProps }) => (
 
         <div className="space-y-4">
           <p className="text-base text-slate-300 leading-relaxed">
-            I'm a passionate self-taught developer from Morocco, specializing in creating modern, 
-            responsive web applications. My journey began with curiosity about how websites work, 
-            and evolved into a deep love for crafting digital experiences that users enjoy.
+            I'm a dedicated self-taught developer from Morocco, specializing in full-stack development with a focus on creating clean, responsive, and efficient applications. My journey started with a passion for problem-solving and has grown into expertise in modern web technologies.
           </p>
           <p className="text-base text-slate-300 leading-relaxed">
-            I focus on writing clean, maintainable code and building user interfaces that feel 
-            intuitive and performant. Every project is an opportunity to solve real problems 
-            and create value for users and businesses.
+            Skilled in React, Next.js, Tailwind CSS, Node.js, Express, MongoDB, and Prisma, I thrive on building scalable solutions that deliver seamless user experiences and robust backend performance.
           </p>
         </div>
 
@@ -303,10 +300,8 @@ const ProfileSection = ({ animationProps }) => (
           <span>Available for remote work</span>
         </div>
 
-        {/* تحسين الأزرار */}
         <TooltipProvider>
           <div className="flex flex-wrap gap-4 pt-6">
-            {/* زر GitHub محسن */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.a
@@ -333,7 +328,6 @@ const ProfileSection = ({ animationProps }) => (
               </TooltipContent>
             </Tooltip>
 
-            {/* زر LinkedIn محسن */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.a
@@ -360,7 +354,6 @@ const ProfileSection = ({ animationProps }) => (
               </TooltipContent>
             </Tooltip>
 
-            {/* زر التحميل محسن */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.a
@@ -414,12 +407,11 @@ const SkillsSection = ({ animationProps }) => {
           Skills & Technologies
         </h2>
         <p className="text-base text-slate-300 leading-relaxed">
-          Technologies I work with to bring ideas to life
+          My toolkit for creating impactful and efficient web applications
         </p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Frontend Skills */}
         <SkillCategory
           title="Frontend"
           icon={<Code className="w-5 h-5" />}
@@ -428,7 +420,6 @@ const SkillsSection = ({ animationProps }) => {
           delay={0.1}
         />
 
-        {/* Backend Skills */}
         <SkillCategory
           title="Backend"
           icon={<Database className="w-5 h-5" />}
@@ -437,7 +428,6 @@ const SkillsSection = ({ animationProps }) => {
           delay={0.2}
         />
 
-        {/* Tools & Other */}
         <SkillCategory
           title="Tools"
           icon={<Wrench className="w-5 h-5" />}
@@ -519,12 +509,11 @@ const ExperienceSection = ({ animationProps }) => {
           My Journey
         </h2>
         <p className="text-base text-slate-300 leading-relaxed">
-          The path that led me to where I am today
+          Milestones in my full-stack development career
         </p>
       </motion.div>
 
       <div className="relative">
-        {/* Timeline Line */}
         <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-500/50 to-sky-500/50"></div>
 
         <div className="space-y-8">
@@ -534,14 +523,12 @@ const ExperienceSection = ({ animationProps }) => {
               variants={animationProps(index * 0.2)}
               className="relative flex gap-6"
             >
-              {/* Timeline Dot */}
               <div className="flex-shrink-0 relative">
                 <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/25">
                   <Calendar className="w-4 h-4 text-white" />
                 </div>
               </div>
 
-              {/* Content */}
               <Card className="flex-1 bg-gradient-to-br from-slate-800/70 to-slate-900/50 border border-slate-700/50 rounded-lg backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300">
                 <CardContent className="p-6">
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3">
@@ -598,7 +585,7 @@ const StatsSection = ({ animationProps }) => {
           Achievements
         </h2>
         <p className="text-base text-slate-300 leading-relaxed">
-          Numbers that represent my journey so far
+          Key metrics showcasing my growth and impact
         </p>
       </motion.div>
 
@@ -638,14 +625,13 @@ const CTASection = ({ animationProps }) => (
     <motion.div variants={animationProps()} className="space-y-8">
       <div>
         <h2 className="text-3xl font-bold text-white mb-4">
-          Ready to work together?
+          Ready to collaborate?
         </h2>
         <p className="text-base text-slate-300 leading-relaxed">
-          Let's create something amazing. I'm always excited to take on new challenges and help bring your ideas to life.
+          Let's build impactful solutions together. I'm excited to tackle new challenges and deliver clean, efficient applications.
         </p>
       </div>
 
-      {/* تحسين أزرار CTA */}
       <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
         <motion.a
           href="#contact"
@@ -657,7 +643,7 @@ const CTASection = ({ animationProps }) => (
           <div className="relative flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-500 to-sky-600 text-white font-semibold text-lg rounded-xl shadow-xl shadow-emerald-500/25 hover:shadow-2xl hover:shadow-emerald-500/40 transition-all duration-300 border border-emerald-400/20">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
             <Briefcase className="w-6 h-6 transition-all duration-300 group-hover:rotate-[-5deg] group-hover:scale-110 relative z-10" />
-            <span className="relative z-10">Let's Work Together</span>
+            <span className="relative z-10">Let's Build Together</span>
             <ArrowRight className="w-5 h-5 transform transition-all duration-300 group-hover:translate-x-2 group-hover:scale-110 relative z-10" />
           </div>
         </motion.a>

@@ -14,7 +14,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { FaReact, FaNodeJs } from "react-icons/fa";
-import { SiNextdotjs, SiTailwindcss, SiMongodb, SiExpress } from "react-icons/si";
+import { SiNextdotjs, SiTailwindcss, SiMongodb, SiExpress, SiPrisma } from "react-icons/si";
 import { clsx } from "clsx";
 import { Button } from "@/app/components/ui/button";
 import { Card, CardContent } from "@/app/components/ui/card";
@@ -24,20 +24,23 @@ const cn = clsx;
 
 // --- CONFIGURATION & DATA CONSTANTS ---
 const PORTFOLIO_CONFIG = {
-  name: "Ayoub Rachd",
+  name: "AYOUB",
   resumeUrl: "/AYOUB RACHIDI - Fullstack Web Developer Resume.pdf",
   socials: {
     github: "https://github.com/AYOU-pixel",
-    linkedin: "https://www.linkedin.com/in/ayoub-rachd-0b344a322/",
+    linkedin: "https://www.linkedin.com/in/ayoub-rachidi-0b344a322/",
   },
 };
 
 const ROLES = [
-  "Frontend Developer",
+  "Full-Stack Developer",
   "React & Next.js Specialist",
   "UI/UX Enthusiast",
   "Creative Web Problem-Solver",
 ];
+
+const HERO_DESCRIPTION =
+  "A self-taught Full-Stack Developer crafting modern web applications with React, Next.js, Tailwind CSS, Node.js, Express, MongoDB & Prisma. I turn ideas into practical, high-quality solutions while constantly exploring new tech.";
 
 const TECH_STACK = [
   { name: "React", icon: <FaReact size={20} />, color: "text-sky-400" },
@@ -46,6 +49,7 @@ const TECH_STACK = [
   { name: "Node.js", icon: <FaNodeJs size={20} />, color: "text-green-400" },
   { name: "MongoDB", icon: <SiMongodb size={20} />, color: "text-emerald-500" },
   { name: "Express", icon: <SiExpress size={20} />, color: "text-gray-400" },
+  { name: "Prisma", icon: <SiPrisma size={20} />, color: "text-blue-400" },
 ];
 
 const STATS = [
@@ -57,7 +61,7 @@ const STATS = [
 
 const TESTIMONIALS = [
   {
-    quote: "Ayoub built a responsive and intuitive frontend that elevated our user experience significantly.",
+    quote: "AYOUB built a responsive and intuitive frontend that elevated our user experience significantly.",
     author: "Alex Johnson",
     role: "CEO, InnovateTech",
     initials: "AJ",
@@ -195,7 +199,7 @@ export default function HeroSection() {
               <div className="mt-4 mb-6"><RoleSwitcher /></div>
 
               <p className="mt-6 max-w-xl mx-auto lg:mx-0 text-lg text-slate-300 leading-relaxed">
-                A passionate Frontend Developer from Morocco, specializing in crafting modern, responsive web applications with React & Next.js. I focus on creating intuitive user experiences with clean, efficient code.
+                {HERO_DESCRIPTION}
               </p>
             </motion.div>
 
@@ -240,7 +244,7 @@ export default function HeroSection() {
                 <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-slate-700/50 shadow-2xl">
                   <Image
                     src="/ayoub.webp"
-                    alt="Headshot of Ayoub Rachd, React & Next.js Frontend Developer"
+                    alt="Headshot of AYOUB, React & Next.js Full-Stack Developer"
                     fill
                     sizes="(max-width: 768px) 16rem, 20rem"
                     className="object-cover scale-105"
@@ -306,7 +310,7 @@ export default function HeroSection() {
                 ))}
               </div>
               <p className="text-slate-300 leading-relaxed text-center lg:text-left pt-4">
-                As a self-taught frontend specialist, I translate complex challenges into high-performance interfaces, bringing ideas to life with precision and passion.
+                As a self-taught full-stack specialist, I translate complex challenges into high-performance applications, bringing ideas to life with precision and passion.
               </p>
             </div>
             <div className="space-y-8">
