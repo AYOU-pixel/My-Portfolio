@@ -25,7 +25,7 @@ const cn = clsx;
 // --- CONFIGURATION & DATA CONSTANTS ---
 const PORTFOLIO_CONFIG = {
   name: "Ayoub Rachd",
-  resumeUrl: "/front-end-developer-resume-ayoub-pdf.pdf",
+  resumeUrl: "/AYOUB RACHIDI - Fullstack Web Developer Resume.pdf",
   socials: {
     github: "https://github.com/AYOU-pixel",
     linkedin: "https://www.linkedin.com/in/ayoub-rachd-0b344a322/",

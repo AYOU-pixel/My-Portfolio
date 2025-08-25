@@ -63,7 +63,7 @@ const FOOTER_CONFIG = {
   resources: [
     { 
       name: "Resume", 
-      href: "/front-end-developer-resume-ayoub-pdf.pdf", 
+      href: "/AYOUB RACHIDI - Fullstack Web Developer Resume.pdf", 
       icon: FileText,
       external: true 
     },
