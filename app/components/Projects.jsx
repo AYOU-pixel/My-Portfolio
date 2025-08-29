@@ -18,7 +18,7 @@ const PROJECTS = [
     description:
       "A real-time weather app with location detection and 5-day forecasts using OpenWeather API. Achieved 98% user satisfaction with intuitive design and seamless user experience.",
     image: "/weather.webp",
-    link: "https://airbnb-clone-neon-five.vercel.app/",
+    link: "https://weather-app-navy-sigma-78.vercel.app/",
     github: "https://github.com/AYOU-pixel/Weather-App",
     tech: [{ name: "React" }, { name: "Next.js" }, { name: "Weather API" }, { name: "Tailwind CSS" }],
     featured: true,
@@ -29,7 +29,7 @@ const PROJECTS = [
   description:
     "A full-featured booking platform inspired by Airbnb, built entirely from scratch in just one month. Includes secure authentication, wishlist functionality, instant booking, and Stripe-powered payments. Designed with a sleek UI and optimized for all devices.",
   image: "/airbnb.png", 
-  link: "https://airbnb-clone-neon-five.vercel.app/", 
+  link: "https://airbnb-clone-eosin-sigma.vercel.app/", 
   github: "https://github.com/AYOU-pixel/Airbnb-Clone", 
   tech: [
     { name: "Next.js" },
