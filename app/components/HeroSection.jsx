@@ -243,7 +243,7 @@ export default function HeroSection() {
                 <div className="absolute -inset-2.5 bg-gradient-to-br from-sky-500 to-indigo-600 rounded-full opacity-30 blur-xl transition-all duration-1000 group-hover:opacity-50 group-hover:blur-2xl animate-[spin_20s_linear_infinite]"></div>
                 <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-slate-700/50 shadow-2xl">
                   <Image
-                    src="/ayoub.webp"
+                    src="/ayoub.png"
                     alt="Headshot of AYOUB, React & Next.js Full-Stack Developer"
                     fill
                     sizes="(max-width: 768px) 16rem, 20rem"

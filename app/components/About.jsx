@@ -248,7 +248,7 @@ const ProfileSection = ({ animationProps }) => (
               <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500/30 to-sky-500/30 rounded-full blur-xl opacity-70"></div>
               <div className="relative w-full aspect-square rounded-2xl overflow-hidden">
                 <Image
-                  src="/ayoub.webp"
+                  src="/ayoub.png"
                   alt={`${PORTFOLIO_CONFIG.name} - Professional headshot`}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"

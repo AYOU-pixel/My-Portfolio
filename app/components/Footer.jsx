@@ -234,7 +234,7 @@ const BrandSection = ({ animationProps }) => (
         className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-slate-700/50 hover:border-emerald-500/50 transition-all duration-300 shadow-lg shadow-emerald-500/10"
       >
         <Image
-          src="/ayoub.webp"
+          src="/logo.png"
           alt={`${FOOTER_CONFIG.name} - Professional photo`}
           fill
           sizes="64px"
