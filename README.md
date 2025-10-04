@@ -101,4 +101,4 @@ I'm available for freelance projects and collaborations. Let’s build something
 
 ---
 
-> Made with ❤️ and Next.js by Ayoub Rachd
+> Made with ❤️ and Next.js by Ayoub Rachidi
