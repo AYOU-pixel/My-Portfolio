@@ -1,5 +1,5 @@
+//about
 "use client";
-
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
@@ -105,14 +105,6 @@ const EXPERIENCE = [
   },
 ];
 
-// --- STATS DATA ---
-const STATS = [
-  { number: "20+", label: "Projects Completed", icon: <Briefcase className="w-5 h-5 text-emerald-400" /> },
-  { number: "12+", label: "Satisfied Clients", icon: <Users className="w-5 h-5 text-emerald-400" /> },
-  { number: "3+", label: "Years Coding", icon: <Clock className="w-5 h-5 text-emerald-400" /> },
-  { number: "95%", label: "Client Satisfaction", icon: <Star className="w-5 h-5 text-emerald-400" /> },
-];
-
 // --- ANIMATION VARIANTS ---
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -191,12 +183,6 @@ export default function About() {
 
         {/* Experience Timeline */}
         <ExperienceSection animationProps={animationProps} />
-
-        {/* Stats Section */}
-        <StatsSection animationProps={animationProps} />
-
-        {/* Call to Action */}
-        <CTASection animationProps={animationProps} />
       </div>
     </div>
   );
@@ -566,105 +552,3 @@ const ExperienceSection = ({ animationProps }) => {
     </motion.section>
   );
 };
-
-// --- STATS SECTION ---
-const StatsSection = ({ animationProps }) => {
-  const statsRef = useRef(null);
-  const isInView = useInView(statsRef, { once: true, margin: "-100px" });
-
-  return (
-    <motion.section
-      ref={statsRef}
-      className="mb-20 max-w-6xl mx-auto"
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={containerVariants}
-    >
-      <motion.div variants={animationProps()} className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-500 mb-4">
-          Achievements
-        </h2>
-        <p className="text-base text-slate-300 leading-relaxed">
-          Key metrics showcasing my growth and impact
-        </p>
-      </motion.div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {STATS.map((stat, index) => (
-          <motion.div
-            key={stat.label}
-            variants={animationProps(index * 0.1)}
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Card className="bg-gradient-to-br from-slate-800/70 to-slate-900/50 border border-slate-700/50 rounded-lg backdrop-blur-sm hover:border-emerald-500/50 transition-all duration-300">
-              <CardContent className="flex items-center gap-4 p-6">
-                {stat.icon}
-                <div>
-                  <p className="text-2xl font-bold text-white">{stat.number}</p>
-                  <p className="text-sm text-slate-400">{stat.label}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
-    </motion.section>
-  );
-};
-
-// --- CTA SECTION ---
-const CTASection = ({ animationProps }) => (
-  <motion.section
-    className="text-center max-w-4xl mx-auto"
-    initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true, amount: 0.3 }}
-    variants={containerVariants}
-  >
-    <motion.div variants={animationProps()} className="space-y-8">
-      <div>
-        <h2 className="text-3xl font-bold text-white mb-4">
-          Ready to collaborate?
-        </h2>
-        <p className="text-base text-slate-300 leading-relaxed">
-          Let's build impactful solutions together. I'm excited to tackle new challenges and deliver clean, efficient applications.
-        </p>
-      </div>
-
-      <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-        <motion.a
-          href="#contact"
-          className="group relative overflow-hidden"
-          whileHover={{ scale: 1.05, y: -3 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-sky-600 rounded-xl blur-lg opacity-60 group-hover:opacity-80 transition-all duration-300"></div>
-          <div className="relative flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-500 to-sky-600 text-white font-semibold text-lg rounded-xl shadow-xl shadow-emerald-500/25 hover:shadow-2xl hover:shadow-emerald-500/40 transition-all duration-300 border border-emerald-400/20">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-            <Briefcase className="w-6 h-6 transition-all duration-300 group-hover:rotate-[-5deg] group-hover:scale-110 relative z-10" />
-            <span className="relative z-10">Let's Build Together</span>
-            <ArrowRight className="w-5 h-5 transform transition-all duration-300 group-hover:translate-x-2 group-hover:scale-110 relative z-10" />
-          </div>
-        </motion.a>
-
-        <motion.a
-          href={PORTFOLIO_CONFIG.resumeUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          download
-          className="group relative overflow-hidden"
-          whileHover={{ scale: 1.05, y: -3 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <div className="relative flex items-center justify-center gap-3 px-6 py-3 bg-gradient-to-r from-slate-800/90 to-slate-700/90 backdrop-blur-sm border border-slate-600/50 text-slate-300 font-medium rounded-xl hover:bg-gradient-to-r hover:from-slate-700/90 hover:to-slate-600/90 hover:text-white hover:border-slate-500/70 transition-all duration-300 shadow-lg shadow-slate-900/25">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-            <Download className="w-5 h-5 transition-all duration-300 group-hover:-translate-y-1 group-hover:scale-110 relative z-10" />
-            <span className="relative z-10">Download Resume</span>
-            <ExternalLink className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-all duration-300 relative z-10" />
-          </div>
-        </motion.a>
-      </div>
-    </motion.div>
-  </motion.section>
-);

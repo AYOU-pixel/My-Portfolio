@@ -1,6 +1,5 @@
-// Navbar.js
+// Navbar.jsx - Unified Design
 "use client";
-
 import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -69,19 +68,19 @@ const Logo = memo(({ onClick }) => (
     href="#home"
     onClick={onClick}
     aria-label="Return to top"
-    className="z-10 group rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-cyan-400"
+    className="z-10 group rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-sky-400"
   >
     <motion.div
-      whileHover={{ scale: 1.1 }}
+      whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      transition={{ type: "spring", stiffness: 400, damping: 15 }}
+      transition={{ type: "spring", stiffness: 400, damping: 20 }}
     >
       <Image
         src="/logo.png"
         alt="Ayoub's Logo"
-        width={48}
-        height={48}
-        className="rounded-full object-cover border-2 border-slate-700 group-hover:border-cyan-400 transition-colors duration-300"
+        width={44}
+        height={44}
+        className="rounded-full object-cover border border-slate-600 group-hover:border-sky-400 transition-colors duration-300"
         priority
       />
     </motion.div>
@@ -91,7 +90,7 @@ Logo.displayName = "Logo";
 
 // Desktop Nav
 const DesktopNav = memo(({ links, activeSection, onLinkClick }) => (
-  <nav className="hidden md:flex items-center bg-slate-800/50 backdrop-blur-sm border border-slate-700/80 rounded-full px-4 py-2 shadow-lg shadow-black/20">
+  <nav className="hidden md:flex items-center bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-full px-3 py-1.5 shadow-lg">
     {links.map((link) => {
       const isActive = activeSection === link.href;
       return (
@@ -100,7 +99,7 @@ const DesktopNav = memo(({ links, activeSection, onLinkClick }) => (
           href={link.href}
           onClick={(e) => onLinkClick(e, link.href)}
           className={cn(
-            "relative z-10 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-cyan-400",
+            "relative z-10 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-sky-400",
             isActive ? "text-white" : "text-slate-300 hover:text-white"
           )}
           aria-current={isActive ? "page" : undefined}
@@ -108,7 +107,7 @@ const DesktopNav = memo(({ links, activeSection, onLinkClick }) => (
           {isActive && (
             <motion.div
               layoutId="desktop-nav-active-pill"
-              className="absolute inset-0 z-0 bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 rounded-full border border-cyan-400/30"
+              className="absolute inset-0 z-0 bg-slate-700/50 rounded-full border border-slate-500/30"
               transition={{ type: "spring", stiffness: 350, damping: 30 }}
             />
           )}
@@ -122,9 +121,20 @@ DesktopNav.displayName = "DesktopNav";
 
 // Mobile Nav
 const MobileNav = memo(({ links, activeSection, onLinkClick, onClose }) => {
-  const menuVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 }, exit: { opacity: 0 } };
-  const navContainerVariants = { hidden: { x: "-100%" }, visible: { x: 0 }, exit: { x: "-100%" } };
-  const navItemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
+  const menuVariants = { 
+    hidden: { opacity: 0 }, 
+    visible: { opacity: 1 }, 
+    exit: { opacity: 0 } 
+  };
+  const navContainerVariants = { 
+    hidden: { x: "-100%" }, 
+    visible: { x: 0 }, 
+    exit: { x: "-100%" } 
+  };
+  const navItemVariants = { 
+    hidden: { opacity: 0, x: -20 }, 
+    visible: { opacity: 1, x: 0 } 
+  };
 
   return (
     <motion.div
@@ -132,28 +142,28 @@ const MobileNav = memo(({ links, activeSection, onLinkClick, onClose }) => {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="fixed inset-0 bg-slate-900/70 backdrop-blur-lg z-40 md:hidden"
+      className="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-40 md:hidden"
       onClick={onClose}
       aria-modal="true"
       role="dialog"
     >
       <motion.div
         variants={navContainerVariants}
-        className="absolute top-0 left-0 h-full w-full max-w-xs bg-gradient-to-b from-slate-900 to-slate-950 shadow-2xl flex flex-col pt-24 p-6"
+        className="absolute top-0 left-0 h-full w-full max-w-xs bg-slate-900 shadow-xl flex flex-col pt-20 p-6 border-r border-slate-800"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 z-50 p-2 text-slate-400 hover:text-cyan-400 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          className="absolute top-4 right-4 z-50 p-2 text-slate-400 hover:text-sky-400 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
           aria-label="Close menu"
         >
-          <FiX className="h-7 w-7" />
+          <FiX className="h-6 w-6" />
         </button>
         <motion.nav
           initial="hidden"
           animate="visible"
-          transition={{ staggerChildren: 0.08, delayChildren: 0.2 }}
-          className="flex flex-col gap-4"
+          transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
+          className="flex flex-col gap-2"
         >
           {links.map((link) => {
             const isActive = activeSection === link.href;
@@ -164,9 +174,9 @@ const MobileNav = memo(({ links, activeSection, onLinkClick, onClose }) => {
                   href={link.href}
                   onClick={(e) => onLinkClick(e, link.href)}
                   className={cn(
-                    "flex items-center gap-4 p-4 rounded-lg text-base font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400",
+                    "flex items-center gap-3 p-3 rounded-lg text-base font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400",
                     isActive
-                      ? "bg-gradient-to-r from-slate-800 to-slate-900 text-cyan-300"
+                      ? "bg-slate-800 text-sky-300 border border-slate-700"
                       : "text-slate-300 hover:bg-slate-800/50 hover:text-white"
                   )}
                   aria-current={isActive ? "page" : undefined}
@@ -192,14 +202,14 @@ const ScrollToTopButton = memo(({ isVisible, onClick }) => (
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.8 }}
-        whileHover={{ scale: 1.1, backgroundColor: "#0891B2", color: "#FFFFFF" }}
-        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.05, backgroundColor: "#0ea5e9" }}
+        whileTap={{ scale: 0.95 }}
         transition={{ type: "spring", stiffness: 400, damping: 20 }}
         onClick={onClick}
-        className="fixed bottom-6 right-6 p-3 rounded-full bg-slate-800 text-cyan-400 border border-slate-700 shadow-lg shadow-cyan-500/20 z-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 focus-visible:ring-cyan-400"
+        className="fixed bottom-6 right-6 p-3 rounded-full bg-slate-800 text-sky-400 border border-slate-700 shadow-lg z-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 focus-visible:ring-sky-400"
         aria-label="Scroll back to top"
       >
-        <FiArrowUp className="h-6 w-6" />
+        <FiArrowUp className="h-5 w-5" />
       </motion.button>
     )}
   </AnimatePresence>
@@ -229,24 +239,24 @@ export default function Navbar() {
     <>
       <motion.header
         className={cn(
-          "fixed top-0 w-full z-30 transition-transform duration-300 ease-in-out bg-slate-900/80 backdrop-blur-lg",
-          isScrolled ? "border-b border-slate-800" : "border-b border-transparent",
+          "fixed top-0 w-full z-30 transition-all duration-300 ease-in-out bg-slate-900/90 backdrop-blur-md border-b",
+          isScrolled ? "border-slate-800" : "border-transparent",
           scrollDirection === "down" && isScrolled ? "-translate-y-full" : "translate-y-0"
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-16">
             <Logo onClick={scrollToTop} />
             <DesktopNav links={NAV_LINKS} activeSection={activeSection} onLinkClick={handleScrollTo} />
             <div className="md:hidden">
               <motion.button
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={toggleMobileMenu}
-                className="p-2 rounded-full text-slate-300 hover:text-cyan-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+                className="p-2 rounded-full text-slate-300 hover:text-sky-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
                 aria-label="Open navigation menu"
                 aria-expanded={mobileMenuOpen}
               >
-                <FiMenu className="h-7 w-7" />
+                <FiMenu className="h-6 w-6" />
               </motion.button>
             </div>
           </div>
