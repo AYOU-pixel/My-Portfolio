@@ -47,7 +47,7 @@ const FOOTER_CONFIG = {
     },
     {
       name: "LinkedIn",
-      url: "https:www.linkedin.com/in/ayoub-rchidi-0b344a322",
+      url: "https://www.linkedin.com/in/ayoub-rchidi-0b344a322/",
       icon: Linkedin,
       color: "text-blue-400",
       hoverColor: "hover:text-white",

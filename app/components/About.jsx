@@ -49,7 +49,7 @@ const PORTFOLIO_CONFIG = {
   resumeUrl: "/RACHIDI-AYOUB-FlowCV-Resume-20251030.pdf",
   socials: {
     github: "https://github.com/AYOU-pixel",
-    linkedin: "https:www.linkedin.com/in/ayoub-rchidi-0b344a322",
+    linkedin: "https://www.linkedin.com/in/ayoub-rchidi-0b344a322/",
   },
 };
 
