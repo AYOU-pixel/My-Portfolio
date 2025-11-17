@@ -46,10 +46,10 @@ import { Progress } from "@/app/components/ui/progress";
 const PORTFOLIO_CONFIG = {
   name: "Ayoub Rachd",
   title: "Full-Stack Developer",
-  resumeUrl: "/AYOUB RACHIDI - Fullstack Web Developer Resume.pdf",
+  resumeUrl: "/RACHIDI-AYOUB-FlowCV-Resume-20251030.pdf",
   socials: {
     github: "https://github.com/AYOU-pixel",
-    linkedin: "https://www.linkedin.com/in/ayoub-rachd-0b344a322/",
+    linkedin: "https:www.linkedin.com/in/ayoub-rchidi-0b344a322",
   },
 };
 
