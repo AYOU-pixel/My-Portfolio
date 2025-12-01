@@ -1,8 +1,8 @@
-//about
+// about.jsx - Professional Design Matching Projects & Hero
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
   Briefcase,
   Download,
@@ -14,12 +14,13 @@ import {
   Database,
   Wrench,
   Calendar,
-  Users,
   Trophy,
-  Clock,
-  Star,
   MapPin,
   Mail,
+  Sparkles,
+  Target,
+  Award,
+  Zap,
 } from "lucide-react";
 import { FaReact, FaNodeJs, FaGitAlt } from "react-icons/fa";
 import { 
@@ -30,10 +31,8 @@ import {
   SiTypescript, 
   SiJavascript,
   SiPostgresql,
-  SiFirebase,
-  SiVercel,
-  SiFigma,
-  SiPrisma
+  SiPrisma,
+  SiFigma
 } from "react-icons/si";
 import { VscCode } from "react-icons/vsc";
 import { Button } from "@/app/components/ui/button";
@@ -44,7 +43,7 @@ import { Progress } from "@/app/components/ui/progress";
 
 // --- CONFIGURATION ---
 const PORTFOLIO_CONFIG = {
-  name: "Ayoub Rachd",
+  name: "AYOUB",
   title: "Full-Stack Developer",
   resumeUrl: "/RACHIDI-AYOUB-FlowCV-Resume-20251030.pdf",
   socials: {
@@ -56,23 +55,22 @@ const PORTFOLIO_CONFIG = {
 // --- SKILLS DATA ---
 const SKILLS = {
   frontend: [
-    { name: "React", icon: <FaReact />, level: 90, color: "text-sky-400" },
-    { name: "Next.js", icon: <SiNextdotjs />, level: 85, color: "text-indigo-400" },
+    { name: "React", icon: <FaReact />, level: 90, color: "text-cyan-400" },
+    { name: "Next.js", icon: <SiNextdotjs />, level: 85, color: "text-white" },
     { name: "TypeScript", icon: <SiTypescript />, level: 80, color: "text-blue-400" },
     { name: "JavaScript", icon: <SiJavascript />, level: 90, color: "text-yellow-400" },
-    { name: "Tailwind CSS", icon: <SiTailwindcss />, level: 95, color: "text-teal-400" },
+    { name: "Tailwind CSS", icon: <SiTailwindcss />, level: 95, color: "text-cyan-400" },
   ],
   backend: [
-    { name: "Node.js", icon: <FaNodeJs />, level: 75, color: "text-green-400" },
-    { name: "Express", icon: <SiExpress />, level: 70, color: "text-gray-400" },
-    { name: "MongoDB", icon: <SiMongodb />, level: 80, color: "text-emerald-500" },
-    { name: "PostgreSQL", icon: <SiPostgresql />, level: 65, color: "text-blue-500" },
-    { name: "Prisma", icon: <SiPrisma />, level: 80, color: "text-purple-500" },
+    { name: "Node.js", icon: <FaNodeJs />, level: 75, color: "text-emerald-400" },
+    { name: "Express", icon: <SiExpress />, level: 70, color: "text-gray-300" },
+    { name: "MongoDB", icon: <SiMongodb />, level: 80, color: "text-emerald-400" },
+    { name: "PostgreSQL", icon: <SiPostgresql />, level: 65, color: "text-blue-400" },
+    { name: "Prisma", icon: <SiPrisma />, level: 80, color: "text-indigo-400" },
   ],
   tools: [
-    { name: "Git", icon: <FaGitAlt />, level: 85, color: "text-orange-500" },
-    { name: "VS Code", icon: <VscCode />, level: 95, color: "text-blue-400" },
-    { name: "Vercel", icon: <SiVercel />, level: 90, color: "text-gray-400" },
+    { name: "Git", icon: <FaGitAlt />, level: 85, color: "text-orange-400" },
+    { name: "VS Code", icon: <VscCode />, level: 95, color: "text-blue-300" },
     { name: "Figma", icon: <SiFigma />, level: 75, color: "text-purple-400" },
   ],
 };
@@ -84,51 +82,68 @@ const EXPERIENCE = [
     title: "Freelance Full-Stack Developer",
     company: "Self-Employed",
     location: "Morocco",
-    description: "Developing scalable full-stack applications using React, Next.js, Node.js, and Prisma, delivering high-performance solutions for global clients.",
-    achievements: ["Completed 12+ full-stack projects", "Achieved 95% client satisfaction", "Optimized backend performance by 35%"],
+    description: "Developing modern full-stack applications using React, Next.js, Node.js, and MongoDB. Delivering high-performance solutions for clients worldwide.",
+    achievements: ["Built 12+ production applications", "95% client satisfaction rate", "35% performance optimization"],
+    tech: ["React", "Next.js", "MongoDB", "Prisma", "Tailwind CSS"],
   },
   {
     year: "2023 – 2024",
-    title: "Full-Stack Learning Path",
+    title: "Full-Stack Learning Journey",
     company: "Self-Learning",
     location: "Remote",
-    description: "Dedicated self-study in full-stack development, mastering React, Next.js, Tailwind CSS, Node.js, Express, MongoDB, and Prisma.",
-    achievements: ["Built 20+ diverse projects", "Developed robust portfolio", "Integrated Prisma for efficient database management"],
+    description: "Mastered full-stack development through intensive self-study and project building. Focused on modern web technologies and best practices.",
+    achievements: ["20+ diverse projects completed", "Comprehensive portfolio development", "Database optimization expertise"],
+    tech: ["JavaScript", "Node.js", "Express", "React", "MongoDB"],
   },
   {
     year: "2023",
-    title: "Full-Stack Development Bootcamp",
+    title: "Development Bootcamp",
     company: "Online Learning",
     location: "Remote",
-    description: "Completed an intensive bootcamp focused on full-stack JavaScript, covering modern frameworks, databases, and deployment practices.",
-    achievements: ["Earned full-stack certification", "Deployed first scalable application", "Mastered Prisma ORM"],
+    description: "Completed intensive full-stack bootcamp focusing on modern JavaScript frameworks, database management, and deployment strategies.",
+    achievements: ["Full-stack certification earned", "First scalable application deployed", "Prisma ORM mastered"],
+    tech: ["Next.js", "Prisma", "Vercel", "Stripe", "NextAuth"],
   },
 ];
 
+// --- STATS DATA ---
+const STATS = [
+  { number: "12+", label: "Projects Completed", icon: <Briefcase className="w-5 h-5" /> },
+  { number: "95%", label: "Client Satisfaction", icon: <Award className="w-5 h-5" /> },
+  { number: "1+", label: "Years Experience", icon: <Calendar className="w-5 h-5" /> },
+  { number: "20+", label: "Technologies Mastered", icon: <Zap className="w-5 h-5" /> },
+];
+
 // --- ANIMATION VARIANTS ---
-const containerVariants = {
+const FADE_IN_UP = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, ease: "easeOut" },
+};
+
+const STAGGER_CONTAINER = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
+      ease: "easeOut"
+    }
+  }
 };
 
 // --- BACKGROUND COMPONENT ---
-const BackgroundAurora = () => (
+const AboutBackground = () => (
   <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0" aria-hidden="true">
-    <div className="absolute w-[600px] h-[600px] bg-gradient-to-br from-emerald-600/15 to-sky-500/15 rounded-full blur-3xl animate-[aurora_25s_infinite_alternate] top-1/4 left-1/4"></div>
-    <div className="absolute w-[400px] h-[400px] bg-gradient-to-tr from-sky-500/10 to-indigo-500/10 rounded-full blur-3xl animate-[aurora_30s_infinite_alternate_reverse] bottom-1/4 right-1/4"></div>
+    <div className="absolute w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-3xl animate-[aurora_20s_infinite_alternate] top-1/4 left-1/4"></div>
+    <div className="absolute w-[400px] h-[400px] bg-blue-500/8 rounded-full blur-3xl animate-[aurora_25s_infinite_alternate_reverse] bottom-1/4 right-1/4"></div>
+    <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(ellipse_at_center,white_20%,transparent_70%)] opacity-10" />
     <style jsx>{`
       @keyframes aurora {
-        0% { transform: translate(0, 0); }
-        50% { transform: translate(100px, 80px); }
-        100% { transform: translate(0, 0); }
+        0% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(60px, 40px) rotate(180deg); }
+        100% { transform: translate(0, 0) rotate(360deg); }
       }
     `}</style>
   </div>
@@ -139,337 +154,387 @@ export default function About() {
   const sectionRef = useRef(null);
   const [reduceMotion, setReduceMotion] = useState(false);
 
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const bgX = useTransform(scrollYProgress, [0, 1], [0, 50]);
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, -50]);
-
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduceMotion(mq.matches);
-
     const handler = (e) => setReduceMotion(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
 
   const animationProps = (delay = 0) => ({
-    ...itemVariants,
-    transition: { ...itemVariants.transition, delay: reduceMotion ? 0 : delay },
+    ...FADE_IN_UP,
+    transition: { ...FADE_IN_UP.transition, delay: reduceMotion ? 0 : delay },
   });
 
   return (
-    <div
+    <section
       ref={sectionRef}
-      className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white overflow-hidden"
+      id="about"
+      className="relative min-h-screen py-24 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden"
+      aria-labelledby="about-heading"
     >
-      <BackgroundAurora />
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:radial-gradient(ellipse_at_center,white_10%,transparent_70%)] opacity-20" aria-hidden="true" />
+      <AboutBackground />
       
-      <motion.div
-        className="absolute inset-0 bg-grid-slate-700/[0.03] bg-[length:60px_60px]"
-        style={{ x: bgX, y: bgY }}
-        aria-hidden="true"
-      />
-
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
-        {/* Header Section */}
-        <HeaderSection animationProps={animationProps} />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Section Header */}
+        <motion.div
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true }}
+          variants={animationProps()}
+          className="text-center mb-20 max-w-4xl mx-auto"
+        >
+          <div className="inline-flex items-center gap-2 mb-6 py-2 px-4 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-full backdrop-blur-sm shadow-lg shadow-cyan-500/5">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-500 shadow-lg shadow-cyan-500/50"></span>
+            </span>
+            <span className="text-sm text-cyan-300 font-semibold tracking-wide">My Journey</span>
+          </div>
+          
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
+            About <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">Me</span>
+          </h2>
+          
+          <p className="text-xl text-slate-300 leading-relaxed max-w-2xl mx-auto">
+            A self-taught full-stack developer passionate about building modern web applications
+            that combine innovative design with robust engineering.
+          </p>
+        </motion.div>
 
         {/* Profile Section */}
         <ProfileSection animationProps={animationProps} />
 
+        {/* Stats Section */}
+        <StatsSection animationProps={animationProps} />
+
         {/* Skills Section */}
         <SkillsSection animationProps={animationProps} />
 
-        {/* Experience Timeline */}
+        {/* Experience Section */}
         <ExperienceSection animationProps={animationProps} />
       </div>
-    </div>
+    </section>
   );
 }
 
-// --- HEADER SECTION ---
-const HeaderSection = ({ animationProps }) => (
-  <motion.section
-    id="about"
-    initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true, amount: 0.3 }}
-    variants={containerVariants}
-    className="text-center mb-20 max-w-4xl mx-auto"
-  >
-    <motion.h1
-      variants={animationProps()}
-      className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6"
-    >
-      About{" "}
-      <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-500">
-        Me
-      </span>
-    </motion.h1>
-    <motion.p
-      variants={animationProps(0.1)}
-      className="text-lg text-slate-300 leading-relaxed"
-    >
-      A passionate self-taught web developer specializing in building full-stack applications that are clean, responsive, and efficient.
-    </motion.p>
-  </motion.section>
-);
-
 // --- PROFILE SECTION ---
-const ProfileSection = ({ animationProps }) => (
-  <motion.section
-    initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true, amount: 0.2 }}
-    variants={containerVariants}
-    className="mb-20"
-  >
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-      {/* Profile Image */}
-      <motion.div variants={animationProps()} className="relative">
-        <Card className="bg-gradient-to-br from-slate-800/70 to-slate-900/50 border border-slate-700/50 rounded-2xl backdrop-blur-sm overflow-hidden shadow-2xl shadow-emerald-500/10">
-          <CardContent className="p-6">
-            <div className="relative">
-              <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500/30 to-sky-500/30 rounded-full blur-xl opacity-70"></div>
-              <div className="relative w-full aspect-square rounded-2xl overflow-hidden">
-                <Image
-                  src="/ayoub.png"
-                  alt={`${PORTFOLIO_CONFIG.name} - Professional headshot`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover"
-                  quality={95}
-                  priority
-                />
-              </div>
-              <div className="absolute bottom-4 left-4 right-4">
-                <div className="flex items-center gap-2 px-3 py-2 bg-slate-900/80 backdrop-blur-sm rounded-lg border border-slate-700/50">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                  <span className="text-sm text-slate-300">Available for projects</span>
+const ProfileSection = ({ animationProps }) => {
+  const profileRef = useRef(null);
+  const isInView = useInView(profileRef, { once: true, margin: "-50px" });
+
+  return (
+    <motion.div
+      ref={profileRef}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={STAGGER_CONTAINER}
+      className="mb-24"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center max-w-6xl mx-auto">
+        {/* Left Column: Image */}
+        <motion.div
+          variants={FADE_IN_UP}
+          className="lg:col-span-5 relative"
+        >
+          <div className="relative group">
+            {/* Glow Effect */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-purple-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            
+            {/* Image Container */}
+            <Card className="relative bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-2xl backdrop-blur-md overflow-hidden">
+              <CardContent className="p-4">
+                <div className="relative aspect-square rounded-xl overflow-hidden">
+                  <Image
+                    src="/ayoub.png"
+                    alt={`${PORTFOLIO_CONFIG.name} - Professional headshot`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover scale-105"
+                    quality={95}
+                    priority
+                  />
                 </div>
-              </div>
+              </CardContent>
+            </Card>
+
+            {/* Status Badge */}
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+              <Badge className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 border border-cyan-500/30 backdrop-blur-md px-4 py-2 rounded-full">
+                <span className="relative flex h-2 w-2 mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                </span>
+                Available for Projects
+              </Badge>
             </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Profile Content */}
-      <motion.div variants={animationProps(0.2)} className="space-y-6">
-        <div>
-          <div className="flex items-center mb-4">
-            <div className="h-1 w-12 rounded bg-gradient-to-r from-emerald-400 to-sky-500 mr-4" />
-            <h2 className="text-sm uppercase tracking-wider font-semibold text-slate-400">
-              Who I Am
-            </h2>
           </div>
-          <h3 className="text-3xl font-bold text-white mb-2">{PORTFOLIO_CONFIG.name}</h3>
-          <p className="text-lg text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-500 font-medium">
-            {PORTFOLIO_CONFIG.title}
-          </p>
-        </div>
+        </motion.div>
 
-        <div className="space-y-4">
-          <p className="text-base text-slate-300 leading-relaxed">
-            I'm a dedicated self-taught developer from Morocco, specializing in full-stack development with a focus on creating clean, responsive, and efficient applications. My journey started with a passion for problem-solving and has grown into expertise in modern web technologies.
-          </p>
-          <p className="text-base text-slate-300 leading-relaxed">
-            Skilled in React, Next.js, Tailwind CSS, Node.js, Express, MongoDB, and Prisma, I thrive on building scalable solutions that deliver seamless user experiences and robust backend performance.
-          </p>
-        </div>
+        {/* Right Column: Content */}
+        <motion.div
+          variants={FADE_IN_UP}
+          transition={{ delay: 0.2 }}
+          className="lg:col-span-7 space-y-6"
+        >
+          <div>
+            <h3 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+              {PORTFOLIO_CONFIG.name}
+            </h3>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-1 w-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" />
+              <p className="text-xl bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent font-medium">
+                {PORTFOLIO_CONFIG.title}
+              </p>
+            </div>
+          </div>
 
-        <div className="flex items-center gap-2 text-sm text-slate-400">
-          <MapPin className="w-4 h-4" />
-          <span>Morocco</span>
-          <span className="mx-2">•</span>
-          <Mail className="w-4 h-4" />
-          <span>Available for remote work</span>
-        </div>
+          <div className="space-y-4">
+            <p className="text-slate-300 leading-relaxed">
+              Hello! I'm a passionate self-taught developer from Morocco, specializing in building modern, 
+              responsive web applications. My journey started with curiosity about how things work on the web, 
+              and has evolved into expertise in full-stack development.
+            </p>
+            <p className="text-slate-300 leading-relaxed">
+              I focus on creating clean, efficient applications using technologies like React, Next.js, 
+              Node.js, MongoDB, and Prisma. Every project is an opportunity to solve problems creatively 
+              and deliver exceptional user experiences.
+            </p>
+          </div>
 
-        <TooltipProvider>
-          <div className="flex flex-wrap gap-4 pt-6">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <motion.a
-                  href={PORTFOLIO_CONFIG.socials.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="GitHub Profile"
-                  className="group relative overflow-hidden"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <div className="relative flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 rounded-xl border border-gray-700 hover:border-gray-500 shadow-lg shadow-gray-900/25 transition-all duration-300">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                    <Github className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors duration-300 relative z-10" />
-                    <span className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors duration-300 relative z-10 hidden sm:inline">
-                      GitHub
-                    </span>
-                    <ExternalLink className="w-3 h-3 text-gray-500 group-hover:text-gray-300 transition-all duration-300 relative z-10 opacity-0 group-hover:opacity-100 transform translate-x-[-5px] group-hover:translate-x-0" />
-                  </div>
-                </motion.a>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>View my GitHub profile</p>
-              </TooltipContent>
-            </Tooltip>
+          {/* Location & Contact */}
+          <div className="flex items-center gap-4 text-slate-400">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              <span className="text-sm">Morocco</span>
+            </div>
+            <div className="w-1 h-1 bg-slate-600 rounded-full" />
+            <div className="flex items-center gap-2">
+              <Mail className="w-4 h-4" />
+              <span className="text-sm">Available for remote work</span>
+            </div>
+          </div>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <motion.a
-                  href={PORTFOLIO_CONFIG.socials.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="LinkedIn Profile"
-                  className="group relative overflow-hidden"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <div className="relative flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-800 to-blue-900 hover:from-blue-700 hover:to-blue-800 rounded-xl border border-blue-700 hover:border-blue-500 shadow-lg shadow-blue-900/25 transition-all duration-300">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                    <Linkedin className="w-5 h-5 text-blue-300 group-hover:text-white transition-colors duration-300 relative z-10" />
-                    <span className="text-sm font-medium text-blue-300 group-hover:text-white transition-colors duration-300 relative z-10 hidden sm:inline">
-                      LinkedIn
-                    </span>
-                    <ExternalLink className="w-3 h-3 text-blue-500 group-hover:text-blue-300 transition-all duration-300 relative z-10 opacity-0 group-hover:opacity-100 transform translate-x-[-5px] group-hover:translate-x-0" />
-                  </div>
-                </motion.a>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Connect with me on LinkedIn</p>
-              </TooltipContent>
-            </Tooltip>
+          {/* Social Links */}
+          <div className="flex gap-4 pt-4">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className="bg-slate-800/50 border border-slate-700/50 text-slate-300 hover:bg-slate-700/50 hover:border-cyan-500/50 hover:text-cyan-300 transition-all duration-300 backdrop-blur-sm"
+                  >
+                    <a
+                      href={PORTFOLIO_CONFIG.socials.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2"
+                    >
+                      <Github className="w-5 h-5" />
+                      <span className="hidden sm:inline">GitHub</span>
+                      <ExternalLink className="w-3 h-3 opacity-70" />
+                    </a>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-slate-800 border-slate-700">
+                  <p>View my GitHub profile</p>
+                </TooltipContent>
+              </Tooltip>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <motion.a
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="lg"
+                    className="bg-slate-800/50 border border-slate-700/50 text-slate-300 hover:bg-slate-700/50 hover:border-blue-500/50 hover:text-blue-300 transition-all duration-300 backdrop-blur-sm"
+                  >
+                    <a
+                      href={PORTFOLIO_CONFIG.socials.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2"
+                    >
+                      <Linkedin className="w-5 h-5" />
+                      <span className="hidden sm:inline">LinkedIn</span>
+                      <ExternalLink className="w-3 h-3 opacity-70" />
+                    </a>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-slate-800 border-slate-700">
+                  <p>Connect on LinkedIn</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Button
+                asChild
+                className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white hover:from-cyan-600 hover:to-blue-700 transition-all duration-300 shadow-lg shadow-cyan-500/25"
+              >
+                <a
                   href={PORTFOLIO_CONFIG.resumeUrl}
                   download
-                  aria-label="Download Resume"
-                  className="group relative overflow-hidden"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center gap-2"
                 >
-                  <div className="relative flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 rounded-xl border border-emerald-500 hover:border-emerald-400 shadow-lg shadow-emerald-900/25 transition-all duration-300">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                    <Download className="w-5 h-5 text-emerald-100 group-hover:text-white transition-all duration-300 relative z-10 group-hover:animate-bounce" />
-                    <span className="text-sm font-medium text-emerald-100 group-hover:text-white transition-colors duration-300 relative z-10 hidden sm:inline">
-                      Resume
-                    </span>
-                    <motion.div
-                      className="w-2 h-2 bg-emerald-300 rounded-full relative z-10"
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    ></motion.div>
-                  </div>
-                </motion.a>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Download my resume (PDF)</p>
-              </TooltipContent>
-            </Tooltip>
+                  <Download className="w-5 h-5" />
+                  <span className="hidden sm:inline">Resume</span>
+                </a>
+              </Button>
+            </TooltipProvider>
           </div>
-        </TooltipProvider>
-      </motion.div>
-    </div>
-  </motion.section>
-);
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+};
+
+// --- STATS SECTION ---
+const StatsSection = ({ animationProps }) => {
+  const statsRef = useRef(null);
+  const isInView = useInView(statsRef, { once: true, margin: "-50px" });
+
+  return (
+    <motion.div
+      ref={statsRef}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={STAGGER_CONTAINER}
+      className="mb-24"
+    >
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+        {STATS.map((stat, index) => (
+          <motion.div
+            key={stat.label}
+            variants={FADE_IN_UP}
+            transition={{ delay: index * 0.1 }}
+            whileHover={{ scale: 1.05, y: -4 }}
+          >
+            <Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-2xl backdrop-blur-md hover:border-cyan-500/30 transition-all duration-300">
+              <CardContent className="p-6 text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-xl mb-4">
+                  <div className="text-cyan-400">{stat.icon}</div>
+                </div>
+                <h4 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2">
+                  {stat.number}
+                </h4>
+                <p className="text-sm text-slate-400 font-medium">{stat.label}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
 
 // --- SKILLS SECTION ---
 const SkillsSection = ({ animationProps }) => {
   const skillsRef = useRef(null);
-  const isInView = useInView(skillsRef, { once: true, margin: "-100px" });
+  const isInView = useInView(skillsRef, { once: true, margin: "-50px" });
 
   return (
-    <motion.section
+    <motion.div
       ref={skillsRef}
-      className="mb-20 max-w-6xl mx-auto"
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      variants={containerVariants}
+      variants={STAGGER_CONTAINER}
+      className="mb-24"
     >
-      <motion.div variants={animationProps()} className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-500 mb-4">
-          Skills & Technologies
-        </h2>
-        <p className="text-base text-slate-300 leading-relaxed">
-          My toolkit for creating impactful and efficient web applications
+      <motion.div
+        variants={FADE_IN_UP}
+        className="text-center mb-12"
+      >
+        <h3 className="text-3xl font-bold text-white mb-4">
+          Technical <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Expertise</span>
+        </h3>
+        <p className="text-slate-300 max-w-2xl mx-auto">
+          A comprehensive skill set focused on modern web development technologies
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
         <SkillCategory
-          title="Frontend"
+          title="Frontend Development"
           icon={<Code className="w-5 h-5" />}
           skills={SKILLS.frontend}
-          animationProps={animationProps}
           delay={0.1}
         />
 
         <SkillCategory
-          title="Backend"
+          title="Backend Development"
           icon={<Database className="w-5 h-5" />}
           skills={SKILLS.backend}
-          animationProps={animationProps}
           delay={0.2}
         />
 
         <SkillCategory
-          title="Tools"
+          title="Development Tools"
           icon={<Wrench className="w-5 h-5" />}
           skills={SKILLS.tools}
-          animationProps={animationProps}
           delay={0.3}
         />
       </div>
-    </motion.section>
+    </motion.div>
   );
 };
 
 // --- SKILL CATEGORY COMPONENT ---
-const SkillCategory = ({ title, icon, skills, animationProps, delay }) => (
-  <motion.div variants={animationProps(delay)}>
-    <Card className="h-full bg-gradient-to-br from-slate-800/70 to-slate-900/50 border border-slate-700/50 rounded-2xl backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300">
+const SkillCategory = ({ title, icon, skills, delay }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ delay: delay, duration: 0.6 }}
+    whileHover={{ y: -8 }}
+  >
+    <Card className="h-full bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-2xl backdrop-blur-md hover:border-cyan-500/30 transition-all duration-300">
       <CardContent className="p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="text-emerald-400">{icon}</div>
-          <h3 className="text-xl font-bold text-white">{title}</h3>
+          <div className="w-10 h-10 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-lg flex items-center justify-center">
+            <div className="text-cyan-400">{icon}</div>
+          </div>
+          <h4 className="text-xl font-bold text-white">{title}</h4>
         </div>
-        
+
         <div className="space-y-4">
           {skills.map((skill, index) => (
-            <TooltipProvider key={skill.name}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <motion.div
-                    className="group cursor-pointer"
-                    whileHover={{ scale: 1.02 }}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: delay + (index * 0.1), duration: 0.5 }}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        <span className={`text-lg ${skill.color} group-hover:scale-110 transition-transform duration-200`}>
-                          {skill.icon}
-                        </span>
-                        <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors duration-200">
-                          {skill.name}
-                        </span>
-                      </div>
-                      <span className="text-xs text-slate-500">{skill.level}%</span>
-                    </div>
-                    <Progress 
-                      value={skill.level} 
-                      className="h-2 bg-slate-700/50"
-                    />
-                  </motion.div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{skill.name} - {skill.level}% proficiency</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <motion.div
+              key={skill.name}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: delay + (index * 0.05) }}
+              whileHover={{ scale: 1.02 }}
+              className="group cursor-pointer"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3">
+                  <div className={`text-lg ${skill.color} transition-transform duration-200`}>
+                    {skill.icon}
+                  </div>
+                  <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
+                    {skill.name}
+                  </span>
+                </div>
+                <span className="text-xs text-slate-500">{skill.level}%</span>
+              </div>
+              
+              <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${skill.level}%` }}
+                  viewport={{ once: true }}
+                  transition={{ delay: delay + (index * 0.1), duration: 1, ease: "easeOut" }}
+                  className={`h-full rounded-full ${
+                    skill.level >= 80 ? 'bg-gradient-to-r from-cyan-500 to-blue-500' :
+                    skill.level >= 60 ? 'bg-gradient-to-r from-emerald-500 to-cyan-500' :
+                    'bg-gradient-to-r from-blue-500 to-indigo-500'
+                  }`}
+                />
+              </div>
+            </motion.div>
           ))}
         </div>
       </CardContent>
@@ -479,76 +544,99 @@ const SkillCategory = ({ title, icon, skills, animationProps, delay }) => (
 
 // --- EXPERIENCE SECTION ---
 const ExperienceSection = ({ animationProps }) => {
-  const timelineRef = useRef(null);
-  const isInView = useInView(timelineRef, { once: true, margin: "-100px" });
+  const experienceRef = useRef(null);
+  const isInView = useInView(experienceRef, { once: true, margin: "-50px" });
 
   return (
-    <motion.section
-      ref={timelineRef}
-      className="mb-20 max-w-4xl mx-auto"
+    <motion.div
+      ref={experienceRef}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      variants={containerVariants}
+      variants={STAGGER_CONTAINER}
+      className="max-w-4xl mx-auto"
     >
-      <motion.div variants={animationProps()} className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-sky-500 mb-4">
-          My Journey
-        </h2>
-        <p className="text-base text-slate-300 leading-relaxed">
-          Milestones in my full-stack development career
+      <motion.div
+        variants={FADE_IN_UP}
+        className="text-center mb-12"
+      >
+        <h3 className="text-3xl font-bold text-white mb-4">
+          Professional <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Journey</span>
+        </h3>
+        <p className="text-slate-300 max-w-2xl mx-auto">
+          Key milestones in my development career and continuous learning path
         </p>
       </motion.div>
 
       <div className="relative">
-        <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald-500/50 to-sky-500/50"></div>
+        {/* Timeline Line */}
+        <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-cyan-500/30 via-blue-500/30 to-purple-500/30" />
 
         <div className="space-y-8">
-          {EXPERIENCE.map((item, index) => (
+          {EXPERIENCE.map((exp, index) => (
             <motion.div
               key={index}
-              variants={animationProps(index * 0.2)}
-              className="relative flex gap-6"
+              variants={FADE_IN_UP}
+              transition={{ delay: index * 0.2 }}
+              className={`relative flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8`}
             >
-              <div className="flex-shrink-0 relative">
-                <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/25">
-                  <Calendar className="w-4 h-4 text-white" />
-                </div>
+              {/* Timeline Dot */}
+              <div className="absolute left-3 md:left-1/2 transform md:-translate-x-1/2 top-6 z-10">
+                <div className="w-6 h-6 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full border-4 border-slate-900 shadow-lg shadow-cyan-500/25" />
               </div>
 
-              <Card className="flex-1 bg-gradient-to-br from-slate-800/70 to-slate-900/50 border border-slate-700/50 rounded-lg backdrop-blur-sm hover:border-emerald-500/30 transition-all duration-300">
-                <CardContent className="p-6">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3">
-                    <div>
-                      <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
-                      <div className="flex items-center gap-2 text-sm text-slate-400 mb-2">
-                        <span className="text-emerald-400 font-medium">{item.company}</span>
+              {/* Year Badge */}
+              <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
+                <Badge className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 border border-cyan-500/30 backdrop-blur-sm px-4 py-2">
+                  {exp.year}
+                </Badge>
+              </div>
+
+              {/* Experience Card */}
+              <div className={`md:w-1/2 ${index % 2 === 0 ? 'md:pl-12' : 'md:pr-12'}`}>
+                <Card className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 rounded-2xl backdrop-blur-md hover:border-cyan-500/30 transition-all duration-300">
+                  <CardContent className="p-6">
+                    <div className="mb-4">
+                      <h4 className="text-lg font-bold text-white mb-1">{exp.title}</h4>
+                      <div className="flex items-center gap-2 text-sm text-slate-400">
+                        <span className="text-cyan-400">{exp.company}</span>
                         <span>•</span>
-                        <span>{item.location}</span>
+                        <span>{exp.location}</span>
                       </div>
                     </div>
-                    <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs whitespace-nowrap">
-                      {item.year}
-                    </Badge>
-                  </div>
-                  
-                  <p className="text-sm text-slate-300 leading-relaxed mb-4">
-                    {item.description}
-                  </p>
 
-                  <div className="space-y-2">
-                    {item.achievements.map((achievement, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <Trophy className="w-3 h-3 text-emerald-400 flex-shrink-0" />
-                        <span className="text-xs text-slate-400">{achievement}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                    <p className="text-sm text-slate-300 mb-4 leading-relaxed">
+                      {exp.description}
+                    </p>
+
+                    {/* Tech Stack */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {exp.tech.map((tech) => (
+                        <Badge
+                          key={tech}
+                          variant="secondary"
+                          className="text-xs bg-slate-700/50 border border-slate-600/50 text-slate-300"
+                        >
+                          {tech}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    {/* Achievements */}
+                    <div className="space-y-2">
+                      {exp.achievements.map((achievement, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <Trophy className="w-3 h-3 text-cyan-400 flex-shrink-0" />
+                          <span className="text-xs text-slate-400">{achievement}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </motion.div>
           ))}
         </div>
       </div>
-    </motion.section>
+    </motion.div>
   );
 };
