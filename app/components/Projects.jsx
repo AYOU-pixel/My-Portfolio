@@ -1,4 +1,4 @@
-// Projects.jsx - Professional Design Matching HeroSection
+
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { Eye, Github, ExternalLink, ArrowUpRight, Sparkles, Globe, Lock } from "lucide-react";

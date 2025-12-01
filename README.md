@@ -97,7 +97,7 @@ I'm available for freelance projects and collaborations. Let’s build something
 
 ## 📄 Resume
 
-📥 [Download Resume](https://my-portfolio-xi-one-84.vercel.app/AYOUB%20RACHIDI%20-%20Fullstack%20Web%20Developer%20Resume.pdf)
+📥 [Download Resume](https://my-portfolio-xi-one-84.vercel.app/RACHIDI-AYOUB-FlowCV-Resume-20251030.pdf)
 
 ---
 

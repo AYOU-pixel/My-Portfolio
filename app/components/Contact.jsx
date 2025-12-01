@@ -1,4 +1,4 @@
-// Contact.jsx - Professional Minimal Design
+
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
