@@ -1,4 +1,3 @@
-//app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -14,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ayoub | Front-End Developer",
+  title: "Ayoub Rachidi — Frontend Engineer",
   description:
-    "I'm Ayoub, a passionate Front-End Developer crafting next-gen web experiences with React, Next.js, and cutting-edge technologies.",
+    "Portfolio of Ayoub Rachidi, a Frontend Engineer crafting high-performance web experiences with React, Next.js, and TypeScript.",
 };
 
 export default function RootLayout({
@@ -27,11 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Favicon */}
         <link rel="icon" href="/logo.png" type="image/png" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-950 text-slate-100`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>

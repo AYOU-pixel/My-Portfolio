@@ -33,9 +33,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/Contact/index.tsx",
-    "next.config.js",
-    "app/About/page.jsx",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
