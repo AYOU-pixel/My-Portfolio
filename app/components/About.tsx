@@ -72,56 +72,56 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.06, delayChildren: 0.2 },
+    transition: { staggerChildren: 0.05, delayChildren: 0.15 },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, scale: 0.8, y: 10 },
+  hidden: { opacity: 0, scale: 0.85, y: 8 },
   visible: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { type: "spring", stiffness: 350, damping: 20 },
+    transition: { type: "spring", stiffness: 400, damping: 24 },
   },
 };
 
 export default function About() {
   const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
 
   return (
     <section
       id="about"
       className="section-padding bg-[#0B0F19] relative overflow-hidden"
     >
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-500/5 rounded-full blur-[120px]" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] md:w-[800px] md:h-[400px] bg-indigo-500/5 rounded-full blur-[100px] md:blur-[120px] pointer-events-none" />
 
       <div className="container-tight relative z-10" ref={sectionRef}>
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-16 md:mb-24"
+          initial={{ opacity: 0, y: 28 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-12 md:mb-16 lg:mb-24"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
+          <h2 className="text-[clamp(2rem,5vw,3.75rem)] font-bold tracking-tight text-white mb-4 md:mb-6 leading-[1.1]">
             About <span className="text-gradient">Me</span>
           </h2>
-          <p className="text-lg text-[#94A3B8] max-w-2xl leading-relaxed">
+          <p className="text-base md:text-lg text-[#94A3B8] max-w-2xl leading-relaxed text-balance">
             Frontend Engineer based in Morocco, crafting digital experiences with
             precision and passion.
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
           <div className="lg:col-span-5">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.96 }}
               animate={
-                isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }
+                isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }
               }
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative aspect-square max-w-md mx-auto lg:mx-0 rounded-2xl overflow-hidden ring-1 ring-white/[0.06] bg-[#111827]"
+              transition={{ duration: 0.55, delay: 0.15 }}
+              className="relative aspect-square max-w-sm md:max-w-md mx-auto lg:mx-0 rounded-2xl overflow-hidden ring-1 ring-white/[0.06] bg-[#111827] shadow-2xl shadow-black/20"
             >
               <Image
                 src="/ayoub.png"
@@ -132,22 +132,22 @@ export default function About() {
               />
             </motion.div>
 
-            <div className="mt-8 grid grid-cols-2 gap-4">
+            <div className="mt-6 md:mt-8 grid grid-cols-2 gap-3 md:gap-4">
               {STATS.map((stat, i) => (
                 <motion.div
                   key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={
-                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }
+                    isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }
                   }
-                  transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-                  className="glass rounded-xl p-4 text-center"
+                  transition={{ duration: 0.5, delay: 0.25 + i * 0.08 }}
+                  className="glass rounded-xl p-3.5 md:p-4 text-center"
                 >
-                  <stat.icon className="w-5 h-5 text-sky-400 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-white mb-1">
+                  <stat.icon className="w-5 h-5 text-sky-400 mx-auto mb-1.5 md:mb-2" />
+                  <div className="text-xl md:text-2xl font-bold text-white mb-0.5 md:mb-1">
                     {stat.value}
                   </div>
-                  <div className="text-xs text-[#64748B] uppercase tracking-wider">
+                  <div className="text-[11px] md:text-xs text-[#64748B] uppercase tracking-[0.1em]">
                     {stat.label}
                   </div>
                 </motion.div>
@@ -155,24 +155,24 @@ export default function About() {
             </div>
           </div>
 
-          <div className="lg:col-span-7 space-y-12">
+          <div className="lg:col-span-7 space-y-10 md:space-y-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              transition={{ duration: 0.55, delay: 0.25 }}
             >
-              <h3 className="text-2xl font-semibold text-white mb-4">
+              <h3 className="text-xl md:text-2xl font-semibold text-white mb-3 md:mb-4">
                 Background
               </h3>
-              <div className="space-y-4 text-[#94A3B8] leading-relaxed">
-                <p>
-                  I'm a self-taught developer with a strong foundation in computer
+              <div className="space-y-3.5 md:space-y-4 text-[#94A3B8] leading-relaxed text-[15px] md:text-base">
+                <p className="text-balance">
+                  I&apos;m a self-taught developer with a strong foundation in computer
                   science and a passion for creating intuitive user interfaces. My
                   journey began with a curiosity for how things work on the web,
                   which evolved into a career building production-ready
                   applications.
                 </p>
-                <p>
+                <p className="text-balance">
                   I specialize in the React ecosystem, with deep expertise in
                   Next.js, TypeScript, and modern CSS architectures. My approach
                   combines technical excellence with design sensibility, ensuring
@@ -180,56 +180,56 @@ export default function About() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-6 mt-6 text-sm text-[#64748B]">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-5 md:mt-6 text-sm text-[#64748B]">
                 <div className="flex items-center gap-2">
-                  <MapPin size={16} />
+                  <MapPin size={15} />
                   <span>Morocco</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Mail size={16} />
+                  <Mail size={15} />
                   <span>Open to remote</span>
                 </div>
               </div>
             </motion.div>
 
-            {/* Animated Skills with Icons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              transition={{ duration: 0.55, delay: 0.35 }}
             >
-              <h3 className="text-2xl font-semibold text-white mb-6">
+              <h3 className="text-xl md:text-2xl font-semibold text-white mb-4 md:mb-6">
                 Technical Expertise
               </h3>
-              <div className="space-y-8">
+              <div className="space-y-6 md:space-y-8">
                 {SKILLS.map((group) => (
                   <div key={group.category}>
-                    <h4 className="text-sm font-medium text-[#64748B] uppercase tracking-wider mb-4">
+                    <h4 className="text-xs md:text-sm font-medium text-[#64748B] uppercase tracking-[0.12em] mb-3 md:mb-4">
                       {group.category}
                     </h4>
                     <motion.div
                       variants={containerVariants}
                       initial="hidden"
                       animate={isInView ? "visible" : "hidden"}
-                      className="flex flex-wrap gap-3"
+                      className="flex flex-wrap gap-2 md:gap-3"
                     >
                       {group.items.map((skill) => (
                         <motion.div
                           key={skill.name}
                           variants={itemVariants}
                           whileHover={{
-                            scale: 1.08,
+                            scale: 1.06,
                             y: -2,
                             transition: {
                               type: "spring",
-                              stiffness: 400,
-                              damping: 15,
+                              stiffness: 450,
+                              damping: 16,
                             },
                           }}
+                          whileTap={{ scale: 0.95 }}
                           className="group relative"
                         >
                           <div
-                            className="flex items-center gap-2.5 px-4 py-2.5 glass rounded-xl cursor-pointer transition-all duration-300 hover:bg-white/[0.05]"
+                            className="flex items-center gap-2 md:gap-2.5 px-3 md:px-4 py-2 md:py-2.5 glass rounded-xl cursor-pointer transition-all duration-300 hover:bg-white/[0.05] hover:ring-white/[0.08] ring-1 ring-transparent"
                             style={
                               {
                                 "--icon-color": skill.color,
@@ -237,9 +237,9 @@ export default function About() {
                               } as React.CSSProperties
                             }
                           >
-                            <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[var(--glow-color)] blur-md" />
+                            <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[var(--glow-color)] blur-md pointer-events-none" />
                             <skill.icon
-                              className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:scale-110"
+                              className="relative z-10 w-3.5 h-3.5 md:w-4 md:h-4 transition-transform duration-300 group-hover:scale-110"
                               style={{ color: skill.color }}
                             />
                             <span className="relative z-10 text-sm font-medium text-[#E2E8F0] group-hover:text-white transition-colors">
@@ -257,25 +257,25 @@ export default function About() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
+              transition={{ duration: 0.55, delay: 0.45 }}
             >
-              <h3 className="text-2xl font-semibold text-white mb-6">
+              <h3 className="text-xl md:text-2xl font-semibold text-white mb-5 md:mb-6">
                 Experience
               </h3>
-              <div className="space-y-8 relative before:absolute before:left-0 before:top-2 before:bottom-2 before:w-px before:bg-white/10">
+              <div className="space-y-8 md:space-y-10 relative before:absolute before:left-0 before:top-2 before:bottom-2 before:w-px before:bg-white/[0.08]">
                 {EXPERIENCE.map((exp, i) => (
-                  <div key={i} className="pl-6 relative">
-                    <div className="absolute left-0 top-2 w-2 h-2 rounded-full bg-sky-400 -translate-x-[3px]" />
-                    <div className="text-sm text-sky-400 font-medium mb-1">
+                  <div key={i} className="pl-5 md:pl-6 relative">
+                    <div className="absolute left-0 top-1.5 w-1.5 h-1.5 rounded-full bg-sky-400 -translate-x-[2.5px] md:-translate-x-[3px]" />
+                    <div className="text-xs md:text-sm text-sky-400 font-medium mb-1">
                       {exp.period}
                     </div>
-                    <h4 className="text-lg font-semibold text-white mb-1">
+                    <h4 className="text-base md:text-lg font-semibold text-white mb-0.5 md:mb-1">
                       {exp.role}
                     </h4>
-                    <div className="text-sm text-[#64748B] mb-2">
+                    <div className="text-xs md:text-sm text-[#64748B] mb-1.5 md:mb-2">
                       {exp.company}
                     </div>
-                    <p className="text-sm text-[#94A3B8] leading-relaxed">
+                    <p className="text-sm text-[#94A3B8] leading-relaxed text-balance">
                       {exp.description}
                     </p>
                   </div>

@@ -29,16 +29,36 @@
 
   html {
     scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
 
   ::selection {
-    background: hsl(199 89% 48% / 0.2);
+    background: hsl(199 89% 48% / 0.25);
     color: hsl(210 40% 98%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -52,16 +72,16 @@
   }
 
   .glass-strong {
-    background-color: hsl(222 47% 8% / 0.8);
+    background-color: hsl(222 47% 8% / 0.85);
     @apply backdrop-blur-xl border border-white/[0.08];
   }
 
   .section-padding {
-    @apply py-24 md:py-32;
+    @apply py-20 md:py-28 lg:py-32;
   }
 
   .container-tight {
-    @apply max-w-7xl mx-auto px-6 lg:px-8;
+    @apply max-w-7xl mx-auto px-5 sm:px-6 lg:px-8;
   }
 }
 
@@ -76,5 +96,22 @@
 
   .animation-delay-300 {
     animation-delay: 300ms;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .gpu {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  .will-change-opacity {
+    will-change: opacity;
   }
 }

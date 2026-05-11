@@ -23,17 +23,17 @@ const tagContainerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.05, delayChildren: 0.3 },
+    transition: { staggerChildren: 0.04, delayChildren: 0.2 },
   },
 };
 
 const tagItemVariants = {
-  hidden: { opacity: 0, scale: 0.8, y: 8 },
+  hidden: { opacity: 0, scale: 0.85, y: 6 },
   visible: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { type: "spring", stiffness: 350, damping: 22 },
+    transition: { type: "spring", stiffness: 400, damping: 24 },
   },
 };
 
@@ -78,14 +78,14 @@ const PROJECTS = [
 
 function ProjectCard({ project, index }: { project: typeof PROJECTS[0]; index: number }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <motion.div
+    <motion.article
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: 32 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
+      transition={{ duration: 0.55, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       className="group relative"
     >
       <div className="relative aspect-[16/10] overflow-hidden rounded-2xl ring-1 ring-white/[0.06] bg-[#111827]">
@@ -93,21 +93,21 @@ function ProjectCard({ project, index }: { project: typeof PROJECTS[0]; index: n
           src={project.image}
           alt={project.title}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-cover transition-transform duration-500 group-hover:scale-105 will-change-transform"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19]/90 via-[#0B0F19]/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
         
-        <div className="absolute inset-0 flex items-end p-6">
+        <div className="absolute inset-0 flex items-end p-5 md:p-6">
           <div className="w-full">
-            <div className="flex items-center justify-between mb-3 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+            <div className="flex items-center justify-between translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out">
               <div className="flex gap-2">
                 <a
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 bg-white/10 backdrop-blur-md rounded-full hover:bg-white/20 transition-colors"
-                  aria-label="Live demo"
+                  className="p-2.5 bg-white/10 backdrop-blur-md rounded-full hover:bg-white/20 active:scale-95 transition-all duration-200"
+                  aria-label={`Live demo of ${project.title}`}
                 >
                   <ExternalLink size={16} className="text-white" />
                 </a>
@@ -115,8 +115,8 @@ function ProjectCard({ project, index }: { project: typeof PROJECTS[0]; index: n
                   href={project.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 bg-white/10 backdrop-blur-md rounded-full hover:bg-white/20 transition-colors"
-                  aria-label="Source code"
+                  className="p-2.5 bg-white/10 backdrop-blur-md rounded-full hover:bg-white/20 active:scale-95 transition-all duration-200"
+                  aria-label={`Source code for ${project.title}`}
                 >
                   <Github size={16} className="text-white" />
                 </a>
@@ -126,11 +126,11 @@ function ProjectCard({ project, index }: { project: typeof PROJECTS[0]; index: n
         </div>
       </div>
 
-      <div className="mt-5">
-        <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-sky-300 transition-colors">
+      <div className="mt-4 md:mt-5">
+        <h3 className="text-lg md:text-xl font-semibold text-white mb-1.5 md:mb-2 group-hover:text-sky-300 transition-colors duration-200">
           {project.title}
         </h3>
-        <p className="text-[#94A3B8] text-sm leading-relaxed mb-4">
+        <p className="text-sm md:text-[15px] text-[#94A3B8] leading-relaxed mb-3 md:mb-4 text-balance">
           {project.description}
         </p>
         
@@ -149,17 +149,18 @@ function ProjectCard({ project, index }: { project: typeof PROJECTS[0]; index: n
                 key={tag}
                 variants={tagItemVariants}
                 whileHover={{
-                  scale: 1.1,
+                  scale: 1.08,
                   y: -2,
-                  transition: { type: "spring", stiffness: 400, damping: 15 },
+                  transition: { type: "spring", stiffness: 450, damping: 16 },
                 }}
+                whileTap={{ scale: 0.95 }}
                 className="group/tag relative"
               >
                 <div
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-[#94A3B8] bg-white/5 rounded-md ring-1 ring-white/[0.06] transition-all duration-300 hover:bg-white/[0.05]"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[#94A3B8] bg-white/5 rounded-lg ring-1 ring-white/[0.06] transition-all duration-300 hover:bg-white/[0.05] hover:ring-white/[0.1]"
                   style={{ "--tag-glow": tech.glow } as React.CSSProperties}
                 >
-                  <div className="absolute inset-0 rounded-md opacity-0 group-hover/tag:opacity-100 transition-opacity duration-300 bg-[var(--tag-glow)] blur-md" />
+                  <div className="absolute inset-0 rounded-lg opacity-0 group-hover/tag:opacity-100 transition-opacity duration-300 bg-[var(--tag-glow)] blur-md pointer-events-none" />
                   <Icon
                     className="relative z-10 w-3 h-3"
                     style={{ color: tech.color }}
@@ -171,33 +172,33 @@ function ProjectCard({ project, index }: { project: typeof PROJECTS[0]; index: n
           })}
         </motion.div>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }
 
 export default function Projects() {
   const headerRef = useRef(null);
-  const isHeaderInView = useInView(headerRef, { once: true, margin: "-100px" });
+  const isHeaderInView = useInView(headerRef, { once: true, margin: "-80px" });
 
   return (
     <section id="projects" className="section-padding bg-[#0B0F19]">
       <div className="container-tight">
         <motion.div
           ref={headerRef}
-          initial={{ opacity: 0, y: 30 }}
-          animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-16 md:mb-24"
+          initial={{ opacity: 0, y: 28 }}
+          animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-12 md:mb-16 lg:mb-24"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
+          <h2 className="text-[clamp(2rem,5vw,3.75rem)] font-bold tracking-tight text-white mb-4 md:mb-6 leading-[1.1]">
             Selected <span className="text-gradient">Projects</span>
           </h2>
-          <p className="text-lg text-[#94A3B8] max-w-2xl leading-relaxed">
+          <p className="text-base md:text-lg text-[#94A3B8] max-w-2xl leading-relaxed text-balance">
             A curated collection of projects that demonstrate my expertise in building modern, performant web applications.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-10">
           {PROJECTS.map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />
           ))}
