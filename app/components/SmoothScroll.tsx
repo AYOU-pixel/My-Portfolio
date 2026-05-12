@@ -19,14 +19,17 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     lenisRef.current = lenis;
 
+    // Sync Lenis with GSAP ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
+    const tickerCallback = (time: number) => {
       lenis.raf(time * 1000);
-    });
+    };
 
+    gsap.ticker.add(tickerCallback);
     gsap.ticker.lagSmoothing(0);
 
+    // Scroll progress indicator
     const progressTween = gsap.to("#scroll-progress", {
       scaleX: 1,
       ease: "none",
@@ -40,7 +43,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
 
     return () => {
       progressTween.kill();
-      ScrollTrigger.getAll().forEach((t) => t.kill());
+      gsap.ticker.remove(tickerCallback);
       lenis.destroy();
       lenisRef.current = null;
     };
