@@ -43,6 +43,8 @@ const TECH_ICONS: Record<string, TechConfig> = {
   Tailwind:         { icon: SiTailwindcss, color: "#38BDF8", glow: "rgba(56,189,248,0.35)"  },
   HTML:             { icon: FaHtml5,       color: "#E34F26", glow: "rgba(227,79,38,0.35)"   },
   AOS:              { icon: Sparkles,      color: "#FF6B6B", glow: "rgba(255,107,107,0.35)" },
+  "framer-motion":  { icon: Sparkles,      color: "#FF6B6B", glow: "rgba(255,107,107,0.35)" },
+  stripe:           { icon: FaStripeS,     color: "#635BFF", glow: "rgba(99,91,255,0.35)"   },
 } as const;
 
 const FALLBACK_TECH: TechConfig = {
@@ -111,9 +113,6 @@ const tagItemVariants: Variants = {
 
 // ---------------------------------------------------------------------------
 // Shared sub-component: ProjectTechTags
-// Replaces the previous duplicated ProjectTechTags + MobileProjectTechTags.
-// Both desktop and mobile render identically — the only difference was the
-// container class (`mb-8` vs `mb-6`), now passed as a prop.
 // ---------------------------------------------------------------------------
 
 interface ProjectTechTagsProps {
@@ -215,7 +214,7 @@ export default function Projects() {
           <div className="hidden md:flex relative items-center gap-0">
             {/* Project Image */}
             <motion.div
-              className="w-[500px] h-[400px] rounded-3xl overflow-hidden bg-[#111827] ring-1 ring-white/[0.06] flex-shrink-0"
+              className="w-[500px] h-[400px] rounded-3xl overflow-hidden bg-[#0d1525] ring-1 ring-white/[0.06] flex-shrink-0"
               initial={{ opacity: 0, x: -30 }}
               animate={isContentInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
               transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -227,17 +226,19 @@ export default function Projects() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  className="w-full h-full"
+                  className="relative w-full h-full"
                 >
                   <Image
                     src={currentProject.image}
                     alt={currentProject.title}
-                    width={500}
-                    height={400}
-                    className="w-full h-full object-contain"
+                    fill
+                    className="object-cover"
                     draggable={false}
                     priority
+                    sizes="500px"
                   />
+                  {/* Subtle gradient overlay for better depth */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-transparent pointer-events-none" aria-hidden="true" />
                 </motion.div>
               </AnimatePresence>
             </motion.div>
@@ -266,7 +267,6 @@ export default function Projects() {
                     </p>
                   </div>
 
-                  {/* Reuse unified component (desktop uses mb-8 default) */}
                   <ProjectTechTags tags={currentProject.tags} isInView={isContentInView} />
 
                   <motion.div
@@ -306,7 +306,7 @@ export default function Projects() {
           {/* ── Mobile Layout ── */}
           <div className="md:hidden max-w-sm mx-auto">
             <motion.div
-              className="w-full aspect-[16/10] rounded-2xl overflow-hidden bg-[#111827] ring-1 ring-white/[0.06] mb-6"
+              className="w-full aspect-[16/10] rounded-2xl overflow-hidden bg-[#0d1525] ring-1 ring-white/[0.06] mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={isContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.2 }}
@@ -318,17 +318,19 @@ export default function Projects() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="w-full h-full"
+                  className="relative w-full h-full"
                 >
                   <Image
                     src={currentProject.image}
                     alt={currentProject.title}
-                    width={400}
-                    height={250}
-                    className="w-full h-full object-contain"
+                    fill
+                    className="object-cover"
                     draggable={false}
                     priority
+                    sizes="(max-width: 768px) 100vw, 400px"
                   />
+                  {/* Subtle gradient overlay for better depth */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-transparent pointer-events-none" aria-hidden="true" />
                 </motion.div>
               </AnimatePresence>
             </motion.div>
@@ -349,7 +351,6 @@ export default function Projects() {
                     {currentProject.description}
                   </p>
 
-                  {/* Reuse unified component with mobile bottom-margin */}
                   <ProjectTechTags
                     tags={currentProject.tags}
                     isInView={isContentInView}
