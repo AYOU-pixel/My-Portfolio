@@ -54,39 +54,36 @@ const FALLBACK_TECH: TechConfig = {
 const PROJECTS: Project[] = [
   {
     id: 1,
-    title: "Weather Application",
-    description: "Real-time weather forecasting with location detection and intuitive data visualization.",
-    image: "/weather.webp",
-    link: "https://weather-app-navy-sigma-78.vercel.app/",
-    github: "https://github.com/AYOU-pixel/Weather-App",
-    tags: ["React", "Next.js", "API Integration"],
+    title: "Gym Landing Page",
+    description: `Designed a responsive landing page for a gym that generates leads via WhatsApp.
+Optimized performance, the mobile experience, and the user journey to improve engagement and conversion rates.
+Analyzed business needs to create a web solution focused on results and customer acquisition.`,
+    image: "/p1.png",
+    link: "https://jafy-gym.vercel.app/",
+    github: "https://github.com/AYOU-pixel/Jafy_gym",
+    tags: ["React", "Next.js", "Tailwind"],
   },
   {
     id: 2,
-    title: "Airbnb Clone",
-    description: "Full-featured booking platform with authentication, payments, and responsive design.",
-    image: "/airbnb.png",
-    link: "https://airbnb-clone-eosin-sigma.vercel.app/",
-    github: "https://github.com/AYOU-pixel/Airbnb-Clone",
-    tags: ["Next.js", "Prisma", "Stripe"],
+    title: "Restaurant Ordering Landing Page",
+    description: `Developed a conversion-focused restaurant landing page with WhatsApp ordering integration.
+Optimized mobile experience, UX, and content structure to improve engagement and simplify the ordering process.
+Solved performance and usability challenges while gaining insight into the needs of local businesses.`,
+    image: "/r1.png",
+    link: "https://fit-food-beryl.vercel.app/",
+    github: "https://github.com/AYOU-pixel/Healthy-Meals",
+    tags: ["Next.js", "Tailwind", "framer-motion"],
   },
   {
     id: 3,
     title: "Fashion E-Commerce",
-    description: "Modern e-commerce platform with real-time tracking, secure payments, and OAuth.",
+    description: `Developed a modern e-commerce platform with secure payments, OAuth authentication, and real-time order tracking.
+Optimized performance, responsive design, and scalable UI architecture to improve user experience and accessibility.
+Strengthened understanding of conversion-focused design and modern business requirements.`,
     image: "/AURA.png",
     link: "https://clothes-store-six-indol.vercel.app",
     github: "https://github.com/AYOU-pixel/Clothes-Store",
-    tags: ["Next.js", "MongoDB", "Tailwind"],
-  },
-  {
-    id: 4,
-    title: "Gym Landing Page",
-    description: "Conversion-optimized landing page with WhatsApp integration and modern animations.",
-    image: "/gym.png",
-    link: "https://landing-page-gym-blush.vercel.app",
-    github: "https://github.com/AYOU-pixel/LandingPageGym",
-    tags: ["HTML", "Tailwind", "AOS"],
+    tags: ["Next.js", "MongoDB", "Tailwind", "stripe"],
   },
 ];
 
@@ -237,7 +234,7 @@ export default function Projects() {
                     alt={currentProject.title}
                     width={500}
                     height={400}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     draggable={false}
                     priority
                   />
@@ -328,7 +325,7 @@ export default function Projects() {
                     alt={currentProject.title}
                     width={400}
                     height={250}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     draggable={false}
                     priority
                   />
