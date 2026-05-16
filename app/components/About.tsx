@@ -173,7 +173,7 @@ export default function About() {
               initial={{ opacity: 0, scale: 0.96 }}
               animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.55, delay: 0.15 }}
-              className="relative aspect-square max-w-sm md:max-w-md mx-auto lg:mx-0 rounded-2xl overflow-hidden ring-1 ring-white/[0.06] bg-[#111827] shadow-2xl shadow-black/20"
+              className="relative aspect-square max-w-sm md:max-w-md mx-auto lg:mx-0"
             >
               <Image
                 src="/ayoub.png"

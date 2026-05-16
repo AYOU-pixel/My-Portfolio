@@ -156,7 +156,7 @@ export default function HeroSection() {
                 <ArrowDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" aria-hidden="true" />
               </a>
               <a
-                href="/RACHIDI-AYOUB-FlowCV-Resume-20260127.pdf"
+                href="/MYCVFORDEV.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 glass rounded-full font-semibold text-sm text-white hover:bg-white/5 active:scale-95 transition-all duration-200 w-full sm:w-auto"
@@ -246,12 +246,12 @@ export default function HeroSection() {
               style={{ opacity: shouldReduceMotion ? 1 : 0 }}
             >
               <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/20 to-indigo-500/20 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
-              <div className="relative w-full h-full rounded-full overflow-hidden ring-1 ring-white/10 shadow-2xl shadow-black/20">
+              <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl shadow-black/20">
                 <Image
                   src="/ayoub.png"
                   alt="Ayoub Rachidi — Frontend Engineer"
                   fill
-                  className="object-cover"
+                  className="object-cover scale-[1.18] object-center"
                   priority
                   sizes="(max-width: 640px) 224px, (max-width: 1024px) 288px, 384px"
                 />
