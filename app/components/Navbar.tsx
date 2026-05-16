@@ -3,37 +3,74 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Menu, X } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
 const NAV_LINKS = [
   { href: "#home", label: "Home" },
   { href: "#projects", label: "Projects" },
   { href: "#about", label: "About" },
   { href: "#contact", label: "Contact" },
-];
+] as const;
+
+// ---------------------------------------------------------------------------
+// Typed Framer Motion variants
+// ---------------------------------------------------------------------------
+
+const mobileMenuVariants: Variants = {
+  hidden: { opacity: 0, y: -10, scale: 0.98 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.25, ease: [0.22, 1, 0.36, 1] },
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    scale: 0.98,
+    transition: { duration: 0.2 },
+  },
+};
+
+const navItemVariants: Variants = {
+  hidden: { opacity: 0, x: -8 },
+  visible: (i: number) => ({
+    opacity: 1,
+    x: 0,
+    transition: { delay: i * 0.04, duration: 0.25 },
+  }),
+};
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
-  const yTo = useRef<ReturnType<typeof gsap.quickTo> | null>(null);
+  // gsap.quickTo returns a function; store it as a ref for stable identity
+  const yTo = useRef<((value: number) => void) | null>(null);
   const lastScrollY = useRef(0);
 
+  // GSAP scroll-hide / background-blur effect
   useEffect(() => {
     const header = headerRef.current;
     if (!header) return;
 
-    // Premium performant hide/reveal using quickTo (reuses tween, no GC spam)
     yTo.current = gsap.quickTo(header, "y", {
       duration: 0.4,
       ease: "power3.out",
     });
 
-    // Subtle background tint on scroll — no blur, no glass, no borders
     const bgTrigger = ScrollTrigger.create({
       trigger: document.body,
       start: "80px top",
@@ -53,53 +90,58 @@ export default function Navbar() {
       },
     });
 
-    const handleScroll = () => {
+    const handleWindowScroll = () => {
       const currentY = window.scrollY;
 
       if (currentY < 80) {
-        yTo.current!(0);
+        yTo.current?.(0);
       } else if (currentY > lastScrollY.current && currentY > 150) {
-        yTo.current!(-100);
+        yTo.current?.(-100);
         setIsMobileMenuOpen(false);
       } else if (currentY < lastScrollY.current) {
-        yTo.current!(0);
+        yTo.current?.(0);
       }
 
       lastScrollY.current = currentY;
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleWindowScroll, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", handleWindowScroll);
       bgTrigger.kill();
     };
   }, []);
 
+  // Lock body scroll and handle Escape key when mobile menu is open
   useEffect(() => {
+    if (!isMobileMenuOpen) {
+      document.body.style.overflow = "";
+      return;
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsMobileMenuOpen(false);
     };
-    if (isMobileMenuOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
     };
   }, [isMobileMenuOpen]);
 
-  const handleScroll = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault();
-    setIsMobileMenuOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  }, []);
+  // Smooth-scroll to anchor and close mobile menu
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      e.preventDefault();
+      setIsMobileMenuOpen(false);
+      document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+    },
+    [],
+  );
 
   return (
     <>
@@ -110,12 +152,17 @@ export default function Navbar() {
       >
         <div className="container-tight">
           <div className="flex items-center justify-between h-16 md:h-20">
+            {/* Logo */}
             <Link
               href="#home"
-              onClick={(e) => handleScroll(e, "#home")}
+              onClick={(e) => handleNavClick(e, "#home")}
               className="relative z-10 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0F19]"
             >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.08, rotate: 3 }}
+                whileTap={{ scale: 0.93 }}
+                transition={{ type: "spring", stiffness: 400, damping: 18 }}
+              >
                 <Image
                   src="/logo.png"
                   alt="Ayoub Rachidi"
@@ -127,39 +174,96 @@ export default function Navbar() {
               </motion.div>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-1">
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex items-center gap-1" aria-label="Primary navigation">
               {NAV_LINKS.map((link) => (
-                <Link
+                <motion.div
                   key={link.href}
-                  href={link.href}
-                  onClick={(e) => handleScroll(e, link.href)}
-                  className="relative px-4 py-2 text-sm font-medium text-[#94A3B8] hover:text-white transition-colors duration-200 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50 group"
+                  whileHover={{ y: -1 }}
+                  whileTap={{ scale: 0.96, y: 0 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 22 }}
                 >
-                  <span className="relative z-10">{link.label}</span>
-                  <span className="absolute inset-0 rounded-lg bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-200" />
-                </Link>
+                  <Link
+                    href={link.href}
+                    onClick={(e) => handleNavClick(e, link.href)}
+                    className="relative px-4 py-2 text-sm font-medium text-[#94A3B8] hover:text-white transition-colors duration-200 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50 group inline-block"
+                  >
+                    <span className="relative z-10">{link.label}</span>
+                    {/* Animated underline */}
+                    <motion.span
+                      className="absolute bottom-1 left-4 right-4 h-px bg-white/30 origin-left"
+                      initial={{ scaleX: 0 }}
+                      whileHover={{ scaleX: 1 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                    />
+                    <span className="absolute inset-0 rounded-lg bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-200" />
+                  </Link>
+                </motion.div>
               ))}
-              <Link
-                href="#contact"
-                onClick={(e) => handleScroll(e, "#contact")}
-                className="ml-4 px-5 py-2.5 text-sm font-medium bg-white text-[#0B0F19] rounded-full hover:bg-[#E2E8F0] active:scale-95 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0F19]"
+
+              {/* Let's Talk CTA */}
+              <motion.div
+                whileHover={{ scale: 1.05, y: -1 }}
+                whileTap={{ scale: 0.96, y: 0 }}
+                transition={{ type: "spring", stiffness: 450, damping: 18 }}
+                className="ml-4 relative"
               >
-                Let&apos;s Talk
-              </Link>
+                <Link
+                  href="#contact"
+                  onClick={(e) => handleNavClick(e, "#contact")}
+                  className="relative inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-white text-[#0B0F19] rounded-full hover:bg-[#E2E8F0] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0F19] overflow-hidden group"
+                >
+                  {/* Shimmer sweep on hover */}
+                  <motion.span
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full"
+                    whileHover={{ translateX: "200%" }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  />
+                  <span className="relative z-10">Let&apos;s Talk</span>
+                </Link>
+              </motion.div>
             </nav>
 
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            {/* Mobile menu toggle */}
+            <motion.button
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              transition={{ type: "spring", stiffness: 450, damping: 18 }}
               className="md:hidden relative z-10 p-2.5 -mr-2 text-[#94A3B8] hover:text-white transition-colors rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50"
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu"
             >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+              <AnimatePresence mode="wait" initial={false}>
+                {isMobileMenuOpen ? (
+                  <motion.span
+                    key="close"
+                    initial={{ rotate: -45, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 45, opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <X size={24} />
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="open"
+                    initial={{ rotate: 45, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -45, opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <Menu size={24} />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
           </div>
         </div>
       </header>
 
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -170,41 +274,61 @@ export default function Navbar() {
             className="fixed inset-0 z-40 md:hidden"
             aria-hidden={!isMobileMenuOpen}
           >
+            {/* Backdrop */}
             <div
               className="absolute inset-0 bg-[#0B0F19]/98"
               onClick={() => setIsMobileMenuOpen(false)}
             />
+
+            {/* Menu panel */}
             <motion.nav
-              initial={{ opacity: 0, y: -10, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.98 }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              id="mobile-menu"
+              variants={mobileMenuVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
               className="absolute top-20 left-4 right-4 bg-[#0B0F19] border border-white/[0.06] rounded-2xl p-3 flex flex-col gap-1 shadow-2xl"
+              aria-label="Mobile navigation"
             >
               {NAV_LINKS.map((link, i) => (
                 <motion.div
                   key={link.href}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.04, duration: 0.25 }}
+                  custom={i}
+                  variants={navItemVariants}
+                  initial="hidden"
+                  animate="visible"
+                  whileHover={{ x: 4 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <Link
                     href={link.href}
-                    onClick={(e) => handleScroll(e, link.href)}
+                    onClick={(e) => handleNavClick(e, link.href)}
                     className="block px-4 py-3.5 text-base font-medium text-[#E2E8F0] hover:text-white hover:bg-white/5 rounded-xl transition-colors active:bg-white/10"
                   >
                     {link.label}
                   </Link>
                 </motion.div>
               ))}
+
               <div className="mt-1 pt-3 pb-1 px-1 border-t border-white/10">
-                <Link
-                  href="#contact"
-                  onClick={(e) => handleScroll(e, "#contact")}
-                  className="block w-full text-center px-5 py-3.5 text-sm font-semibold bg-white text-[#0B0F19] rounded-full active:scale-[0.98] transition-transform"
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: "spring", stiffness: 450, damping: 18 }}
                 >
-                  Let&apos;s Talk
-                </Link>
+                  <Link
+                    href="#contact"
+                    onClick={(e) => handleNavClick(e, "#contact")}
+                    className="block w-full text-center px-5 py-3.5 text-sm font-semibold bg-white text-[#0B0F19] rounded-full transition-transform overflow-hidden relative group"
+                  >
+                    <motion.span
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full"
+                      whileHover={{ translateX: "200%" }}
+                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                    />
+                    <span className="relative z-10">Let&apos;s Talk</span>
+                  </Link>
+                </motion.div>
               </div>
             </motion.nav>
           </motion.div>

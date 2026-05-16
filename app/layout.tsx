@@ -30,6 +30,8 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Ayoub Rachidi" }],
   creator: "Ayoub Rachidi",
+  // Canonical URL — update to your real domain
+  metadataBase: new URL("https://ayoub-rachidi.dev"),
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -69,6 +71,10 @@ export default function RootLayout({
     >
       <head>
         <link rel="icon" href="/logo.png" type="image/png" />
+        {/* Preconnect to Vercel's image optimization CDN to reduce LCP latency */}
+        <link rel="preconnect" href="https://vercel.com" />
+        {/* dns-prefetch as fallback for browsers that don't support preconnect */}
+        <link rel="dns-prefetch" href="//vercel.com" />
       </head>
       <body className="antialiased">{children}</body>
     </html>

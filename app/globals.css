@@ -83,6 +83,11 @@
   .container-tight {
     @apply max-w-7xl mx-auto px-5 sm:px-6 lg:px-8;
   }
+
+  /* Reusable focus ring — single definition, used via @apply */
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50;
+  }
 }
 
 @layer utilities {
