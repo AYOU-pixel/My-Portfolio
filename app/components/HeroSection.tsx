@@ -134,8 +134,8 @@ export default function HeroSection() {
               className="text-base md:text-lg lg:text-xl text-[#94A3B8] max-w-md md:max-w-lg mx-auto lg:mx-0 mb-7 md:mb-8 leading-relaxed text-balance"
               style={{ opacity: shouldReduceMotion ? 1 : 0 }}
             >
-              Frontend Engineer specializing in building exceptional digital
-              experiences with React, Next.js, and modern web technologies.
+              Frontend Engineer Focused on High-Performance & Conversion-Driven Experiences.
+              Building fast, scalable web applications with React and Next.js optimized for performance, UX, and business impact.
             </p>
 
             {/* CTA buttons */}

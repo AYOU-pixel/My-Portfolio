@@ -89,17 +89,10 @@ const SKILLS: SkillGroup[] = [
 const EXPERIENCE: ExperienceEntry[] = [
   {
     period: "2024 — Present",
-    role: "Freelance Full-Stack Developer",
+    role: "Frontend Engineer | Freelance & Independent Projects",
     company: "Self-Employed",
     description:
-      "Delivering production-ready applications for clients worldwide using modern JavaScript ecosystems.",
-  },
-  {
-    period: "2023 — 2024",
-    role: "Full-Stack Learning Journey",
-    company: "Self-Directed",
-    description:
-      "Mastered modern web development through intensive project-based learning and open source contributions.",
+      "Designing and developing high-performance web experiences focused on frontend performance, user engagement, and conversion-oriented UX. Specialized in building landing pages optimized for lead generation, scalable React/Next.js applications, modern UI systems, and responsive digital experiences. Worked on projects including fitness brands, healthy meal platforms, and fashion e-commerce applications.",
   },
 ];
 
@@ -160,8 +153,7 @@ export default function About() {
             className="items-start mb-4 md:mb-6"
           />
           <p className="text-base md:text-lg text-[#94A3B8] max-w-2xl leading-relaxed text-balance">
-            Frontend Engineer based in Morocco, crafting digital experiences with
-            precision and passion.
+           Frontend Engineer based in Morocco, specialized in building high-performance web experiences that combine modern UI engineering with business-focused thinking.
           </p>
         </motion.div>
 
@@ -224,17 +216,16 @@ export default function About() {
               </h3>
               <div className="space-y-3.5 md:space-y-4 text-[#94A3B8] leading-relaxed text-[15px] md:text-base">
                 <p className="text-balance">
-                  I&apos;m a self-taught developer with a strong foundation in computer
-                  science and a passion for creating intuitive user interfaces. My
-                  journey began with a curiosity for how things work on the web,
-                  which evolved into a career building production-ready
-                  applications.
+                  My work goes beyond creating visually polished interfaces. I focus on building fast, scalable, and conversion-oriented digital products designed to improve engagement, usability, and overall user experience.
                 </p>
                 <p className="text-balance">
-                  I specialize in the React ecosystem, with deep expertise in
-                  Next.js, TypeScript, and modern CSS architectures. My approach
-                  combines technical excellence with design sensibility, ensuring
-                  every project is both performant and visually polished.
+                  Over the past few years, I&apos;ve worked extensively with the React ecosystem — particularly Next.js, TypeScript, and modern frontend architectures — developing production-ready applications ranging from conversion-focused landing pages to scalable e-commerce platforms.
+                </p>
+                <p className="text-balance">
+                  I&apos;m especially interested in the intersection of frontend performance, UX optimization, conversion-focused design, and scalable UI systems.
+                </p>
+                <p className="text-balance">
+                  My approach combines technical execution with product thinking, ensuring that every interface is not only aesthetically refined, but also strategically designed to support business goals and user behavior.
                 </p>
               </div>
 

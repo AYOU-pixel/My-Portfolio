@@ -56,36 +56,38 @@ const FALLBACK_TECH: TechConfig = {
 const PROJECTS: Project[] = [
   {
     id: 1,
-    title: "Gym Landing Page",
-    description: `Designed a responsive landing page for a gym that generates leads via WhatsApp.
-Optimized performance, the mobile experience, and the user journey to improve engagement and conversion rates.
-Analyzed business needs to create a web solution focused on results and customer acquisition.`,
+    title: "Olympic Jafy Gym",
+    description: `Built a conversion-focused fitness landing page designed to generate qualified leads through WhatsApp.
+Focused on mobile-first UX, CTA visibility, and friction reduction to improve engagement and customer acquisition.
+Engineered a fast and responsive experience optimized for performance and user interaction.`,
     image: "/p1.png",
     link: "https://jafy-gym.vercel.app/",
     github: "https://github.com/AYOU-pixel/Jafy_gym",
-    tags: ["React", "Next.js", "Tailwind"],
+    tags: ["React", "Next.js", "Tailwind CSS"],
   },
+
   {
     id: 2,
-    title: "Restaurant Ordering Landing Page",
-    description: `Developed a conversion-focused restaurant landing page with WhatsApp ordering integration.
-Optimized mobile experience, UX, and content structure to improve engagement and simplify the ordering process.
-Solved performance and usability challenges while gaining insight into the needs of local businesses.`,
+    title: "FitFood",
+    description: `Designed and developed a high-performance landing experience for a healthy meal service with integrated WhatsApp ordering.
+Structured the interface around conversion flow, mobile usability, and clear content hierarchy to simplify the ordering experience.
+Focused on smooth interactions, responsive layouts, and scalable UI architecture.`,
     image: "/r1.png",
     link: "https://fit-food-beryl.vercel.app/",
     github: "https://github.com/AYOU-pixel/Healthy-Meals",
-    tags: ["Next.js", "Tailwind", "framer-motion"],
+    tags: ["Next.js", "Tailwind CSS", "Framer Motion"],
   },
+
   {
     id: 3,
-    title: "Fashion E-Commerce",
-    description: `Developed a modern e-commerce platform with secure payments, OAuth authentication, and real-time order tracking.
-Optimized performance, responsive design, and scalable UI architecture to improve user experience and accessibility.
-Strengthened understanding of conversion-focused design and modern business requirements.`,
+    title: "Aura Store",
+    description: `Developed a scalable fashion e-commerce platform inspired by modern minimalist shopping experiences.
+Integrated secure payments, OAuth authentication, and optimized product flows to create a seamless purchasing experience.
+Focused on clean UX, responsive design, and scalable frontend architecture using modern web technologies.`,
     image: "/AURA.png",
     link: "https://clothes-store-six-indol.vercel.app",
     github: "https://github.com/AYOU-pixel/Clothes-Store",
-    tags: ["Next.js", "MongoDB", "Tailwind", "stripe"],
+    tags: ["Next.js", "MongoDB", "Tailwind CSS", "Stripe"],
   },
 ];
 
@@ -211,10 +213,10 @@ export default function Projects() {
         <div ref={contentRef}>
 
           {/* ── Desktop Layout ── */}
-          <div className="hidden md:flex relative items-center gap-0">
+          <div className="hidden lg:flex relative items-start justify-center gap-4 xl:gap-8 px-4">
             {/* Project Image */}
             <motion.div
-              className="w-[500px] h-[400px] rounded-3xl overflow-hidden bg-[#0d1525] ring-1 ring-white/[0.06] flex-shrink-0"
+              className="w-full lg:w-[450px] xl:w-[500px] h-[320px] lg:h-[380px] xl:h-[400px] rounded-3xl overflow-hidden bg-[#0d1525] ring-1 ring-white/[0.06] flex-shrink-0"
               initial={{ opacity: 0, x: -30 }}
               animate={isContentInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
               transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -235,7 +237,7 @@ export default function Projects() {
                     className="object-cover"
                     draggable={false}
                     priority
-                    sizes="500px"
+                    sizes="(max-width: 1280px) 450px, 500px"
                   />
                   {/* Subtle gradient overlay for better depth */}
                   <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-transparent pointer-events-none" aria-hidden="true" />
@@ -243,9 +245,9 @@ export default function Projects() {
               </AnimatePresence>
             </motion.div>
 
-            {/* Project Card — overlapping */}
+            {/* Project Card — adaptive positioning */}
             <motion.div
-              className="glass-strong rounded-3xl shadow-2xl p-8 md:p-10 ml-[-80px] z-10 max-w-xl flex-1"
+              className="glass-strong rounded-3xl shadow-2xl p-6 lg:p-8 xl:p-10 w-full lg:w-[420px] xl:w-[480px] z-10 lg:-ml-12 xl:-ml-20 relative flex-shrink-0"
               initial={{ opacity: 0, x: 30 }}
               animate={isContentInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
               transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -390,11 +392,103 @@ export default function Projects() {
               </AnimatePresence>
             </div>
           </div>
+
+          {/* ── Tablet/Medium Screen Layout (768px–1024px) ── */}
+          <div className="hidden md:flex lg:hidden relative items-start justify-center gap-6 px-4">
+            {/* Project Image */}
+            <motion.div
+              className="w-[350px] h-[300px] rounded-3xl overflow-hidden bg-[#0d1525] ring-1 ring-white/[0.06] flex-shrink-0"
+              initial={{ opacity: 0, x: -30 }}
+              animate={isContentInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentProject.image}
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative w-full h-full"
+                >
+                  <Image
+                    src={currentProject.image}
+                    alt={currentProject.title}
+                    fill
+                    className="object-cover"
+                    draggable={false}
+                    priority
+                    sizes="350px"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-transparent pointer-events-none" aria-hidden="true" />
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+
+            {/* Project Card */}
+            <motion.div
+              className="glass-strong rounded-3xl shadow-2xl p-6 w-[320px] z-10 -ml-6 relative flex-shrink-0"
+              initial={{ opacity: 0, x: 30 }}
+              animate={isContentInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
+              transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentProject.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="mb-5">
+                    <h2 className="text-xl font-bold text-white mb-2">
+                      {currentProject.title}
+                    </h2>
+                    <p className="text-sm text-[#94A3B8] leading-relaxed">
+                      {currentProject.description}
+                    </p>
+                  </div>
+
+                  <ProjectTechTags tags={currentProject.tags} isInView={isContentInView} className="mb-6" />
+
+                  <motion.div
+                    className="flex flex-col gap-2.5"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={isContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                    transition={{ duration: 0.4, delay: 0.6 }}
+                  >
+                    <motion.a
+                      href={currentProject.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-[#0B0F19] rounded-full font-medium text-sm hover:bg-[#E2E8F0] transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ExternalLink size={15} aria-hidden="true" />
+                      Live Demo
+                    </motion.a>
+                    <motion.a
+                      href={currentProject.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white/5 text-white rounded-full font-medium text-sm hover:bg-white/10 transition-colors ring-1 ring-white/[0.06]"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Github size={15} aria-hidden="true" />
+                      Source Code
+                    </motion.a>
+                  </motion.div>
+                </motion.div>
+              </AnimatePresence>
+            </motion.div>
+          </div>
         </div>
 
         {/* ── Pagination Controls ── */}
         <motion.div
-          className="flex justify-center items-center gap-6 mt-8"
+          className="flex justify-center items-center gap-4 md:gap-6 mt-10 md:mt-12 lg:mt-14"
           initial={{ opacity: 0, y: 20 }}
           animate={isContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5, delay: 0.6 }}
