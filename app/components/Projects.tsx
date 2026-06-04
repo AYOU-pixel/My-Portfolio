@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useInView, type Variants } from "framer-motion";
-import { ExternalLink, Github, Cloud, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { ExternalLink, Github, Cloud, Sparkles, ChevronLeft, ChevronRight, Target, Lightbulb, Wrench, CheckCircle2 } from "lucide-react";
 import { FaReact, FaHtml5, FaStripeS } from "react-icons/fa";
 import { SiNextdotjs, SiTailwindcss, SiMongodb, SiPrisma } from "react-icons/si";
 import type { IconType } from "react-icons";
@@ -27,6 +27,12 @@ interface Project {
   link: string;
   github: string;
   tags: string[];
+  caseStudy: {
+    businessGoal: string;
+    problem: string;
+    solution: string;
+    features: string[];
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -64,6 +70,17 @@ Engineered a fast and responsive experience optimized for performance and user i
     link: "https://jafy-gym.vercel.app/",
     github: "https://github.com/AYOU-pixel/Jafy_gym",
     tags: ["React", "Next.js", "Tailwind CSS"],
+    caseStudy: {
+      businessGoal: "Increase WhatsApp inquiries and walk-in visits for a local gym in Salé, Morocco.",
+      problem: "The gym had no online presence. Potential members couldn't find class info, pricing, or contact details — losing leads to competitors with websites.",
+      solution: "Built a mobile-first landing page with prominent WhatsApp CTAs, a sticky navbar, and a clean program breakdown to eliminate friction between discovery and contact.",
+      features: [
+        "One-tap WhatsApp inquiry buttons",
+        "Animated program & pricing sections",
+        "Mobile-first layout (80%+ users on mobile)",
+        "Optimized Core Web Vitals for fast load",
+      ],
+    },
   },
 
   {
@@ -76,6 +93,17 @@ Focused on smooth interactions, responsive layouts, and scalable UI architecture
     link: "https://fit-food-beryl.vercel.app/",
     github: "https://github.com/AYOU-pixel/Healthy-Meals",
     tags: ["Next.js", "Tailwind CSS", "Framer Motion"],
+    caseStudy: {
+      businessGoal: "Drive direct meal orders through WhatsApp for a healthy food delivery service.",
+      problem: "Customers had no clear way to browse the menu or place orders online, causing the business to lose sales to delivery apps taking 30% commissions.",
+      solution: "Designed a conversion-first landing page with a scannable menu layout, trust signals, and a frictionless WhatsApp ordering flow — no third-party app needed.",
+      features: [
+        "WhatsApp-integrated order flow",
+        "Menu grid with category filters",
+        "Smooth Framer Motion scroll transitions",
+        "Responsive layout optimized for mobile ordering",
+      ],
+    },
   },
 
   {
@@ -88,6 +116,17 @@ Focused on clean UX, responsive design, and scalable frontend architecture using
     link: "https://clothes-store-six-indol.vercel.app",
     github: "https://github.com/AYOU-pixel/Clothes-Store",
     tags: ["Next.js", "MongoDB", "Tailwind CSS", "Stripe"],
+    caseStudy: {
+      businessGoal: "Demonstrate a full-stack e-commerce capability to attract fashion or retail clients.",
+      problem: "Small fashion brands lack affordable, custom storefronts — they rely on Shopify templates that look generic and charge high monthly fees.",
+      solution: "Built a full-stack e-commerce platform with a minimalist aesthetic, secure Stripe payments, and OAuth login — giving brands a fully custom, owned storefront.",
+      features: [
+        "Stripe secure checkout integration",
+        "OAuth authentication (Google)",
+        "MongoDB product & order management",
+        "Minimalist UI with dark/light product displays",
+      ],
+    },
   },
 ];
 
@@ -161,6 +200,86 @@ function ProjectTechTags({ tags, isInView, className = "mb-8" }: ProjectTechTags
           </motion.div>
         );
       })}
+    </motion.div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Shared sub-component: CaseStudyBlock
+// ---------------------------------------------------------------------------
+
+interface CaseStudyBlockProps {
+  caseStudy: Project["caseStudy"];
+  isInView: boolean;
+}
+
+const caseStudyVariants: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
+  return (
+    <motion.div
+      variants={caseStudyVariants}
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      className="mb-6 space-y-3"
+    >
+      {/* Business Goal */}
+      <div className="flex gap-2.5">
+        <Target className="w-3.5 h-3.5 text-sky-400 mt-[3px] flex-shrink-0" aria-hidden="true" />
+        <div>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-sky-400/80 block mb-0.5">
+            Goal
+          </span>
+          <p className="text-xs text-[#94A3B8] leading-relaxed">{caseStudy.businessGoal}</p>
+        </div>
+      </div>
+
+      {/* Problem */}
+      <div className="flex gap-2.5">
+        <Lightbulb className="w-3.5 h-3.5 text-[#94A3B8] mt-[3px] flex-shrink-0" aria-hidden="true" />
+        <div>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]/60 block mb-0.5">
+            Problem
+          </span>
+          <p className="text-xs text-[#94A3B8] leading-relaxed">{caseStudy.problem}</p>
+        </div>
+      </div>
+
+      {/* Solution */}
+      <div className="flex gap-2.5">
+        <Wrench className="w-3.5 h-3.5 text-[#94A3B8] mt-[3px] flex-shrink-0" aria-hidden="true" />
+        <div>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]/60 block mb-0.5">
+            Solution
+          </span>
+          <p className="text-xs text-[#94A3B8] leading-relaxed">{caseStudy.solution}</p>
+        </div>
+      </div>
+
+      {/* Features */}
+      <div className="flex gap-2.5">
+        <CheckCircle2 className="w-3.5 h-3.5 text-[#94A3B8] mt-[3px] flex-shrink-0" aria-hidden="true" />
+        <div>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]/60 block mb-1">
+            Features
+          </span>
+          <ul className="space-y-0.5">
+            {caseStudy.features.map((f) => (
+              <li key={f} className="text-xs text-[#94A3B8] leading-relaxed flex gap-1.5 items-start">
+                <span className="text-sky-400/60 mt-[3px] leading-none select-none" aria-hidden="true">›</span>
+                {f}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -260,13 +379,11 @@ export default function Projects() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <div className="mb-6">
-                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                  <div className="mb-4">
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
                       {currentProject.title}
                     </h2>
-                    <p className="text-base text-[#94A3B8] leading-relaxed">
-                      {currentProject.description}
-                    </p>
+                    <CaseStudyBlock caseStudy={currentProject.caseStudy} isInView={isContentInView} />
                   </div>
 
                   <ProjectTechTags tags={currentProject.tags} isInView={isContentInView} />
@@ -346,12 +463,10 @@ export default function Projects() {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.4, ease: "easeInOut" }}
                 >
-                  <h2 className="text-xl font-bold text-white mb-2">
+                  <h2 className="text-xl font-bold text-white mb-3">
                     {currentProject.title}
                   </h2>
-                  <p className="text-sm text-[#94A3B8] leading-relaxed mb-4">
-                    {currentProject.description}
-                  </p>
+                  <CaseStudyBlock caseStudy={currentProject.caseStudy} isInView={isContentInView} />
 
                   <ProjectTechTags
                     tags={currentProject.tags}
@@ -440,13 +555,11 @@ export default function Projects() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <div className="mb-5">
-                    <h2 className="text-xl font-bold text-white mb-2">
+                  <div className="mb-4">
+                    <h2 className="text-xl font-bold text-white mb-3">
                       {currentProject.title}
                     </h2>
-                    <p className="text-sm text-[#94A3B8] leading-relaxed">
-                      {currentProject.description}
-                    </p>
+                    <CaseStudyBlock caseStudy={currentProject.caseStudy} isInView={isContentInView} />
                   </div>
 
                   <ProjectTechTags tags={currentProject.tags} isInView={isContentInView} className="mb-6" />

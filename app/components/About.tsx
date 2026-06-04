@@ -3,8 +3,7 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useInView, type Variants } from "framer-motion";
-import { MapPin, Mail, Briefcase, Award, Calendar, Zap } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { MapPin, Mail } from "lucide-react";
 import { FaReact, FaNodeJs } from "react-icons/fa";
 import {
   SiNextdotjs,
@@ -22,12 +21,6 @@ import { AnimatedText } from "./ui/AnimatedUnderline";
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
-
-interface Stat {
-  icon: LucideIcon;
-  label: string;
-  value: string;
-}
 
 interface SkillItem {
   name: string;
@@ -50,13 +43,6 @@ interface ExperienceEntry {
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-
-const STATS: Stat[] = [
-  { icon: Briefcase, label: "Projects",     value: "12+" },
-  { icon: Award,     label: "Satisfaction", value: "95%" },
-  { icon: Calendar,  label: "Experience",   value: "1+"  },
-  { icon: Zap,       label: "Technologies", value: "20+" },
-];
 
 const SKILLS: SkillGroup[] = [
   {
@@ -175,31 +161,6 @@ export default function About() {
                 sizes="(max-width: 1024px) 100vw, 40vw"
               />
             </motion.div>
-
-            {/* Stats grid */}
-            <div className="mt-6 md:mt-8 grid grid-cols-2 gap-3 md:gap-4" role="list" aria-label="Stats">
-              {STATS.map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  role="listitem"
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-                  transition={{ duration: 0.5, delay: 0.25 + i * 0.08 }}
-                  className="glass rounded-xl p-3.5 md:p-4 text-center"
-                >
-                  <stat.icon
-                    className="w-5 h-5 text-sky-400 mx-auto mb-1.5 md:mb-2"
-                    aria-hidden="true"
-                  />
-                  <div className="text-xl md:text-2xl font-bold text-white mb-0.5 md:mb-1">
-                    {stat.value}
-                  </div>
-                  <div className="text-[11px] md:text-xs text-[#64748B] uppercase tracking-[0.1em]">
-                    {stat.label}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
           </div>
 
           {/* ── Right column: bio, skills, experience ── */}

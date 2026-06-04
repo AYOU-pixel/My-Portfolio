@@ -245,7 +245,7 @@ export default function Contact() {
                   </Button>
                 </motion.a>
                 <motion.a
-                  href="https://www.linkedin.com/in/ayoub-rchidi-0b344a322/"
+                  href="https://www.linkedin.com/in/ayoub-rachidi-0b344a322/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="LinkedIn profile"

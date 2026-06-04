@@ -129,14 +129,21 @@ export default function HeroSection() {
               </span>
             </h1>
 
-            <p
-              ref={subheadingRef}
-              className="text-base md:text-lg lg:text-xl text-[#94A3B8] max-w-md md:max-w-lg mx-auto lg:mx-0 mb-7 md:mb-8 leading-relaxed text-balance"
-              style={{ opacity: shouldReduceMotion ? 1 : 0 }}
-            >
-              Frontend Engineer Focused on High-Performance & Conversion-Driven Experiences.
-              Building fast, scalable web applications with React and Next.js optimized for performance, UX, and business impact.
-            </p>
+<div
+  ref={subheadingRef}
+  className="max-w-md md:max-w-lg mx-auto lg:mx-0 mb-7 md:mb-8"
+  style={{ opacity: shouldReduceMotion ? 1 : 0 }}
+>
+  <p className="text-base md:text-lg lg:text-xl text-[#94A3B8] leading-relaxed">
+    Frontend Developer specializing in landing pages and modern websites
+    designed to generate more leads and convert more visitors.
+  </p>
+
+  <p className="text-base md:text-lg lg:text-xl text-[#94A3B8] leading-relaxed mt-4">
+    Building fast, responsive experiences with React and Next.js that combine
+    clean design, strong performance, and business-focused execution.
+  </p>
+</div>
 
             {/* CTA buttons */}
             <div
@@ -227,7 +234,7 @@ export default function HeroSection() {
                 <Github size={20} aria-hidden="true" />
               </a>
               <a
-                href="https://www.linkedin.com/in/ayoub-rchidi-0b344a322/"
+                href="https://www.linkedin.com/in/ayoub-rachidi-0b344a322/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#94A3B8] hover:text-white transition-colors duration-200 p-2 -m-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50"
