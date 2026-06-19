@@ -17,6 +17,9 @@ const Contact = dynamic(() => import("./components/Contact"), {
 const FooterSection = dynamic(() => import("./components/Footer"), {
   loading: () => <SectionSkeleton />,
 });
+const Testimonials = dynamic(() => import("./components/Testimonials"), {
+  loading: () => <SectionSkeleton />,
+});
 
 /**
  * Lightweight placeholder shown while a lazy section is loading.
@@ -52,14 +55,19 @@ export default function Home() {
         </Suspense>
 
         <Suspense fallback={<SectionSkeleton />}>
+          <Testimonials />
+        </Suspense>
+      </main>
+      
+        <Suspense fallback={<SectionSkeleton />}>
           <About />
         </Suspense>
 
         <Suspense fallback={<SectionSkeleton />}>
           <Contact />
         </Suspense>
-      </main>
 
+        
       <Suspense fallback={<SectionSkeleton />}>
         <FooterSection />
       </Suspense>
