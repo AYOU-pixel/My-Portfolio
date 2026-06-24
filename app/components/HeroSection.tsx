@@ -224,24 +224,30 @@ export default function HeroSection() {
 
             {/* Social links */}
             <div className="mt-8 md:mt-10 flex items-center justify-center lg:justify-start gap-5">
-              <a
+              <motion.a
                 href="https://github.com/AYOU-pixel"
                 target="_blank"
                 rel="noopener noreferrer"
+                whileHover={{ scale: 1.12, y: -2 }}
+                whileTap={{ scale: 0.92 }}
+                transition={{ type: "spring", stiffness: 400, damping: 18 }}
                 className="text-[#94A3B8] hover:text-white transition-colors duration-200 p-2 -m-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50"
                 aria-label="GitHub profile"
               >
                 <Github size={20} aria-hidden="true" />
-              </a>
-              <a
+              </motion.a>
+              <motion.a
                 href="https://www.linkedin.com/in/ayoub-rachidi-0b344a322/"
                 target="_blank"
                 rel="noopener noreferrer"
+                whileHover={{ scale: 1.12, y: -2 }}
+                whileTap={{ scale: 0.92 }}
+                transition={{ type: "spring", stiffness: 400, damping: 18 }}
                 className="text-[#94A3B8] hover:text-white transition-colors duration-200 p-2 -m-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50"
                 aria-label="LinkedIn profile"
               >
                 <Linkedin size={20} aria-hidden="true" />
-              </a>
+              </motion.a>
             </div>
           </div>
 

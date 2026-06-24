@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, useInView, type Variants } from "framer-motion";
-import { Mail, Phone, MapPin, Send, Github, Linkedin, CheckCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Github, Linkedin, CheckCircle, AlertCircle } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { AnimatedText } from "./ui/AnimatedUnderline";
 import { Input } from "./ui/input";
@@ -24,12 +24,19 @@ interface ContactInfoItem {
   value: string;
   hoverColor: string;
   isLink: boolean;
+  ariaLabel: string;
 }
 
 interface FormState {
   name: string;
   email: string;
   message: string;
+}
+
+interface FormErrors {
+  name?: string;
+  email?: string;
+  message?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -46,6 +53,7 @@ const CONTACT_INFO_ITEMS: ContactInfoItem[] = [
     value: "ayoubprograma@gmail.com",
     hoverColor: "group-hover:text-sky-300",
     isLink: true,
+    ariaLabel: "Send email to ayoubprograma@gmail.com",
   },
   {
     href: "tel:+212781913306",
@@ -56,6 +64,7 @@ const CONTACT_INFO_ITEMS: ContactInfoItem[] = [
     value: "+212 781 913 306",
     hoverColor: "group-hover:text-indigo-300",
     isLink: true,
+    ariaLabel: "Call +212 781 913 306",
   },
   {
     href: null,
@@ -66,6 +75,7 @@ const CONTACT_INFO_ITEMS: ContactInfoItem[] = [
     value: "Rabat, Morocco",
     hoverColor: "",
     isLink: false,
+    ariaLabel: "Location: Rabat, Morocco",
   },
 ];
 
@@ -85,7 +95,29 @@ const itemVariants: Variants = {
 };
 
 // ---------------------------------------------------------------------------
-// Sub-component: ContactInfoCard (avoids duplicated JSX between link/non-link)
+// Validation helpers
+// ---------------------------------------------------------------------------
+
+function validateEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validateForm(state: FormState): FormErrors {
+  const errors: FormErrors = {};
+  if (!state.name.trim()) errors.name = "Name is required";
+  else if (state.name.trim().length < 2) errors.name = "Name must be at least 2 characters";
+  
+  if (!state.email.trim()) errors.email = "Email is required";
+  else if (!validateEmail(state.email)) errors.email = "Please enter a valid email address";
+  
+  if (!state.message.trim()) errors.message = "Message is required";
+  else if (state.message.trim().length < 10) errors.message = "Message must be at least 10 characters";
+  
+  return errors;
+}
+
+// ---------------------------------------------------------------------------
+// Sub-component: ContactInfoCard
 // ---------------------------------------------------------------------------
 
 interface ContactInfoCardProps {
@@ -94,24 +126,34 @@ interface ContactInfoCardProps {
 
 function ContactInfoCard({ item }: ContactInfoCardProps) {
   const Icon = item.icon;
+  const CardWrapper = item.isLink ? "a" : "div";
+  const linkProps = item.isLink
+    ? { href: item.href!, target: "_blank", rel: "noopener noreferrer", "aria-label": item.ariaLabel }
+    : {};
+
   return (
-    <Card className="glass border-white/[0.06] bg-transparent hover:bg-white/5 active:bg-white/[0.08] transition-all duration-200 group cursor-default">
-      <CardContent className="flex items-center gap-3 md:gap-4 p-3.5 md:p-4">
-        <div
-          className={`w-9 h-9 md:w-10 md:h-10 rounded-lg ${item.iconBg} flex items-center justify-center shrink-0`}
-        >
-          <Icon className={`w-4 h-4 md:w-5 md:h-5 ${item.iconColor}`} aria-hidden="true" />
-        </div>
-        <div className="min-w-0">
-          <div className="text-xs md:text-sm text-[#64748B] mb-0.5">{item.label}</div>
+    <CardWrapper
+      {...linkProps}
+      className={`block ${item.isLink ? "cursor-pointer" : "cursor-default"}`}
+    >
+      <Card className="glass border-white/[0.06] bg-transparent hover:bg-white/5 active:bg-white/[0.08] transition-all duration-200 group">
+        <CardContent className="flex items-center gap-3 md:gap-4 p-3.5 md:p-4">
           <div
-            className={`text-sm md:text-base text-white font-medium transition-colors truncate ${item.hoverColor}`}
+            className={`w-9 h-9 md:w-10 md:h-10 rounded-lg ${item.iconBg} flex items-center justify-center shrink-0`}
           >
-            {item.value}
+            <Icon className={`w-4 h-4 md:w-5 md:h-5 ${item.iconColor}`} aria-hidden="true" />
           </div>
-        </div>
-      </CardContent>
-    </Card>
+          <div className="min-w-0">
+            <div className="text-xs md:text-sm text-[#64748B] mb-0.5">{item.label}</div>
+            <div
+              className={`text-sm md:text-base text-white font-medium transition-colors truncate ${item.hoverColor}`}
+            >
+              {item.value}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </CardWrapper>
   );
 }
 
@@ -121,37 +163,81 @@ function ContactInfoCard({ item }: ContactInfoCardProps) {
 
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView   = useInView(sectionRef, { once: true, margin: "-80px" });
+  const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
+  const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const [formState,   setFormState]   = useState<FormState>(INITIAL_FORM_STATE);
+  const [formState, setFormState] = useState<FormState>(INITIAL_FORM_STATE);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted,  setIsSubmitted]  = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Clear success state on unmount
+  useEffect(() => {
+    return () => {
+      if (successTimeoutRef.current) clearTimeout(successTimeoutRef.current);
+    };
+  }, []);
+
+  const validateField = useCallback((field: keyof FormState, value: string) => {
+    const fieldErrors = validateForm({ ...formState, [field]: value });
+    setErrors((prev) => ({ ...prev, [field]: fieldErrors[field] }));
+  }, [formState]);
+
+  const handleChange = useCallback(
+    (field: keyof FormState, value: string) => {
+      setFormState((prev) => ({ ...prev, [field]: value }));
+      if (touched[field]) {
+        validateField(field, value);
+      }
+    },
+    [touched, validateField],
+  );
+
+  const handleBlur = useCallback(
+    (field: keyof FormState) => {
+      setTouched((prev) => ({ ...prev, [field]: true }));
+      validateField(field, formState[field]);
+    },
+    [formState, validateField],
+  );
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
+      
+      // Validate all fields
+      const formErrors = validateForm(formState);
+      setErrors(formErrors);
+      setTouched({ name: true, email: true, message: true });
+      
+      if (Object.keys(formErrors).length > 0) {
+        // Focus first invalid field
+        const firstErrorField = Object.keys(formErrors)[0] as keyof FormState;
+        document.getElementById(firstErrorField)?.focus();
+        return;
+      }
+
       if (isSubmitting) return;
       setIsSubmitting(true);
+
       try {
-        // Replace with your real form submission (e.g. fetch to an API route)
         await new Promise<void>((resolve) => setTimeout(resolve, 1200));
         setIsSubmitted(true);
         setFormState(INITIAL_FORM_STATE);
-        setTimeout(() => setIsSubmitted(false), 4000);
+        setTouched({});
+        setErrors({});
+        
+        // Auto-dismiss after 5s with cleanup
+        successTimeoutRef.current = setTimeout(() => setIsSubmitted(false), 5000);
       } finally {
         setIsSubmitting(false);
       }
     },
-    [isSubmitting],
+    [formState, isSubmitting],
   );
 
-  // Single generic change handler keyed to FormState fields
-  const handleChange = useCallback(
-    (field: keyof FormState, value: string) => {
-      setFormState((prev) => ({ ...prev, [field]: value }));
-    },
-    [],
-  );
+  const getFieldErrorId = (field: string) => `${field}-error`;
 
   return (
     <section
@@ -159,14 +245,12 @@ export default function Contact() {
       id="contact"
       className="section-padding bg-[#0B0F19] relative overflow-hidden"
     >
-      {/* Decorative glow */}
       <div
         className="absolute bottom-0 right-0 w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-sky-500/5 rounded-full blur-[100px] md:blur-[120px] pointer-events-none"
         aria-hidden="true"
       />
 
       <div className="container-tight relative z-10">
-        {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
@@ -187,14 +271,13 @@ export default function Contact() {
 
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
 
-          {/* ── Left column: contact info + socials ── */}
+          {/* Left column */}
           <motion.div
             initial={{ opacity: 0, x: -16 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -16 }}
             transition={{ duration: 0.55, delay: 0.15 }}
             className="lg:col-span-5 space-y-6 md:space-y-8"
           >
-            {/* Contact info cards */}
             <div className="space-y-3 md:space-y-4">
               {CONTACT_INFO_ITEMS.map((item, i) => (
                 <motion.div
@@ -204,18 +287,11 @@ export default function Contact() {
                   initial="hidden"
                   animate={isInView ? "visible" : "hidden"}
                 >
-                  {item.isLink ? (
-                    <a href={item.href!} className="block">
-                      <ContactInfoCard item={item} />
-                    </a>
-                  ) : (
-                    <ContactInfoCard item={item} />
-                  )}
+                  <ContactInfoCard item={item} />
                 </motion.div>
               ))}
             </div>
 
-            {/* Social links */}
             <motion.div
               custom={3}
               variants={itemVariants}
@@ -230,43 +306,33 @@ export default function Contact() {
                   href="https://github.com/AYOU-pixel"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="GitHub profile"
+                  aria-label="GitHub profile (opens in new tab)"
                   whileHover={{ scale: 1.05, y: -1 }}
                   whileTap={{ scale: 0.96 }}
                   transition={{ type: "spring", stiffness: 450, damping: 18 }}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 glass border border-white/[0.06] bg-transparent text-[#E2E8F0] hover:text-white hover:bg-white/5 rounded-full text-sm font-medium transition-colors focus-ring"
                 >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="glass border-white/[0.06] bg-transparent text-[#E2E8F0] hover:text-white hover:bg-white/5 gap-2"
-                  >
-                    <Github size={15} aria-hidden="true" />
-                    GitHub
-                  </Button>
+                  <Github size={15} aria-hidden="true" />
+                  GitHub
                 </motion.a>
                 <motion.a
                   href="https://www.linkedin.com/in/ayoub-rachidi-0b344a322/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="LinkedIn profile"
+                  aria-label="LinkedIn profile (opens in new tab)"
                   whileHover={{ scale: 1.05, y: -1 }}
                   whileTap={{ scale: 0.96 }}
                   transition={{ type: "spring", stiffness: 450, damping: 18 }}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 glass border border-white/[0.06] bg-transparent text-[#E2E8F0] hover:text-white hover:bg-white/5 rounded-full text-sm font-medium transition-colors focus-ring"
                 >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="glass border-white/[0.06] bg-transparent text-[#E2E8F0] hover:text-white hover:bg-white/5 gap-2"
-                  >
-                    <Linkedin size={15} aria-hidden="true" />
-                    LinkedIn
-                  </Button>
+                  <Linkedin size={15} aria-hidden="true" />
+                  LinkedIn
                 </motion.a>
               </div>
             </motion.div>
           </motion.div>
 
-          {/* ── Right column: contact form ── */}
+          {/* Right column: contact form */}
           <motion.div
             initial={{ opacity: 0, x: 16 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 16 }}
@@ -281,57 +347,90 @@ export default function Contact() {
                   aria-label="Contact form"
                   noValidate
                 >
-                  {/* Name + Email row */}
                   <div className="grid sm:grid-cols-2 gap-4 md:gap-5">
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-sm font-medium text-[#E2E8F0]">
-                        Name
+                        Name <span className="text-sky-400" aria-hidden="true">*</span>
                       </Label>
                       <Input
                         id="name"
+                        name="name"
                         type="text"
                         required
                         autoComplete="name"
                         value={formState.name}
                         onChange={(e) => handleChange("name", e.target.value)}
+                        onBlur={() => handleBlur("name")}
                         placeholder="John Doe"
-                        className="bg-[#111827] border-white/[0.06] text-white placeholder-[#475569] focus-visible:ring-sky-500/30 focus-visible:border-sky-500/30 rounded-xl h-11 transition-all duration-200"
+                        aria-invalid={!!errors.name}
+                        aria-describedby={errors.name ? getFieldErrorId("name") : undefined}
+                        className={`bg-[#111827] border-white/[0.06] text-white placeholder-[#475569] focus-visible:ring-sky-500/30 focus-visible:border-sky-500/30 rounded-xl h-11 transition-all duration-200 ${
+                          errors.name && touched.name ? "border-red-500/50 focus-visible:border-red-500/50 focus-visible:ring-red-500/20" : ""
+                        }`}
                       />
+                      {errors.name && touched.name && (
+                        <p id={getFieldErrorId("name")} className="text-xs text-red-400 flex items-center gap-1" role="alert">
+                          <AlertCircle size={12} aria-hidden="true" />
+                          {errors.name}
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-sm font-medium text-[#E2E8F0]">
-                        Email
+                        Email <span className="text-sky-400" aria-hidden="true">*</span>
                       </Label>
                       <Input
                         id="email"
+                        name="email"
                         type="email"
                         required
                         autoComplete="email"
                         value={formState.email}
                         onChange={(e) => handleChange("email", e.target.value)}
+                        onBlur={() => handleBlur("email")}
                         placeholder="john@example.com"
-                        className="bg-[#111827] border-white/[0.06] text-white placeholder-[#475569] focus-visible:ring-sky-500/30 focus-visible:border-sky-500/30 rounded-xl h-11 transition-all duration-200"
+                        aria-invalid={!!errors.email}
+                        aria-describedby={errors.email ? getFieldErrorId("email") : undefined}
+                        className={`bg-[#111827] border-white/[0.06] text-white placeholder-[#475569] focus-visible:ring-sky-500/30 focus-visible:border-sky-500/30 rounded-xl h-11 transition-all duration-200 ${
+                          errors.email && touched.email ? "border-red-500/50 focus-visible:border-red-500/50 focus-visible:ring-red-500/20" : ""
+                        }`}
                       />
+                      {errors.email && touched.email && (
+                        <p id={getFieldErrorId("email")} className="text-xs text-red-400 flex items-center gap-1" role="alert">
+                          <AlertCircle size={12} aria-hidden="true" />
+                          {errors.email}
+                        </p>
+                      )}
                     </div>
                   </div>
 
-                  {/* Message */}
                   <div className="space-y-2">
                     <Label htmlFor="message" className="text-sm font-medium text-[#E2E8F0]">
-                      Message
+                      Message <span className="text-sky-400" aria-hidden="true">*</span>
                     </Label>
                     <Textarea
                       id="message"
+                      name="message"
                       required
                       rows={5}
                       value={formState.message}
                       onChange={(e) => handleChange("message", e.target.value)}
+                      onBlur={() => handleBlur("message")}
                       placeholder="Tell me about your project..."
-                      className="bg-[#111827] border-white/[0.06] text-white placeholder-[#475569] focus-visible:ring-sky-500/30 focus-visible:border-sky-500/30 rounded-xl resize-none transition-all duration-200"
+                      aria-invalid={!!errors.message}
+                      aria-describedby={errors.message ? getFieldErrorId("message") : undefined}
+                      className={`bg-[#111827] border-white/[0.06] text-white placeholder-[#475569] focus-visible:ring-sky-500/30 focus-visible:border-sky-500/30 rounded-xl resize-none transition-all duration-200 ${
+                        errors.message && touched.message ? "border-red-500/50 focus-visible:border-red-500/50 focus-visible:ring-red-500/20" : ""
+                      }`}
                     />
+                    {errors.message && touched.message && (
+                      <p id={getFieldErrorId("message")} className="text-xs text-red-400 flex items-center gap-1" role="alert">
+                        <AlertCircle size={12} aria-hidden="true" />
+                        {errors.message}
+                      </p>
+                    )}
                   </div>
 
-                  {/* Submit button */}
                   <motion.div
                     whileHover={!isSubmitting && !isSubmitted ? { scale: 1.02, y: -1 } : {}}
                     whileTap={!isSubmitting && !isSubmitted ? { scale: 0.97 } : {}}
@@ -347,8 +446,8 @@ export default function Contact() {
                           : "bg-white text-[#0B0F19] hover:bg-[#E2E8F0]"
                       } disabled:opacity-60 disabled:cursor-not-allowed`}
                       aria-live="polite"
+                      aria-atomic="true"
                     >
-                      {/* Shimmer sweep — only shown in idle state */}
                       {!isSubmitting && !isSubmitted && (
                         <motion.span
                           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full pointer-events-none"
@@ -369,7 +468,7 @@ export default function Contact() {
                       ) : isSubmitted ? (
                         <span className="flex items-center gap-2 relative z-10">
                           <CheckCircle size={16} aria-hidden="true" />
-                          Message sent!
+                          Message sent successfully!
                         </span>
                       ) : (
                         <span className="flex items-center gap-2 relative z-10">

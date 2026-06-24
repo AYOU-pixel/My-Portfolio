@@ -78,12 +78,12 @@ const EXPERIENCE: ExperienceEntry[] = [
     role: "Frontend Engineer | Freelance & Independent Projects",
     company: "Self-Employed",
     description:
-      "Designing and developing high-performance web experiences focused on frontend performance, user engagement, and conversion-oriented UX. Specialized in building landing pages optimized for lead generation, scalable React/Next.js applications, modern UI systems, and responsive digital experiences. Worked on projects including fitness brands, healthy meal platforms, and fashion e-commerce applications.",
+      "Designing and developing high-performance web experiences focused on frontend performance, user engagement, and conversion-oriented UX. Specialized in building landing pages optimized for lead generation, scalable React/Next.js applications, modern UI systems, and responsive digital experiences.",
   },
 ];
 
 // ---------------------------------------------------------------------------
-// Typed Framer Motion variants
+// Framer Motion variants
 // ---------------------------------------------------------------------------
 
 const containerVariants: Variants = {
@@ -118,7 +118,6 @@ export default function About() {
       id="about"
       className="section-padding bg-[#0B0F19] relative overflow-hidden"
     >
-      {/* Decorative background glow */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] md:w-[800px] md:h-[400px] bg-indigo-500/5 rounded-full blur-[100px] md:blur-[120px] pointer-events-none"
         aria-hidden="true"
@@ -145,13 +144,13 @@ export default function About() {
 
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
 
-          {/* ── Left column: photo + stats ── */}
+          {/* Left column: photo */}
           <div className="lg:col-span-5">
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.55, delay: 0.15 }}
-              className="relative aspect-square max-w-sm md:max-w-md mx-auto lg:mx-0"
+              className="relative aspect-square max-w-sm md:max-w-md mx-auto lg:mx-0 rounded-2xl overflow-hidden ring-1 ring-white/[0.06]"
             >
               <Image
                 src="/ayoub.png"
@@ -159,11 +158,12 @@ export default function About() {
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 40vw"
+                priority={false}
               />
             </motion.div>
           </div>
 
-          {/* ── Right column: bio, skills, experience ── */}
+          {/* Right column: bio, skills, experience */}
           <div className="lg:col-span-7 space-y-10 md:space-y-12">
 
             {/* Background */}
@@ -223,7 +223,7 @@ export default function About() {
                       animate={isInView ? "visible" : "hidden"}
                       className="flex flex-wrap gap-2 md:gap-3"
                       role="list"
-                      aria-label={`${group.category} skills`}
+                      aria-label={`${group.category} skills and technologies`}
                     >
                       {group.items.map((skill) => (
                         <motion.div
@@ -237,14 +237,15 @@ export default function About() {
                           whileTap={{ scale: 0.95 }}
                           className="group relative"
                           role="listitem"
+                          aria-label={skill.name}
                         >
                           <div
-                            className="flex items-center gap-2 md:gap-2.5 px-3 md:px-4 py-2 md:py-2.5 glass rounded-xl cursor-pointer transition-all duration-300 hover:bg-white/[0.05] hover:ring-white/[0.08] ring-1 ring-transparent"
+                            className="flex items-center gap-2 md:gap-2.5 px-3 md:px-4 py-2 md:py-2.5 glass rounded-xl cursor-default transition-all duration-300 hover:bg-white/[0.05] hover:ring-white/[0.08] ring-1 ring-transparent"
                             style={
                               {
-                                "--icon-color": skill.color,
-                                "--glow-color": `${skill.color}40`,
-                              } as React.CSSProperties
+                                ["--icon-color" as string]: skill.color,
+                                ["--glow-color" as string]: `${skill.color}40`,
+                              }
                             }
                           >
                             <div
@@ -277,7 +278,10 @@ export default function About() {
               <h3 className="text-xl md:text-2xl font-semibold text-white mb-5 md:mb-6">
                 Experience
               </h3>
-              <ol className="space-y-8 md:space-y-10 relative before:absolute before:left-0 before:top-2 before:bottom-2 before:w-px before:bg-white/[0.08]">
+              <ol 
+                className="space-y-8 md:space-y-10 relative before:absolute before:left-0 before:top-2 before:bottom-2 before:w-px before:bg-white/[0.08]"
+                aria-label="Work experience timeline"
+              >
                 {EXPERIENCE.map((exp) => (
                   <li key={exp.role} className="pl-5 md:pl-6 relative">
                     <div

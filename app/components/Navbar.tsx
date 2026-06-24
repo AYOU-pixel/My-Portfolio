@@ -10,20 +10,12 @@ import { Menu, X } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
 const NAV_LINKS = [
   { href: "#home", label: "Home" },
   { href: "#projects", label: "Projects" },
   { href: "#about", label: "About" },
   { href: "#contact", label: "Contact" },
 ] as const;
-
-// ---------------------------------------------------------------------------
-// Typed Framer Motion variants
-// ---------------------------------------------------------------------------
 
 const mobileMenuVariants: Variants = {
   hidden: { opacity: 0, y: -10, scale: 0.98 },
@@ -50,18 +42,17 @@ const navItemVariants: Variants = {
   }),
 };
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("#home");
   const headerRef = useRef<HTMLElement>(null);
-  // gsap.quickTo returns a function; store it as a ref for stable identity
   const yTo = useRef<((value: number) => void) | null>(null);
   const lastScrollY = useRef(0);
+  const ticking = useRef(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const lastFocusedElement = useRef<HTMLElement | null>(null);
 
-  // GSAP scroll-hide / background-blur effect
+  // GSAP scroll-hide / background-blur / active section effect
   useEffect(() => {
     const header = headerRef.current;
     if (!header) return;
@@ -91,21 +82,44 @@ export default function Navbar() {
     });
 
     const handleWindowScroll = () => {
-      const currentY = window.scrollY;
+      if (ticking.current) return;
+      ticking.current = true;
 
-      if (currentY < 80) {
-        yTo.current?.(0);
-      } else if (currentY > lastScrollY.current && currentY > 150) {
-        yTo.current?.(-100);
-        setIsMobileMenuOpen(false);
-      } else if (currentY < lastScrollY.current) {
-        yTo.current?.(0);
-      }
+      requestAnimationFrame(() => {
+        const currentY = window.scrollY;
+        const viewportHeight = window.innerHeight;
 
-      lastScrollY.current = currentY;
+        // Navbar hide/show
+        if (currentY < 80) {
+          yTo.current?.(0);
+        } else if (currentY > lastScrollY.current && currentY > 150) {
+          yTo.current?.(-100);
+          setIsMobileMenuOpen(false);
+        } else if (currentY < lastScrollY.current) {
+          yTo.current?.(0);
+        }
+        lastScrollY.current = currentY;
+
+        // Active section detection
+        let currentSection = "#home";
+        for (const link of NAV_LINKS) {
+          const id = link.href.slice(1);
+          const el = document.getElementById(id);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= viewportHeight * 0.4) {
+              currentSection = link.href;
+            }
+          }
+        }
+        setActiveSection(currentSection);
+
+        ticking.current = false;
+      });
     };
 
     window.addEventListener("scroll", handleWindowScroll, { passive: true });
+    handleWindowScroll();
 
     return () => {
       window.removeEventListener("scroll", handleWindowScroll);
@@ -113,27 +127,59 @@ export default function Navbar() {
     };
   }, []);
 
-  // Lock body scroll and handle Escape key when mobile menu is open
+  // Lock body scroll, handle Escape, and trap focus when mobile menu is open
   useEffect(() => {
     if (!isMobileMenuOpen) {
       document.body.style.overflow = "";
       return;
     }
 
+    lastFocusedElement.current = document.activeElement as HTMLElement;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsMobileMenuOpen(false);
+      if (e.key === "Escape") {
+        setIsMobileMenuOpen(false);
+        return;
+      }
+
+      if (e.key === "Tab" && mobileMenuRef.current) {
+        const focusable = mobileMenuRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button, [tabindex]:not([tabindex="-1"])'
+        );
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (!first || !last) return;
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     document.body.style.overflow = "hidden";
 
+    requestAnimationFrame(() => {
+      const firstLink = mobileMenuRef.current?.querySelector<HTMLElement>("a");
+      firstLink?.focus();
+    });
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
+      lastFocusedElement.current?.focus();
     };
   }, [isMobileMenuOpen]);
 
-  // Smooth-scroll to anchor and close mobile menu
   const handleNavClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
       e.preventDefault();
@@ -186,16 +232,25 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.href)}
-                    className="relative px-4 py-2 text-sm font-medium text-[#94A3B8] hover:text-white transition-colors duration-200 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50 group inline-block"
+                    aria-current={activeSection === link.href ? "page" : undefined}
+                    className={`relative px-4 py-2 text-sm font-medium rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50 group inline-block transition-colors duration-200 ${
+                      activeSection === link.href
+                        ? "text-white"
+                        : "text-[#94A3B8] hover:text-white"
+                    }`}
                   >
                     <span className="relative z-10">{link.label}</span>
-                    {/* Animated underline */}
-                    <motion.span
-                      className="absolute bottom-1 left-4 right-4 h-px bg-white/30 origin-left"
-                      initial={{ scaleX: 0 }}
-                      whileHover={{ scaleX: 1 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
-                    />
+                    {activeSection === link.href && (
+                      <span className="absolute bottom-1 left-4 right-4 h-px bg-sky-400" />
+                    )}
+                    {activeSection !== link.href && (
+                      <motion.span
+                        className="absolute bottom-1 left-4 right-4 h-px bg-white/30 origin-left"
+                        initial={{ scaleX: 0 }}
+                        whileHover={{ scaleX: 1 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                      />
+                    )}
                     <span className="absolute inset-0 rounded-lg bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-200" />
                   </Link>
                 </motion.div>
@@ -213,7 +268,6 @@ export default function Navbar() {
                   onClick={(e) => handleNavClick(e, "#contact")}
                   className="relative inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-white text-[#0B0F19] rounded-full hover:bg-[#E2E8F0] transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0F19] overflow-hidden group"
                 >
-                  {/* Shimmer sweep on hover */}
                   <motion.span
                     className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full"
                     whileHover={{ translateX: "200%" }}
@@ -274,21 +328,22 @@ export default function Navbar() {
             className="fixed inset-0 z-40 md:hidden"
             aria-hidden={!isMobileMenuOpen}
           >
-            {/* Backdrop */}
             <div
               className="absolute inset-0 bg-[#0B0F19]/98"
               onClick={() => setIsMobileMenuOpen(false)}
             />
 
-            {/* Menu panel */}
             <motion.nav
               id="mobile-menu"
+              ref={mobileMenuRef}
               variants={mobileMenuVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
               className="absolute top-20 left-4 right-4 bg-[#0B0F19] border border-white/[0.06] rounded-2xl p-3 flex flex-col gap-1 shadow-2xl"
               aria-label="Mobile navigation"
+              aria-modal="true"
+              role="dialog"
             >
               {NAV_LINKS.map((link, i) => (
                 <motion.div
@@ -303,7 +358,12 @@ export default function Navbar() {
                   <Link
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.href)}
-                    className="block px-4 py-3.5 text-base font-medium text-[#E2E8F0] hover:text-white hover:bg-white/5 rounded-xl transition-colors active:bg-white/10"
+                    aria-current={activeSection === link.href ? "page" : undefined}
+                    className={`block px-4 py-3.5 text-base font-medium rounded-xl transition-colors active:bg-white/10 ${
+                      activeSection === link.href
+                        ? "text-white bg-white/5"
+                        : "text-[#E2E8F0] hover:text-white hover:bg-white/5"
+                    }`}
                   >
                     {link.label}
                   </Link>
@@ -319,7 +379,7 @@ export default function Navbar() {
                   <Link
                     href="#contact"
                     onClick={(e) => handleNavClick(e, "#contact")}
-                    className="block w-full text-center px-5 py-3.5 text-sm font-semibold bg-white text-[#0B0F19] rounded-full transition-transform overflow-hidden relative group"
+                    className="block w-full text-center px-5 py-3.5 text-sm font-semibold bg-white text-[#0B0F19] rounded-full transition-transform overflow-hidden relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0F19]"
                   >
                     <motion.span
                       className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full"

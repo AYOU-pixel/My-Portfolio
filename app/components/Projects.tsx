@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useInView, type Variants } from "framer-motion";
 import { ExternalLink, Github, Cloud, Sparkles, ChevronLeft, ChevronRight, Target, Lightbulb, Wrench, CheckCircle2 } from "lucide-react";
@@ -82,7 +82,6 @@ Engineered a fast and responsive experience optimized for performance and user i
       ],
     },
   },
-
   {
     id: 2,
     title: "FitFood",
@@ -105,7 +104,6 @@ Focused on smooth interactions, responsive layouts, and scalable UI architecture
       ],
     },
   },
-
   {
     id: 3,
     title: "Aura Store",
@@ -131,7 +129,7 @@ Focused on clean UX, responsive design, and scalable frontend architecture using
 ];
 
 // ---------------------------------------------------------------------------
-// Typed Framer Motion variants
+// Framer Motion variants
 // ---------------------------------------------------------------------------
 
 const tagContainerVariants: Variants = {
@@ -152,8 +150,45 @@ const tagItemVariants: Variants = {
   },
 };
 
+const imageVariants: Variants = {
+  enter: (direction: number) => ({
+    opacity: 0,
+    scale: 1.04,
+    x: direction > 0 ? 30 : -30,
+  }),
+  center: {
+    opacity: 1,
+    scale: 1,
+    x: 0,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+  },
+  exit: (direction: number) => ({
+    opacity: 0,
+    scale: 0.97,
+    x: direction > 0 ? -30 : 30,
+    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  }),
+};
+
+const contentVariants: Variants = {
+  enter: (direction: number) => ({
+    opacity: 0,
+    y: direction > 0 ? 20 : -20,
+  }),
+  center: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+  },
+  exit: (direction: number) => ({
+    opacity: 0,
+    y: direction > 0 ? -20 : 20,
+    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+  }),
+};
+
 // ---------------------------------------------------------------------------
-// Shared sub-component: ProjectTechTags
+// Sub-components
 // ---------------------------------------------------------------------------
 
 interface ProjectTechTagsProps {
@@ -179,16 +214,16 @@ function ProjectTechTags({ tags, isInView, className = "mb-8" }: ProjectTechTags
             key={tag}
             variants={tagItemVariants}
             whileHover={{
-              scale: 1.08,
+              scale: 1.06,
               y: -2,
-              transition: { type: "spring", stiffness: 450, damping: 16 },
+              transition: { type: "spring", stiffness: 400, damping: 18 },
             }}
             whileTap={{ scale: 0.95 }}
             className="group/tag relative"
           >
             <div
               className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[#94A3B8] bg-white/5 rounded-lg ring-1 ring-white/[0.06] transition-all duration-300 hover:bg-white/[0.05] hover:ring-white/[0.1]"
-              style={{ "--tag-glow": tech.glow } as React.CSSProperties}
+              style={{ ["--tag-glow" as string]: tech.glow }}
             >
               <div
                 className="absolute inset-0 rounded-lg opacity-0 group-hover/tag:opacity-100 transition-opacity duration-300 bg-[var(--tag-glow)] blur-md pointer-events-none"
@@ -204,15 +239,6 @@ function ProjectTechTags({ tags, isInView, className = "mb-8" }: ProjectTechTags
   );
 }
 
-// ---------------------------------------------------------------------------
-// Shared sub-component: CaseStudyBlock
-// ---------------------------------------------------------------------------
-
-interface CaseStudyBlockProps {
-  caseStudy: Project["caseStudy"];
-  isInView: boolean;
-}
-
 const caseStudyVariants: Variants = {
   hidden: { opacity: 0, y: 10 },
   visible: {
@@ -222,6 +248,11 @@ const caseStudyVariants: Variants = {
   },
 };
 
+interface CaseStudyBlockProps {
+  caseStudy: Project["caseStudy"];
+  isInView: boolean;
+}
+
 function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
   return (
     <motion.div
@@ -230,7 +261,6 @@ function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
       animate={isInView ? "visible" : "hidden"}
       className="mb-6 space-y-3"
     >
-      {/* Business Goal */}
       <div className="flex gap-2.5">
         <Target className="w-3.5 h-3.5 text-sky-400 mt-[3px] flex-shrink-0" aria-hidden="true" />
         <div>
@@ -241,7 +271,6 @@ function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
         </div>
       </div>
 
-      {/* Problem */}
       <div className="flex gap-2.5">
         <Lightbulb className="w-3.5 h-3.5 text-[#94A3B8] mt-[3px] flex-shrink-0" aria-hidden="true" />
         <div>
@@ -252,7 +281,6 @@ function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
         </div>
       </div>
 
-      {/* Solution */}
       <div className="flex gap-2.5">
         <Wrench className="w-3.5 h-3.5 text-[#94A3B8] mt-[3px] flex-shrink-0" aria-hidden="true" />
         <div>
@@ -263,7 +291,6 @@ function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
         </div>
       </div>
 
-      {/* Features */}
       <div className="flex gap-2.5">
         <CheckCircle2 className="w-3.5 h-3.5 text-[#94A3B8] mt-[3px] flex-shrink-0" aria-hidden="true" />
         <div>
@@ -290,22 +317,47 @@ function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
 
 export default function Projects() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const headerRef  = useRef<HTMLDivElement>(null);
+  const [direction, setDirection] = useState(1);
+  const headerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const isHeaderInView  = useInView(headerRef,  { once: true, margin: "-80px" });
+  const isHeaderInView = useInView(headerRef, { once: true, margin: "-80px" });
   const isContentInView = useInView(contentRef, { once: true, margin: "-80px" });
 
-  const handleNext = () =>
+  const handleNext = useCallback(() => {
+    setDirection(1);
     setCurrentIndex((i) => (i + 1) % PROJECTS.length);
+  }, []);
 
-  const handlePrevious = () =>
+  const handlePrevious = useCallback(() => {
+    setDirection(-1);
     setCurrentIndex((i) => (i - 1 + PROJECTS.length) % PROJECTS.length);
+  }, []);
+
+  const goToProject = useCallback((index: number) => {
+    setDirection(index > currentIndex ? 1 : -1);
+    setCurrentIndex(index);
+  }, [currentIndex]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") handlePrevious();
+      if (e.key === "ArrowRight") handleNext();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleNext, handlePrevious]);
 
   const currentProject = PROJECTS[currentIndex];
 
   return (
-    <section id="projects" className="section-padding bg-[#0B0F19]">
+    <section 
+      id="projects" 
+      className="section-padding bg-[#0B0F19]"
+      aria-label="Selected projects showcase"
+    >
       <div className="container-tight">
 
         {/* Section header */}
@@ -329,211 +381,37 @@ export default function Projects() {
         </motion.div>
 
         {/* Project display */}
-        <div ref={contentRef}>
+        <div ref={contentRef} aria-live="polite" aria-atomic="true" aria-label={`Project ${currentIndex + 1} of ${PROJECTS.length}: ${currentProject.title}`}>
 
-          {/* ── Desktop Layout ── */}
-          <div className="hidden lg:flex relative items-start justify-center gap-4 xl:gap-8 px-4">
+          {/* Unified responsive layout */}
+          <div className="flex flex-col lg:flex-row items-start justify-center gap-6 lg:gap-8 xl:gap-8 px-0 lg:px-4">
+            
             {/* Project Image */}
             <motion.div
-              className="w-full lg:w-[450px] xl:w-[500px] h-[320px] lg:h-[380px] xl:h-[400px] rounded-3xl overflow-hidden bg-[#0d1525] ring-1 ring-white/[0.06] flex-shrink-0"
+              className="w-full lg:w-[450px] xl:w-[500px] h-[240px] sm:h-[280px] lg:h-[380px] xl:h-[400px] rounded-2xl lg:rounded-3xl overflow-hidden bg-[#0d1525] ring-1 ring-white/[0.06] flex-shrink-0"
               initial={{ opacity: 0, x: -30 }}
               animate={isContentInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
               transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             >
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={currentProject.image}
-                  initial={{ opacity: 0, scale: 1.05 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  custom={direction}
+                  variants={imageVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
                   className="relative w-full h-full"
                 >
                   <Image
                     src={currentProject.image}
-                    alt={currentProject.title}
+                    alt={`${currentProject.title} project preview`}
                     fill
                     className="object-cover"
                     draggable={false}
-                    priority
-                    sizes="(max-width: 1280px) 450px, 500px"
-                  />
-                  {/* Subtle gradient overlay for better depth */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-transparent pointer-events-none" aria-hidden="true" />
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-
-            {/* Project Card — adaptive positioning */}
-            <motion.div
-              className="glass-strong rounded-3xl shadow-2xl p-6 lg:p-8 xl:p-10 w-full lg:w-[420px] xl:w-[480px] z-10 lg:-ml-12 xl:-ml-20 relative flex-shrink-0"
-              initial={{ opacity: 0, x: 30 }}
-              animate={isContentInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
-              transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentProject.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <div className="mb-4">
-                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                      {currentProject.title}
-                    </h2>
-                    <CaseStudyBlock caseStudy={currentProject.caseStudy} isInView={isContentInView} />
-                  </div>
-
-                  <ProjectTechTags tags={currentProject.tags} isInView={isContentInView} />
-
-                  <motion.div
-                    className="flex gap-3"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={isContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-                    transition={{ duration: 0.4, delay: 0.6 }}
-                  >
-                    <motion.a
-                      href={currentProject.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-3 bg-white text-[#0B0F19] rounded-full font-medium text-sm hover:bg-[#E2E8F0] transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <ExternalLink size={16} aria-hidden="true" />
-                      Live Demo
-                    </motion.a>
-                    <motion.a
-                      href={currentProject.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-3 bg-white/5 text-white rounded-full font-medium text-sm hover:bg-white/10 transition-colors ring-1 ring-white/[0.06]"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Github size={16} aria-hidden="true" />
-                      Source Code
-                    </motion.a>
-                  </motion.div>
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-          </div>
-
-          {/* ── Mobile Layout ── */}
-          <div className="md:hidden max-w-sm mx-auto">
-            <motion.div
-              className="w-full aspect-[16/10] rounded-2xl overflow-hidden bg-[#0d1525] ring-1 ring-white/[0.06] mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentProject.image}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="relative w-full h-full"
-                >
-                  <Image
-                    src={currentProject.image}
-                    alt={currentProject.title}
-                    fill
-                    className="object-cover"
-                    draggable={false}
-                    priority
-                    sizes="(max-width: 768px) 100vw, 400px"
-                  />
-                  {/* Subtle gradient overlay for better depth */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-transparent pointer-events-none" aria-hidden="true" />
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-
-            <div className="px-4">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentProject.title}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                >
-                  <h2 className="text-xl font-bold text-white mb-3">
-                    {currentProject.title}
-                  </h2>
-                  <CaseStudyBlock caseStudy={currentProject.caseStudy} isInView={isContentInView} />
-
-                  <ProjectTechTags
-                    tags={currentProject.tags}
-                    isInView={isContentInView}
-                    className="mb-6"
-                  />
-
-                  <motion.div
-                    className="flex gap-3"
-                    initial={{ opacity: 0 }}
-                    animate={isContentInView ? { opacity: 1 } : { opacity: 0 }}
-                    transition={{ duration: 0.4, delay: 0.5 }}
-                  >
-                    <motion.a
-                      href={currentProject.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#0B0F19] rounded-full font-medium text-sm hover:bg-[#E2E8F0] transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <ExternalLink size={16} aria-hidden="true" />
-                      Live Demo
-                    </motion.a>
-                    <motion.a
-                      href={currentProject.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/5 text-white rounded-full font-medium text-sm hover:bg-white/10 transition-colors ring-1 ring-white/[0.06]"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Github size={16} aria-hidden="true" />
-                      Source
-                    </motion.a>
-                  </motion.div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* ── Tablet/Medium Screen Layout (768px–1024px) ── */}
-          <div className="hidden md:flex lg:hidden relative items-start justify-center gap-6 px-4">
-            {/* Project Image */}
-            <motion.div
-              className="w-[350px] h-[300px] rounded-3xl overflow-hidden bg-[#0d1525] ring-1 ring-white/[0.06] flex-shrink-0"
-              initial={{ opacity: 0, x: -30 }}
-              animate={isContentInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentProject.image}
-                  initial={{ opacity: 0, scale: 1.05 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  className="relative w-full h-full"
-                >
-                  <Image
-                    src={currentProject.image}
-                    alt={currentProject.title}
-                    fill
-                    className="object-cover"
-                    draggable={false}
-                    priority
-                    sizes="350px"
+                    priority={currentIndex === 0}
+                    loading={currentIndex === 0 ? "eager" : "lazy"}
+                    sizes="(max-width: 1024px) 100vw, 500px"
                   />
                   <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-transparent pointer-events-none" aria-hidden="true" />
                 </motion.div>
@@ -542,30 +420,31 @@ export default function Projects() {
 
             {/* Project Card */}
             <motion.div
-              className="glass-strong rounded-3xl shadow-2xl p-6 w-[320px] z-10 -ml-6 relative flex-shrink-0"
+              className="glass-strong rounded-2xl lg:rounded-3xl shadow-2xl p-5 sm:p-6 lg:p-8 xl:p-10 w-full lg:w-[420px] xl:w-[480px] z-10 lg:-ml-12 xl:-ml-20 relative flex-shrink-0"
               initial={{ opacity: 0, x: 30 }}
               animate={isContentInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
               transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={currentProject.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  custom={direction}
+                  variants={contentVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
                 >
                   <div className="mb-4">
-                    <h2 className="text-xl font-bold text-white mb-3">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 lg:mb-4">
                       {currentProject.title}
                     </h2>
                     <CaseStudyBlock caseStudy={currentProject.caseStudy} isInView={isContentInView} />
                   </div>
 
-                  <ProjectTechTags tags={currentProject.tags} isInView={isContentInView} className="mb-6" />
+                  <ProjectTechTags tags={currentProject.tags} isInView={isContentInView} />
 
                   <motion.div
-                    className="flex flex-col gap-2.5"
+                    className="flex flex-col sm:flex-row gap-2.5 sm:gap-3"
                     initial={{ opacity: 0, y: 10 }}
                     animate={isContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                     transition={{ duration: 0.4, delay: 0.6 }}
@@ -574,22 +453,26 @@ export default function Projects() {
                       href={currentProject.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-[#0B0F19] rounded-full font-medium text-sm hover:bg-[#E2E8F0] transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      aria-label={`View live demo of ${currentProject.title} (opens in new tab)`}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-[#0B0F19] rounded-full font-medium text-sm hover:bg-[#E2E8F0] transition-colors focus-ring"
+                      whileHover={{ scale: 1.04, y: -1 }}
+                      whileTap={{ scale: 0.96 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 18 }}
                     >
-                      <ExternalLink size={15} aria-hidden="true" />
+                      <ExternalLink size={16} aria-hidden="true" />
                       Live Demo
                     </motion.a>
                     <motion.a
                       href={currentProject.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white/5 text-white rounded-full font-medium text-sm hover:bg-white/10 transition-colors ring-1 ring-white/[0.06]"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      aria-label={`View source code of ${currentProject.title} on GitHub (opens in new tab)`}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/5 text-white rounded-full font-medium text-sm hover:bg-white/10 transition-colors ring-1 ring-white/[0.06] focus-ring"
+                      whileHover={{ scale: 1.04, y: -1 }}
+                      whileTap={{ scale: 0.96 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 18 }}
                     >
-                      <Github size={15} aria-hidden="true" />
+                      <Github size={16} aria-hidden="true" />
                       Source Code
                     </motion.a>
                   </motion.div>
@@ -599,7 +482,7 @@ export default function Projects() {
           </div>
         </div>
 
-        {/* ── Pagination Controls ── */}
+        {/* Pagination Controls */}
         <motion.div
           className="flex justify-center items-center gap-4 md:gap-6 mt-10 md:mt-12 lg:mt-14"
           initial={{ opacity: 0, y: 20 }}
@@ -609,9 +492,10 @@ export default function Projects() {
           <motion.button
             onClick={handlePrevious}
             aria-label="Previous project"
-            className="w-12 h-12 rounded-full bg-white/[0.03] border border-white/[0.06] shadow-md flex items-center justify-center hover:bg-white/[0.06] transition-colors"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            className="w-12 h-12 rounded-full bg-white/[0.03] border border-white/[0.06] shadow-md flex items-center justify-center hover:bg-white/[0.06] transition-colors focus-ring"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            transition={{ type: "spring", stiffness: 400, damping: 18 }}
           >
             <ChevronLeft className="w-6 h-6 text-[#94A3B8]" aria-hidden="true" />
           </motion.button>
@@ -620,11 +504,12 @@ export default function Projects() {
             {PROJECTS.map((project, projectIndex) => (
               <motion.button
                 key={project.id}
-                onClick={() => setCurrentIndex(projectIndex)}
+                onClick={() => goToProject(projectIndex)}
                 role="tab"
                 aria-selected={projectIndex === currentIndex}
-                aria-label={`Go to project: ${project.title}`}
-                className={`rounded-full transition-all duration-300 ${
+                aria-controls="project-content"
+                aria-label={`Project ${projectIndex + 1}: ${project.title}`}
+                className={`rounded-full transition-all duration-300 focus-ring ${
                   projectIndex === currentIndex
                     ? "bg-sky-400 w-6 h-3"
                     : "bg-white/20 hover:bg-white/40 w-3 h-3"
@@ -638,9 +523,10 @@ export default function Projects() {
           <motion.button
             onClick={handleNext}
             aria-label="Next project"
-            className="w-12 h-12 rounded-full bg-white/[0.03] border border-white/[0.06] shadow-md flex items-center justify-center hover:bg-white/[0.06] transition-colors"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+            className="w-12 h-12 rounded-full bg-white/[0.03] border border-white/[0.06] shadow-md flex items-center justify-center hover:bg-white/[0.06] transition-colors focus-ring"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            transition={{ type: "spring", stiffness: 400, damping: 18 }}
           >
             <ChevronRight className="w-6 h-6 text-[#94A3B8]" aria-hidden="true" />
           </motion.button>
