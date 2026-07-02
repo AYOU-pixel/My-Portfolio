@@ -67,7 +67,7 @@ const PROJECTS: Project[] = [
 Focused on mobile-first UX, CTA visibility, and friction reduction to improve engagement and customer acquisition.
 Engineered a fast and responsive experience optimized for performance and user interaction.`,
     image: "/p1.png",
-    link: "https://jafy-gym.vercel.app/",
+    link: "https://www.olympicjafygym.com",
     github: "https://github.com/AYOU-pixel/Jafy_gym",
     tags: ["React", "Next.js", "Tailwind CSS"],
     caseStudy: {
@@ -89,7 +89,7 @@ Engineered a fast and responsive experience optimized for performance and user i
 Structured the interface around conversion flow, mobile usability, and clear content hierarchy to simplify the ordering experience.
 Focused on smooth interactions, responsive layouts, and scalable UI architecture.`,
     image: "/r1.png",
-    link: "https://fit-food-beryl.vercel.app/",
+    link: "https://healthy-food-six-lilac.vercel.app",
     github: "https://github.com/AYOU-pixel/Healthy-Meals",
     tags: ["Next.js", "Tailwind CSS", "Framer Motion"],
     caseStudy: {
