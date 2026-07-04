@@ -2,12 +2,27 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence, useInView, type Variants } from "framer-motion";
-import { ExternalLink, Github, Cloud, Sparkles, ChevronLeft, ChevronRight, Target, Lightbulb, Wrench, CheckCircle2 } from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import {
+  ExternalLink,
+  Github,
+  Cloud,
+  Sparkles,
+  Target,
+  Lightbulb,
+  Wrench,
+  CheckCircle2,
+} from "lucide-react";
 import { FaReact, FaHtml5, FaStripeS } from "react-icons/fa";
 import { SiNextdotjs, SiTailwindcss, SiMongodb, SiPrisma } from "react-icons/si";
 import type { IconType } from "react-icons";
 import { AnimatedText } from "./ui/AnimatedUnderline";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -58,6 +73,9 @@ const FALLBACK_TECH: TechConfig = {
   color: "#94A3B8",
   glow: "rgba(148,163,184,0.2)",
 };
+
+// Subtle per-project accent used for the low-opacity background glow.
+const GLOW_COLORS = ["#38BDF8", "#A78BFA", "#818CF8"];
 
 const PROJECTS: Project[] = [
   {
@@ -129,139 +147,26 @@ Focused on clean UX, responsive design, and scalable frontend architecture using
 ];
 
 // ---------------------------------------------------------------------------
-// Framer Motion variants
+// Shared presentational sub-components (used by both the cinematic pinned
+// experience and the reduced-motion static fallback)
 // ---------------------------------------------------------------------------
 
-const tagContainerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.04, delayChildren: 0.1 },
-  },
-};
-
-const tagItemVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.85, y: 6 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { type: "spring", stiffness: 400, damping: 24 },
-  },
-};
-
-const imageVariants: Variants = {
-  enter: (direction: number) => ({
-    opacity: 0,
-    scale: 1.04,
-    x: direction > 0 ? 30 : -30,
-  }),
-  center: {
-    opacity: 1,
-    scale: 1,
-    x: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-  },
-  exit: (direction: number) => ({
-    opacity: 0,
-    scale: 0.97,
-    x: direction > 0 ? -30 : 30,
-    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
-
-const contentVariants: Variants = {
-  enter: (direction: number) => ({
-    opacity: 0,
-    y: direction > 0 ? 20 : -20,
-  }),
-  center: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-  },
-  exit: (direction: number) => ({
-    opacity: 0,
-    y: direction > 0 ? -20 : 20,
-    transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
-  }),
-};
-
-// ---------------------------------------------------------------------------
-// Sub-components
-// ---------------------------------------------------------------------------
-
-interface ProjectTechTagsProps {
-  tags: string[];
-  isInView: boolean;
-  className?: string;
+interface CaseStudyRefs {
+  goal?: (el: HTMLDivElement | null) => void;
+  problem?: (el: HTMLDivElement | null) => void;
+  solution?: (el: HTMLDivElement | null) => void;
 }
 
-function ProjectTechTags({ tags, isInView, className = "mb-8" }: ProjectTechTagsProps) {
-  return (
-    <motion.div
-      variants={tagContainerVariants}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      className={`flex flex-wrap gap-2 ${className}`}
-    >
-      {tags.map((tag) => {
-        const tech = TECH_ICONS[tag] ?? FALLBACK_TECH;
-        const Icon = tech.icon;
-
-        return (
-          <motion.div
-            key={tag}
-            variants={tagItemVariants}
-            whileHover={{
-              scale: 1.06,
-              y: -2,
-              transition: { type: "spring", stiffness: 400, damping: 18 },
-            }}
-            whileTap={{ scale: 0.95 }}
-            className="group/tag relative"
-          >
-            <div
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[#94A3B8] bg-white/5 rounded-lg ring-1 ring-white/[0.06] transition-all duration-300 hover:bg-white/[0.05] hover:ring-white/[0.1]"
-              style={{ ["--tag-glow" as string]: tech.glow }}
-            >
-              <div
-                className="absolute inset-0 rounded-lg opacity-0 group-hover/tag:opacity-100 transition-opacity duration-300 bg-[var(--tag-glow)] blur-md pointer-events-none"
-                aria-hidden="true"
-              />
-              <Icon className="relative z-10 w-3 h-3" style={{ color: tech.color }} aria-hidden="true" />
-              <span className="relative z-10">{tag}</span>
-            </div>
-          </motion.div>
-        );
-      })}
-    </motion.div>
-  );
-}
-
-const caseStudyVariants: Variants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
-  },
-};
-
-interface CaseStudyBlockProps {
+function CaseStudyContent({
+  caseStudy,
+  refs = {},
+}: {
   caseStudy: Project["caseStudy"];
-  isInView: boolean;
-}
-
-function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
+  refs?: CaseStudyRefs;
+}) {
   return (
-    <motion.div
-      variants={caseStudyVariants}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      className="mb-6 space-y-3"
-    >
-      <div className="flex gap-2.5">
+    <div className="mb-6 space-y-3">
+      <div ref={refs.goal} className="flex gap-2.5">
         <Target className="w-3.5 h-3.5 text-sky-400 mt-[3px] flex-shrink-0" aria-hidden="true" />
         <div>
           <span className="text-[10px] font-semibold uppercase tracking-widest text-sky-400/80 block mb-0.5">
@@ -271,7 +176,7 @@ function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
         </div>
       </div>
 
-      <div className="flex gap-2.5">
+      <div ref={refs.problem} className="flex gap-2.5">
         <Lightbulb className="w-3.5 h-3.5 text-[#94A3B8] mt-[3px] flex-shrink-0" aria-hidden="true" />
         <div>
           <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]/60 block mb-0.5">
@@ -281,7 +186,7 @@ function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
         </div>
       </div>
 
-      <div className="flex gap-2.5">
+      <div ref={refs.solution} className="flex gap-2.5">
         <Wrench className="w-3.5 h-3.5 text-[#94A3B8] mt-[3px] flex-shrink-0" aria-hidden="true" />
         <div>
           <span className="text-[10px] font-semibold uppercase tracking-widest text-[#94A3B8]/60 block mb-0.5">
@@ -299,15 +204,88 @@ function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
           </span>
           <ul className="space-y-0.5">
             {caseStudy.features.map((f) => (
-              <li key={f} className="text-xs text-[#94A3B8] leading-relaxed flex gap-1.5 items-start">
-                <span className="text-sky-400/60 mt-[3px] leading-none select-none" aria-hidden="true">›</span>
+              <li key={f} className="feature-item text-xs text-[#94A3B8] leading-relaxed flex gap-1.5 items-start">
+                <span className="text-sky-400/60 mt-[3px] leading-none select-none" aria-hidden="true">
+                  ›
+                </span>
                 {f}
               </li>
             ))}
           </ul>
         </div>
       </div>
-    </motion.div>
+    </div>
+  );
+}
+
+function TechPills({ tags }: { tags: string[] }) {
+  return (
+    <div className="flex flex-wrap gap-2 mb-8">
+      {tags.map((tag) => {
+        const tech = TECH_ICONS[tag] ?? FALLBACK_TECH;
+        const Icon = tech.icon;
+
+        return (
+          <div
+            key={tag}
+            className="tech-pill group/tag relative transition-transform duration-300 hover:-translate-y-0.5"
+          >
+            <div
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-[#94A3B8] bg-white/5 rounded-lg ring-1 ring-white/[0.06] transition-all duration-300 hover:bg-white/[0.05] hover:ring-white/[0.1]"
+              style={{ ["--tag-glow" as string]: tech.glow }}
+            >
+              <div
+                className="absolute inset-0 rounded-lg opacity-0 group-hover/tag:opacity-100 transition-opacity duration-300 bg-[var(--tag-glow)] blur-md pointer-events-none"
+                aria-hidden="true"
+              />
+              <Icon className="relative z-10 w-3 h-3" style={{ color: tech.color }} aria-hidden="true" />
+              <span className="relative z-10">{tag}</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function ProjectCTAs({
+  project,
+  ctaRef,
+}: {
+  project: Project;
+  ctaRef?: (el: HTMLDivElement | null) => void;
+}) {
+  return (
+    <div ref={ctaRef} className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
+      <a
+        href={project.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`View live demo of ${project.title} (opens in new tab)`}
+        className="group/cta inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-[#0B0F19] rounded-full font-medium text-sm hover:bg-[#E2E8F0] active:scale-95 transition-all duration-300 focus-ring"
+      >
+        <ExternalLink
+          size={16}
+          aria-hidden="true"
+          className="transition-transform duration-300 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5"
+        />
+        Live Demo
+      </a>
+      <a
+        href={project.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`View source code of ${project.title} on GitHub (opens in new tab)`}
+        className="group/gh inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/5 text-white rounded-full font-medium text-sm hover:bg-white/10 active:scale-95 transition-all duration-300 ring-1 ring-white/[0.06] focus-ring"
+      >
+        <Github
+          size={16}
+          aria-hidden="true"
+          className="transition-transform duration-300 group-hover/gh:rotate-12 group-hover/gh:-translate-y-0.5"
+        />
+        Source Code
+      </a>
+    </div>
   );
 }
 
@@ -316,50 +294,219 @@ function CaseStudyBlock({ caseStudy, isInView }: CaseStudyBlockProps) {
 // ---------------------------------------------------------------------------
 
 export default function Projects() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
+  const N = PROJECTS.length;
+
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
   const isHeaderInView = useInView(headerRef, { once: true, margin: "-80px" });
-  const isContentInView = useInView(contentRef, { once: true, margin: "-80px" });
 
-  const handleNext = useCallback(() => {
-    setDirection(1);
-    setCurrentIndex((i) => (i + 1) % PROJECTS.length);
-  }, []);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
-  const handlePrevious = useCallback(() => {
-    setDirection(-1);
-    setCurrentIndex((i) => (i - 1 + PROJECTS.length) % PROJECTS.length);
-  }, []);
-
-  const goToProject = useCallback((index: number) => {
-    setDirection(index > currentIndex ? 1 : -1);
-    setCurrentIndex(index);
-  }, [currentIndex]);
-
-  // Keyboard navigation
+  // Detect (and react live to) prefers-reduced-motion so the scroll-jacked
+  // cinematic version never runs for people who've asked for less motion.
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") handlePrevious();
-      if (e.key === "ArrowRight") handleNext();
-    };
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
+  // Per-project refs — every project is mounted simultaneously (stacked),
+  // GSAP crossfades/transitions between them as the user scrolls.
+  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const glowRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const titleRefs = useRef<(HTMLHeadingElement | null)[]>([]);
+  const goalRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const problemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const solutionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const ctaRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const navRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const sectionProgressRef = useRef<HTMLDivElement>(null);
+
+  const stRef = useRef<ScrollTrigger | null>(null);
+  const activeIndexRef = useRef(0);
+
+  // Cheap, non-React DOM writes driven directly from ScrollTrigger's
+  // onUpdate — avoids re-rendering React on every scroll frame.
+  const updateNav = useCallback(
+    (progress: number) => {
+      if (N <= 1) return;
+      const raw = progress * (N - 1);
+      const newActive = Math.min(N - 1, Math.max(0, Math.round(raw)));
+
+      if (activeIndexRef.current !== newActive) {
+        activeIndexRef.current = newActive;
+        navRefs.current.forEach((btn, i) => {
+          if (!btn) return;
+          btn.classList.toggle("text-white", i === newActive);
+          btn.classList.toggle("text-white/30", i !== newActive);
+          btn.setAttribute("aria-current", i === newActive ? "true" : "false");
+        });
+      }
+
+      if (sectionProgressRef.current) {
+        sectionProgressRef.current.style.transform = `scaleX(${progress})`;
+      }
+    },
+    [N]
+  );
+
+  // Click / keyboard navigation jumps the real scroll position to the
+  // point in the pinned range that corresponds to a given project.
+  const goToIndex = useCallback(
+    (i: number) => {
+      const clamped = Math.min(N - 1, Math.max(0, i));
+      const st = stRef.current;
+      if (!st || N <= 1) return;
+      const target = st.start + (clamped / (N - 1)) * (st.end - st.start);
+      gsap.to(window, { duration: 1, ease: "power2.inOut", scrollTo: { y: target, autoKill: true } });
+    },
+    [N]
+  );
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") goToIndex(activeIndexRef.current - 1);
+      if (e.key === "ArrowRight") goToIndex(activeIndexRef.current + 1);
+    };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleNext, handlePrevious]);
+  }, [goToIndex, prefersReducedMotion]);
 
-  const currentProject = PROJECTS[currentIndex];
+  useGSAP(
+    () => {
+      if (prefersReducedMotion || N <= 1 || !pinRef.current) return;
+
+      // ---- Initial states -------------------------------------------------
+      imageRefs.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.set(el, i === 0 ? { y: "0%", scale: 1, opacity: 1 } : { y: "100%", scale: 1, opacity: 1 });
+      });
+
+      glowRefs.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.set(el, { opacity: i === 0 ? 1 : 0 });
+      });
+
+      panelRefs.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.set(el, { opacity: i === 0 ? 1 : 0, pointerEvents: i === 0 ? "auto" : "none" });
+      });
+
+      titleRefs.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.set(
+          el,
+          i === 0
+            ? { clipPath: "inset(0% 0% 0% 0%)", y: 0, opacity: 1 }
+            : { clipPath: "inset(0% 0% 100% 0%)", y: 24, opacity: 0 }
+        );
+      });
+
+      [goalRefs, problemRefs, solutionRefs].forEach((refArr) => {
+        refArr.current.forEach((el, i) => {
+          if (!el) return;
+          gsap.set(el, i === 0 ? { y: 0, opacity: 1 } : { y: 18, opacity: 0 });
+        });
+      });
+
+      ctaRefs.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.set(el, i === 0 ? { y: 0, opacity: 1 } : { y: 14, opacity: 0 });
+      });
+
+      panelRefs.current.forEach((panel, i) => {
+        if (!panel) return;
+        const features = panel.querySelectorAll(".feature-item");
+        const pills = panel.querySelectorAll(".tech-pill");
+        gsap.set(features, i === 0 ? { x: 0, opacity: 1 } : { x: -12, opacity: 0 });
+        gsap.set(pills, i === 0 ? { scale: 1, y: 0, opacity: 1 } : { scale: 0.85, y: 6, opacity: 0 });
+      });
+
+      // ---- Master scrubbed timeline ---------------------------------------
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: pinRef.current,
+          start: "top top",
+          end: () => `+=${(N - 1) * window.innerHeight * 1.25}`,
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => updateNav(self.progress),
+        },
+      });
+      stRef.current = tl.scrollTrigger as ScrollTrigger;
+
+      for (let i = 0; i < N - 1; i++) {
+        const panelOut = panelRefs.current[i];
+        const panelIn = panelRefs.current[i + 1];
+        const featuresIn = panelIn?.querySelectorAll(".feature-item");
+        const pillsIn = panelIn?.querySelectorAll(".tech-pill");
+
+        // Screenshot stack: outgoing shrinks, fades slightly, recedes;
+        // incoming slides up from below to become the active card.
+        tl.to(imageRefs.current[i], { scale: 0.82, opacity: 0.4, y: "-4%", duration: 1, ease: "none" }, i);
+        tl.to(imageRefs.current[i + 1], { y: "0%", duration: 1, ease: "none" }, i);
+
+        // Ambient background glow crossfades to the next project's accent.
+        tl.to(glowRefs.current[i], { opacity: 0, duration: 0.5, ease: "none" }, i);
+        tl.to(glowRefs.current[i + 1], { opacity: 1, duration: 0.6, ease: "none" }, i + 0.2);
+
+        // Outgoing text recedes as a whole.
+        if (panelOut) {
+          tl.to(panelOut, { opacity: 0, y: -20, duration: 0.3, ease: "power2.in" }, i);
+          tl.set(panelOut, { pointerEvents: "none" }, i + 0.3);
+        }
+
+        // Incoming text reveals in sequence, synced to the same window.
+        if (panelIn) {
+          tl.set(panelIn, { pointerEvents: "auto" }, i + 0.05);
+          tl.to(panelIn, { opacity: 1, duration: 0.01, ease: "none" }, i + 0.05);
+
+          tl.to(
+            titleRefs.current[i + 1],
+            { clipPath: "inset(0% 0% 0% 0%)", y: 0, opacity: 1, duration: 0.28, ease: "power3.out" },
+            i + 0.08
+          );
+          tl.to(goalRefs.current[i + 1], { y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, i + 0.22);
+          tl.to(problemRefs.current[i + 1], { y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, i + 0.32);
+          tl.to(solutionRefs.current[i + 1], { y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, i + 0.42);
+
+          if (featuresIn && featuresIn.length) {
+            tl.to(
+              featuresIn,
+              { x: 0, opacity: 1, stagger: 0.05, duration: 0.2, ease: "power2.out" },
+              i + 0.55
+            );
+          }
+          if (pillsIn && pillsIn.length) {
+            tl.to(
+              pillsIn,
+              { scale: 1, y: 0, opacity: 1, stagger: 0.03, duration: 0.2, ease: "back.out(1.6)" },
+              i + 0.68
+            );
+          }
+
+          tl.to(ctaRefs.current[i + 1], { y: 0, opacity: 1, duration: 0.22, ease: "power2.out" }, i + 0.8);
+        }
+      }
+    },
+    { scope: sectionRef, dependencies: [prefersReducedMotion], revertOnUpdate: true }
+  );
 
   return (
-    <section 
-      id="projects" 
-      className="section-padding bg-[#0B0F19]"
+    <section
+      id="projects"
+      ref={sectionRef}
+      className="section-padding bg-[#0B0F19] relative"
       aria-label="Selected projects showcase"
     >
       <div className="container-tight">
-
         {/* Section header */}
         <motion.div
           ref={headerRef}
@@ -379,160 +526,177 @@ export default function Projects() {
             building modern, performant web applications.
           </p>
         </motion.div>
+      </div>
 
-        {/* Project display */}
-        <div ref={contentRef} aria-live="polite" aria-atomic="true" aria-label={`Project ${currentIndex + 1} of ${PROJECTS.length}: ${currentProject.title}`}>
-
-          {/* Unified responsive layout */}
-          <div className="flex flex-col lg:flex-row items-start justify-center gap-6 lg:gap-8 xl:gap-8 px-0 lg:px-4">
-            
-            {/* Project Image */}
-            <motion.div
-              className="w-full lg:w-[450px] xl:w-[500px] h-[240px] sm:h-[280px] lg:h-[380px] xl:h-[400px] rounded-2xl lg:rounded-3xl overflow-hidden bg-[#0d1525] ring-1 ring-white/[0.06] flex-shrink-0"
-              initial={{ opacity: 0, x: -30 }}
-              animate={isContentInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+      {prefersReducedMotion ? (
+        // -------------------------------------------------------------
+        // Reduced-motion fallback: plain stacked layout, no scroll-jacking,
+        // no scale/opacity choreography — fully accessible and motion-free.
+        // -------------------------------------------------------------
+        <div className="container-tight">
+          {PROJECTS.map((p) => (
+            <div
+              key={p.id}
+              className="project-static-item flex flex-col lg:flex-row gap-6 lg:gap-10 items-start mb-16 last:mb-0"
             >
-              <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                  key={currentProject.image}
-                  custom={direction}
-                  variants={imageVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  className="relative w-full h-full"
-                >
-                  <Image
-                    src={currentProject.image}
-                    alt={`${currentProject.title} project preview`}
-                    fill
-                    className="object-cover"
-                    draggable={false}
-                    priority={currentIndex === 0}
-                    loading={currentIndex === 0 ? "eager" : "lazy"}
-                    sizes="(max-width: 1024px) 100vw, 500px"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-transparent pointer-events-none" aria-hidden="true" />
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-
-            {/* Project Card */}
-            <motion.div
-              className="glass-strong rounded-2xl lg:rounded-3xl shadow-2xl p-5 sm:p-6 lg:p-8 xl:p-10 w-full lg:w-[420px] xl:w-[480px] z-10 lg:-ml-12 xl:-ml-20 relative flex-shrink-0"
-              initial={{ opacity: 0, x: 30 }}
-              animate={isContentInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
-              transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                  key={currentProject.title}
-                  custom={direction}
-                  variants={contentVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                >
-                  <div className="mb-4">
-                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 lg:mb-4">
-                      {currentProject.title}
-                    </h2>
-                    <CaseStudyBlock caseStudy={currentProject.caseStudy} isInView={isContentInView} />
-                  </div>
-
-                  <ProjectTechTags tags={currentProject.tags} isInView={isContentInView} />
-
-                  <motion.div
-                    className="flex flex-col sm:flex-row gap-2.5 sm:gap-3"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={isContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-                    transition={{ duration: 0.4, delay: 0.6 }}
-                  >
-                    <motion.a
-                      href={currentProject.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`View live demo of ${currentProject.title} (opens in new tab)`}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white text-[#0B0F19] rounded-full font-medium text-sm hover:bg-[#E2E8F0] transition-colors focus-ring"
-                      whileHover={{ scale: 1.04, y: -1 }}
-                      whileTap={{ scale: 0.96 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 18 }}
-                    >
-                      <ExternalLink size={16} aria-hidden="true" />
-                      Live Demo
-                    </motion.a>
-                    <motion.a
-                      href={currentProject.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`View source code of ${currentProject.title} on GitHub (opens in new tab)`}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-white/5 text-white rounded-full font-medium text-sm hover:bg-white/10 transition-colors ring-1 ring-white/[0.06] focus-ring"
-                      whileHover={{ scale: 1.04, y: -1 }}
-                      whileTap={{ scale: 0.96 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 18 }}
-                    >
-                      <Github size={16} aria-hidden="true" />
-                      Source Code
-                    </motion.a>
-                  </motion.div>
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-          </div>
+              <div className="relative w-full lg:w-1/2 h-[240px] sm:h-[320px] lg:h-[380px] rounded-2xl lg:rounded-3xl overflow-hidden ring-1 ring-white/[0.06] bg-[#0d1525]">
+                <Image
+                  src={p.image}
+                  alt={`${p.title} project preview`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+                <div
+                  className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-transparent pointer-events-none"
+                  aria-hidden="true"
+                />
+              </div>
+              <div className="glass-strong rounded-2xl lg:rounded-3xl shadow-2xl p-6 lg:p-8 w-full lg:w-1/2">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 lg:mb-4">
+                  {p.title}
+                </h2>
+                <CaseStudyContent caseStudy={p.caseStudy} />
+                <TechPills tags={p.tags} />
+                <ProjectCTAs project={p} />
+              </div>
+            </div>
+          ))}
         </div>
+      ) : (
+        // -------------------------------------------------------------
+        // Cinematic pinned scroll-storytelling experience
+        // -------------------------------------------------------------
+        <div ref={pinRef} className="relative h-screen w-full overflow-hidden mt-6 lg:mt-2">
+          {/* Section scroll progress */}
+          <div
+            ref={sectionProgressRef}
+            className="absolute top-0 left-0 h-[2px] w-full bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-400 origin-left scale-x-0 z-20 will-change-transform"
+            aria-hidden="true"
+          />
 
-        {/* Pagination Controls */}
-        <motion.div
-          className="flex justify-center items-center gap-4 md:gap-6 mt-10 md:mt-12 lg:mt-14"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isContentInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          <motion.button
-            onClick={handlePrevious}
-            aria-label="Previous project"
-            className="w-12 h-12 rounded-full bg-white/[0.03] border border-white/[0.06] shadow-md flex items-center justify-center hover:bg-white/[0.06] transition-colors focus-ring"
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.92 }}
-            transition={{ type: "spring", stiffness: 400, damping: 18 }}
+          {/* Ambient background glow layers, crossfaded per project */}
+          {PROJECTS.map((p, i) => (
+            <div
+              key={`glow-${p.id}`}
+              ref={(el) => {
+                glowRefs.current[i] = el;
+              }}
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none will-change-opacity"
+              style={{
+                background: `radial-gradient(60% 50% at 50% 35%, ${GLOW_COLORS[i % GLOW_COLORS.length]}22 0%, transparent 70%)`,
+                filter: "blur(90px)",
+              }}
+            />
+          ))}
+
+          <div className="relative h-full container-tight flex items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 w-full items-center">
+              {/* Screenshot stack */}
+              <div className="relative h-[32vh] sm:h-[40vh] lg:h-[60vh] xl:h-[64vh] rounded-2xl lg:rounded-3xl overflow-hidden ring-1 ring-white/[0.06] bg-[#0d1525]">
+                {PROJECTS.map((p, i) => (
+                  <div
+                    key={p.id}
+                    ref={(el) => {
+                      imageRefs.current[i] = el;
+                    }}
+                    className="absolute inset-0 gpu will-change-transform"
+                  >
+                    <Image
+                      src={p.image}
+                      alt={`${p.title} project preview`}
+                      fill
+                      className="object-cover"
+                      draggable={false}
+                      priority={i === 0}
+                      loading={i === 0 ? "eager" : "lazy"}
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
+                    <div
+                      className="absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-transparent pointer-events-none"
+                      aria-hidden="true"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Text stack */}
+              <div
+                className="relative h-[46vh] lg:h-[60vh] xl:h-[64vh]"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {PROJECTS.map((p, i) => (
+                  <div
+                    key={p.id}
+                    ref={(el) => {
+                      panelRefs.current[i] = el;
+                    }}
+                    className="absolute inset-0 glass-strong rounded-2xl lg:rounded-3xl shadow-2xl p-5 sm:p-6 lg:p-8 xl:p-10 overflow-y-auto will-change-opacity"
+                  >
+                    <h2
+                      ref={(el) => {
+                        titleRefs.current[i] = el;
+                      }}
+                      className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 lg:mb-4"
+                    >
+                      {p.title}
+                    </h2>
+                    <CaseStudyContent
+                      caseStudy={p.caseStudy}
+                      refs={{
+                        goal: (el) => {
+                          goalRefs.current[i] = el;
+                        },
+                        problem: (el) => {
+                          problemRefs.current[i] = el;
+                        },
+                        solution: (el) => {
+                          solutionRefs.current[i] = el;
+                        },
+                      }}
+                    />
+                    <TechPills tags={p.tags} />
+                    <ProjectCTAs
+                      project={p}
+                      ctaRef={(el) => {
+                        ctaRefs.current[i] = el;
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Elegant numbered navigation */}
+          <div
+            className="absolute bottom-4 inset-x-0 flex flex-row justify-center items-center gap-6 lg:bottom-auto lg:inset-x-auto lg:right-5 xl:right-8 lg:top-1/2 lg:-translate-y-1/2 lg:flex-col lg:gap-5 z-20"
+            role="tablist"
+            aria-label="Project navigation"
           >
-            <ChevronLeft className="w-6 h-6 text-[#94A3B8]" aria-hidden="true" />
-          </motion.button>
-
-          <div className="flex gap-2" role="tablist" aria-label="Project navigation">
-            {PROJECTS.map((project, projectIndex) => (
-              <motion.button
-                key={project.id}
-                onClick={() => goToProject(projectIndex)}
+            {PROJECTS.map((p, i) => (
+              <button
+                key={p.id}
+                ref={(el) => {
+                  navRefs.current[i] = el;
+                }}
+                onClick={() => goToIndex(i)}
                 role="tab"
-                aria-selected={projectIndex === currentIndex}
-                aria-controls="project-content"
-                aria-label={`Project ${projectIndex + 1}: ${project.title}`}
-                className={`rounded-full transition-all duration-300 focus-ring ${
-                  projectIndex === currentIndex
-                    ? "bg-sky-400 w-6 h-3"
-                    : "bg-white/20 hover:bg-white/40 w-3 h-3"
+                aria-selected={i === 0}
+                aria-current={i === 0 ? "true" : "false"}
+                aria-label={`Go to project ${i + 1}: ${p.title}`}
+                className={`text-xs font-mono tracking-wider transition-colors duration-300 focus-ring px-1.5 py-1 ${
+                  i === 0 ? "text-white" : "text-white/30"
                 }`}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-              />
+              >
+                {String(i + 1).padStart(2, "0")}
+              </button>
             ))}
           </div>
-
-          <motion.button
-            onClick={handleNext}
-            aria-label="Next project"
-            className="w-12 h-12 rounded-full bg-white/[0.03] border border-white/[0.06] shadow-md flex items-center justify-center hover:bg-white/[0.06] transition-colors focus-ring"
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.92 }}
-            transition={{ type: "spring", stiffness: 400, damping: 18 }}
-          >
-            <ChevronRight className="w-6 h-6 text-[#94A3B8]" aria-hidden="true" />
-          </motion.button>
-        </motion.div>
-
-      </div>
+        </div>
+      )}
     </section>
   );
 }
