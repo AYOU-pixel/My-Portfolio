@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useMotionValue } from "framer-motion";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -323,11 +323,12 @@ export default function Projects() {
   const problemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const solutionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const ctaRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const navRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const sectionProgressRef = useRef<HTMLDivElement>(null);
+  const percentRef = useRef<HTMLSpanElement>(null);
 
   const stRef = useRef<ScrollTrigger | null>(null);
   const activeIndexRef = useRef(0);
+  const progressMotionValue = useMotionValue(0);
 
   // Cheap, non-React DOM writes driven directly from ScrollTrigger's
   // onUpdate — avoids re-rendering React on every scroll frame.
@@ -339,19 +340,19 @@ export default function Projects() {
 
       if (activeIndexRef.current !== newActive) {
         activeIndexRef.current = newActive;
-        navRefs.current.forEach((btn, i) => {
-          if (!btn) return;
-          btn.classList.toggle("text-white", i === newActive);
-          btn.classList.toggle("text-white/30", i !== newActive);
-          btn.setAttribute("aria-current", i === newActive ? "true" : "false");
-        });
       }
 
       if (sectionProgressRef.current) {
         sectionProgressRef.current.style.transform = `scaleX(${progress})`;
       }
+
+      if (percentRef.current) {
+        percentRef.current.textContent = `${Math.round(progress * 100)}%`;
+      }
+
+      progressMotionValue.set(progress);
     },
-    [N]
+    [N, progressMotionValue]
   );
 
   // Click / keyboard navigation jumps the real scroll position to the
@@ -453,7 +454,7 @@ export default function Projects() {
         tl.to(imageRefs.current[i], { scale: 0.82, opacity: 0.4, y: "-4%", duration: 1, ease: "none" }, i);
         tl.to(imageRefs.current[i + 1], { y: "0%", duration: 1, ease: "none" }, i);
 
-        // Ambient background glow crossfades to the next project's accent.
+        // Ambient background glow crossfades to the next project&apos;s accent.
         tl.to(glowRefs.current[i], { opacity: 0, duration: 0.5, ease: "none" }, i);
         tl.to(glowRefs.current[i + 1], { opacity: 1, duration: 0.6, ease: "none" }, i + 0.2);
 
@@ -670,30 +671,43 @@ export default function Projects() {
             </div>
           </div>
 
-          {/* Elegant numbered navigation */}
-          <div
-            className="absolute bottom-4 inset-x-0 flex flex-row justify-center items-center gap-6 lg:bottom-auto lg:inset-x-auto lg:right-5 xl:right-8 lg:top-1/2 lg:-translate-y-1/2 lg:flex-col lg:gap-5 z-20"
-            role="tablist"
-            aria-label="Project navigation"
-          >
-            {PROJECTS.map((p, i) => (
-              <button
-                key={p.id}
-                ref={(el) => {
-                  navRefs.current[i] = el;
-                }}
-                onClick={() => goToIndex(i)}
-                role="tab"
-                aria-selected={i === 0}
-                aria-current={i === 0 ? "true" : "false"}
-                aria-label={`Go to project ${i + 1}: ${p.title}`}
-                className={`text-xs font-mono tracking-wider transition-colors duration-300 focus-ring px-1.5 py-1 ${
-                  i === 0 ? "text-white" : "text-white/30"
-                }`}
+          {/* Circular scroll progress */}
+          <div className="absolute bottom-4 right-4 lg:bottom-8 lg:right-8 z-20">
+            <div className="group bg-white/5 flex size-12 items-center justify-center rounded-2xl border border-white/10 backdrop-blur-md ring-1 ring-white/[0.06]">
+              <span
+                ref={percentRef}
+                className="absolute -top-1 flex h-8 -translate-y-full items-center justify-center px-4 text-xs font-medium tabular-nums text-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               >
-                {String(i + 1).padStart(2, "0")}
-              </button>
-            ))}
+                0%
+              </span>
+              <svg className="size-10" viewBox="0 0 48 48" role="presentation">
+                <circle
+                  cx="24"
+                  cy="24"
+                  r={18}
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  className="text-white/20"
+                  fill="none"
+                />
+                <motion.circle
+                  cx="24"
+                  cy="24"
+                  r={18}
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeDasharray={`${2 * Math.PI * 18}`}
+                  style={{
+                    pathLength: progressMotionValue,
+                    rotate: -90,
+                    transformOrigin: "50% 50%",
+                  }}
+                  className="text-sky-400"
+                />
+              </svg>
+            </div>
           </div>
         </div>
       )}
