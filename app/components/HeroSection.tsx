@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import { useReducedMotion, motion, type Variants } from "framer-motion";
 import { ArrowDown, Github, Linkedin } from "lucide-react";
-import { gsap } from "gsap";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { FaReact, FaNodeJs } from "react-icons/fa";
 import {
   SiNextdotjs,
@@ -14,6 +15,8 @@ import {
 } from "react-icons/si";
 import type { IconType } from "react-icons";
 import TextThree from "./ui/typwriter";
+
+gsap.registerPlugin(useGSAP);
 
 // ---------------------------------------------------------------------------
 // Types
@@ -73,20 +76,22 @@ export default function HeroSection() {
   const imageRef       = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    if (shouldReduceMotion) return;
+  // Same architecture as Projects.tsx / Testimonials.tsx: useGSAP() instead
+  // of a manual useEffect + gsap.context — cleanup (revert) is automatic,
+  // and re-runs cleanly if shouldReduceMotion flips mid-session.
+  useGSAP(
+    () => {
+      if (shouldReduceMotion) return;
 
-    const ctx = gsap.context(() => {
       gsap
         .timeline({ defaults: { ease: "power3.out" }, delay: 0.15 })
         .fromTo(headingRef.current,    { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1 })
         .fromTo(subheadingRef.current, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8 }, "-=0.65")
         .fromTo(ctaRef.current,        { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8 }, "-=0.5")
         .fromTo(imageRef.current,      { scale: 0.92, opacity: 0 }, { scale: 1, opacity: 1, duration: 1 }, "-=0.7");
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [shouldReduceMotion]);
+    },
+    { scope: sectionRef, dependencies: [shouldReduceMotion], revertOnUpdate: true }
+  );
 
   return (
     <section
