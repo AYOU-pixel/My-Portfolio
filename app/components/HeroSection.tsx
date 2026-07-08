@@ -266,7 +266,7 @@ export default function HeroSection() {
               <div className="absolute inset-0 bg-gradient-to-tr from-sky-500/20 to-indigo-500/20 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
               <div className="relative w-full h-full rounded-full overflow-hidden shadow-2xl shadow-black/20">
                 <Image
-                  src="/ayoub.png"
+                  src="/a2.png"
                   alt="Ayoub Rachidi — Frontend Engineer"
                   fill
                   className="object-cover scale-[1.18] object-center"

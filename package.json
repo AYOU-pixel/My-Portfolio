@@ -212,6 +212,7 @@
     "minimatch": "^3.1.2",
     "minimist": "^1.2.8",
     "minipass": "^7.1.2",
+    "motion": "^12.42.2",
     "motion-dom": "^12.4.10",
     "motion-utils": "^12.4.10",
     "ms": "^2.1.3",
