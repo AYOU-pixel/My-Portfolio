@@ -31,6 +31,7 @@
     scroll-behavior: auto;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    scrollbar-gutter: stable;
   }
 
   body {
@@ -39,6 +40,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    text-wrap: pretty;
   }
 
   ::selection {
@@ -59,6 +61,11 @@
 
   * {
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Focus visible styles for keyboard navigation (WCAG 2.1) */
+  :focus-visible {
+    @apply outline-none ring-2 ring-sky-400/50 ring-offset-2 ring-offset-[#0B0F19];
   }
 }
 
@@ -86,7 +93,18 @@
 
   /* Reusable focus ring — single definition, used via @apply */
   .focus-ring {
-    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0F19];
+  }
+
+  /* Touch target minimum: 44×44px (Apple HIG / WCAG) */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Content visibility for performance on below-fold sections */
+  .content-visibility-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
   }
 }
 
@@ -103,8 +121,20 @@
     animation-delay: 300ms;
   }
 
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animation-delay-500 {
+    animation-delay: 500ms;
+  }
+
   .text-balance {
     text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
   }
 
   .gpu {
@@ -118,5 +148,15 @@
 
   .will-change-opacity {
     will-change: opacity;
+  }
+
+  /* Performance: contain layout for isolated sections */
+  .contain-layout {
+    contain: layout;
+  }
+
+  /* Prevent layout shift from scrollbar */
+  .scrollbar-stable {
+    scrollbar-gutter: stable;
   }
 }

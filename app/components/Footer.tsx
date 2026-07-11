@@ -1,12 +1,23 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Github, Linkedin, ArrowUp } from "lucide-react";
+
+// ---------------------------------------------------------------------------
+// Spring configs (Framer Motion best practices)
+// ---------------------------------------------------------------------------
+const springMicro = {
+  type: "spring" as const,
+  stiffness: 400,
+  damping: 25,
+  mass: 0.8,
+};
 
 export default function FooterSection() {
   const footerRef = useRef<HTMLElement>(null);
   const isInView = useInView(footerRef, { once: true, margin: "-40px" });
+  const shouldReduceMotion = useReducedMotion();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -17,9 +28,9 @@ export default function FooterSection() {
   return (
     <motion.footer
       ref={footerRef}
-      initial={{ opacity: 0, y: 16 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+      animate={isInView || shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="py-8 md:py-12 border-t border-white/[0.06] bg-[#0B0F19]"
     >
       <div className="container-tight">
@@ -42,10 +53,10 @@ export default function FooterSection() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub profile (opens in new tab)"
-              whileHover={{ scale: 1.12, y: -2 }}
+              whileHover={shouldReduceMotion ? {} : { scale: 1.12, y: -2 }}
               whileTap={{ scale: 0.92 }}
-              transition={{ type: "spring", stiffness: 400, damping: 18 }}
-              className="text-[#64748B] hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring"
+              transition={springMicro}
+              className="text-[#64748B] hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring touch-target"
             >
               <Github size={18} aria-hidden="true" />
             </motion.a>
@@ -54,10 +65,10 @@ export default function FooterSection() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn profile (opens in new tab)"
-              whileHover={{ scale: 1.12, y: -2 }}
+              whileHover={shouldReduceMotion ? {} : { scale: 1.12, y: -2 }}
               whileTap={{ scale: 0.92 }}
-              transition={{ type: "spring", stiffness: 400, damping: 18 }}
-              className="text-[#64748B] hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring"
+              transition={springMicro}
+              className="text-[#64748B] hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring touch-target"
             >
               <Linkedin size={18} aria-hidden="true" />
             </motion.a>
@@ -67,10 +78,10 @@ export default function FooterSection() {
             <motion.button
               type="button"
               onClick={scrollToTop}
-              whileHover={{ scale: 1.05, y: -1 }}
+              whileHover={shouldReduceMotion ? {} : { scale: 1.05, y: -1 }}
               whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 18 }}
-              className="group flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-[#64748B] hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring"
+              transition={springMicro}
+              className="group flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-[#64748B] hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring touch-target"
               aria-label="Scroll back to top"
             >
               Back to top

@@ -6,14 +6,12 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
   display: "swap",
-  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
   display: "swap",
-  preload: true,
 });
 
 export const metadata: Metadata = {
@@ -30,33 +28,53 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Ayoub Rachidi" }],
   creator: "Ayoub Rachidi",
-  // Canonical URL — update to your real domain
   metadataBase: new URL("https://ayoub-rachidi.dev"),
+
+  alternates: {
+    canonical: "/",
+  },
+
   openGraph: {
     type: "website",
     locale: "en_US",
+    url: "https://ayoub-rachidi.dev",
     title: "Ayoub Rachidi — Frontend Engineer",
     description:
       "Portfolio of Ayoub Rachidi, a Frontend Engineer crafting high-performance web experiences with React, Next.js, and TypeScript.",
     siteName: "Ayoub Rachidi Portfolio",
   },
+
   twitter: {
     card: "summary_large_image",
     title: "Ayoub Rachidi — Frontend Engineer",
     description:
       "Portfolio of Ayoub Rachidi, a Frontend Engineer crafting high-performance web experiences with React, Next.js, and TypeScript.",
   },
+
   robots: {
     index: true,
     follow: true,
   },
+
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
+
+  appleWebApp: {
+    title: "Ayoub Rachidi",
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0B0F19",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0B0F19" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+  ],
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  userScalable: true,
 };
 
 export default function RootLayout({
@@ -67,15 +85,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      dir="ltr"
       className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
     >
-      <head>
-        <link rel="icon" href="/logo.png" type="image/png" />
-        {/* Preconnect to Vercel's image optimization CDN to reduce LCP latency */}
-        <link rel="preconnect" href="https://vercel.com" />
-        {/* dns-prefetch as fallback for browsers that don't support preconnect */}
-        <link rel="dns-prefetch" href="//vercel.com" />
-      </head>
       <body className="antialiased">{children}</body>
     </html>
   );

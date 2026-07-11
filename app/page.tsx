@@ -1,76 +1,58 @@
-import { Suspense } from "react";
 import dynamic from "next/dynamic";
+
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import SmoothScroll from "./components/SmoothScroll";
 
-// Lazy-load below-the-fold sections to reduce initial JS payload
-const Projects = dynamic(() => import("./components/Projects"), {
-  loading: () => <SectionSkeleton />,
-});
-const About = dynamic(() => import("./components/About"), {
-  loading: () => <SectionSkeleton />,
-});
-const Contact = dynamic(() => import("./components/Contact"), {
-  loading: () => <SectionSkeleton />,
-});
-const FooterSection = dynamic(() => import("./components/Footer"), {
-  loading: () => <SectionSkeleton />,
-});
-const Testimonials = dynamic(() => import("./components/Testimonials"), {
-  loading: () => <SectionSkeleton />,
-});
-
-/**
- * Lightweight placeholder shown while a lazy section is loading.
- * Uses `aria-hidden` so screen-readers skip over it.
- */
 function SectionSkeleton() {
   return (
     <div
       aria-hidden="true"
-      className="w-full min-h-[50vh] animate-pulse bg-white/[0.02]"
+      className="min-h-[40vh] w-full animate-pulse bg-white/[0.02]"
     />
   );
 }
 
+const Projects = dynamic(() => import("./components/Projects"), {
+  loading: () => <SectionSkeleton />,
+});
+
+const Testimonials = dynamic(() => import("./components/Testimonials"), {
+  loading: () => <SectionSkeleton />,
+});
+
+const About = dynamic(() => import("./components/About"), {
+  loading: () => <SectionSkeleton />,
+});
+
+const Contact = dynamic(() => import("./components/Contact"), {
+  loading: () => <SectionSkeleton />,
+});
+
+const FooterSection = dynamic(() => import("./components/Footer"), {
+  loading: () => <SectionSkeleton />,
+});
+
 export default function Home() {
   return (
     <SmoothScroll>
-      {/* Scroll-progress indicator — driven by SmoothScroll via GSAP */}
       <div
         id="scroll-progress"
-        className="fixed top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-400 z-[100] origin-left scale-x-0 will-change-transform"
         aria-hidden="true"
+        className="fixed top-0 left-0 right-0 z-[100] h-[2px] origin-left scale-x-0 bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-400 will-change-transform"
       />
 
       <Navbar />
 
       <main>
-        {/* HeroSection is eagerly loaded — it's above the fold */}
         <HeroSection />
-
-        <Suspense fallback={<SectionSkeleton />}>
-          <Projects />
-        </Suspense>
-
-        <Suspense fallback={<SectionSkeleton />}>
-          <Testimonials />
-        </Suspense>
+        <Projects />
+        <Testimonials />
+        <About />
+        <Contact />
       </main>
-      
-        <Suspense fallback={<SectionSkeleton />}>
-          <About />
-        </Suspense>
 
-        <Suspense fallback={<SectionSkeleton />}>
-          <Contact />
-        </Suspense>
-
-        
-      <Suspense fallback={<SectionSkeleton />}>
-        <FooterSection />
-      </Suspense>
+      <FooterSection />
     </SmoothScroll>
   );
 }

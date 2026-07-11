@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { AnimatedText } from "./ui/AnimatedUnderline";
 import { FlipCard, type FlipCardData } from "./ui/flip-card";
 
@@ -26,6 +26,7 @@ const PROFILE: FlipCardData = {
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-80px" });
+  const shouldReduceMotion = useReducedMotion();
 
   return (
     <section
@@ -41,9 +42,9 @@ export default function About() {
       <div className="container-tight relative z-10">
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+          animate={isInView || shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+          transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-12 md:mb-16"
         >
           <AnimatedText
@@ -52,7 +53,7 @@ export default function About() {
             underlineClassName="text-sky-400"
             className="items-center justify-center mb-4 md:mb-6"
           />
-          <p className="text-base md:text-lg text-[#94A3B8] max-w-2xl mx-auto leading-relaxed text-balance">
+          <p className="text-base md:text-lg text-[#94A3B8] max-w-2xl mx-auto leading-relaxed text-balance text-pretty">
             Frontend Engineer based in Morocco, specialized in building
             high-performance web experiences that combine modern UI
             engineering with business-focused thinking.
@@ -61,9 +62,9 @@ export default function About() {
 
         {/* Flip card */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
-          transition={{ duration: 0.55, delay: 0.15 }}
+          initial={shouldReduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
+          animate={isInView || shouldReduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
+          transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.55, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           className="relative flex justify-center"
         >
           <div
