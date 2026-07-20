@@ -15,7 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ayoub Rachidi — Frontend Engineer",
+  title: {
+    default: "Ayoub Rachidi — Frontend Engineer",
+    template: "%s — Ayoub Rachidi",
+  },
   description:
     "Portfolio of Ayoub Rachidi, a Frontend Engineer crafting high-performance web experiences with React, Next.js, and TypeScript.",
   keywords: [
@@ -28,7 +31,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Ayoub Rachidi" }],
   creator: "Ayoub Rachidi",
-  metadataBase: new URL("https://ayoub-rachidi.dev"),
+  metadataBase: new URL("https://ayoubtec.vercel.app"),
 
   alternates: {
     canonical: "/",
@@ -37,7 +40,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://ayoub-rachidi.dev",
+    url: "https://ayoubtec.vercel.app",
     title: "Ayoub Rachidi — Frontend Engineer",
     description:
       "Portfolio of Ayoub Rachidi, a Frontend Engineer crafting high-performance web experiences with React, Next.js, and TypeScript.",
@@ -54,6 +57,12 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 
   icons: {
@@ -64,6 +73,8 @@ export const metadata: Metadata = {
   appleWebApp: {
     title: "Ayoub Rachidi",
   },
+
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
@@ -89,7 +100,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

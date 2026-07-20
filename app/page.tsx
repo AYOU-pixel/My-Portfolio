@@ -44,7 +44,8 @@ export default function Home() {
 
       <Navbar />
 
-      <main>
+      {/* NEW: id + tabIndex is the landing target for the skip-link above */}
+      <main id="main-content" tabIndex={-1} className="focus:outline-none">
         <HeroSection />
         <Projects />
         <Testimonials />
