@@ -15,10 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "Ayoub Rachidi — Frontend Engineer",
-    template: "%s — Ayoub Rachidi",
-  },
+  title: "Ayoub Rachidi — Frontend Engineer",
   description:
     "Portfolio of Ayoub Rachidi, a Frontend Engineer crafting high-performance web experiences with React, Next.js, and TypeScript.",
   keywords: [
@@ -57,12 +54,6 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
   },
 
   icons: {
@@ -73,8 +64,6 @@ export const metadata: Metadata = {
   appleWebApp: {
     title: "Ayoub Rachidi",
   },
-
-  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
@@ -100,12 +89,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="antialiased">
-        <a href="#main-content" className="skip-link">
-          Skip to main content
-        </a>
-        {children}
-      </body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
