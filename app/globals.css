@@ -32,8 +32,6 @@
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     scrollbar-gutter: stable;
-    /* NEW: prevents fixed navbar from covering anchor-scrolled sections */
-    scroll-padding-top: 5.5rem;
   }
 
   body {
@@ -43,13 +41,6 @@
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
     text-wrap: pretty;
-  }
-
-  /* NEW: iOS auto-zooms inputs under 16px — silent UX bug on any future form fields */
-  input,
-  textarea,
-  select {
-    font-size: 16px;
   }
 
   ::selection {
@@ -167,17 +158,5 @@
   /* Prevent layout shift from scrollbar */
   .scrollbar-stable {
     scrollbar-gutter: stable;
-  }
-
-  /* NEW: fixes the missing class referenced in Navbar.tsx */
-  .safe-top {
-    padding-top: env(safe-area-inset-top, 0px);
-  }
-
-  /* NEW: accessible skip-link (visually hidden until focused) */
-  .skip-link {
-    @apply sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[200]
-      focus:rounded-lg focus:bg-white focus:px-4 focus:py-2.5 focus:text-sm focus:font-semibold
-      focus:text-[#0B0F19] focus:shadow-lg;
   }
 }
