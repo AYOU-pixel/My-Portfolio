@@ -87,7 +87,6 @@ export default function Navbar() {
           backgroundColor: "rgba(11, 15, 25, 0.92)",
           backdropFilter: "blur(16px)",
           WebkitBackdropFilter: "blur(16px)",
-          boxShadow: "0 1px 0 0 rgba(255,255,255,0.06), 0 8px 24px -8px rgba(0,0,0,0.4)", // NEW
           duration: 0.25,
           ease: "power2.out",
         });
@@ -97,7 +96,6 @@ export default function Navbar() {
           backgroundColor: "rgba(11, 15, 25, 0)",
           backdropFilter: "blur(0px)",
           WebkitBackdropFilter: "blur(0px)",
-          boxShadow: "none", // NEW
           duration: 0.25,
           ease: "power2.out",
         });
@@ -242,7 +240,6 @@ export default function Navbar() {
             {/* Logo — Improved touch target */}
             <Link
               href="#home"
-              prefetch={false}
               onClick={(e) => handleNavClick(e, "#home")}
               className="relative z-10 rounded-full focus-ring touch-target flex items-center justify-center -ml-2"
               aria-label="Go to homepage"
@@ -274,7 +271,6 @@ export default function Navbar() {
                 >
                   <Link
                     href={link.href}
-                    prefetch={false}
                     onClick={(e) => handleNavClick(e, link.href)}
                     aria-current={activeSection === link.href ? "page" : undefined}
                     className={`relative px-4 py-2.5 text-sm font-medium rounded-lg focus-ring group inline-block transition-colors duration-200 touch-target ${
@@ -308,7 +304,6 @@ export default function Navbar() {
               >
                 <Link
                   href="#contact"
-                  prefetch={false}
                   onClick={(e) => handleNavClick(e, "#contact")}
                   className="relative inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold bg-white text-[#0B0F19] rounded-full hover:bg-[#E2E8F0] active:bg-[#CBD5E1] transition-colors duration-200 focus-ring overflow-hidden group touch-target"
                 >
@@ -319,7 +314,6 @@ export default function Navbar() {
 
             {/* Mobile menu toggle — Larger touch target */}
             <motion.button
-              type="button"
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
               whileHover={shouldReduceMotion ? {} : { scale: 1.06 }}
               whileTap={{ scale: 0.92 }}
@@ -368,6 +362,7 @@ export default function Navbar() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-40 md:hidden"
+            aria-hidden={!isMobileMenuOpen}
           >
             <div
               className="absolute inset-0 bg-[#0B0F19]/95 backdrop-blur-sm"
@@ -382,7 +377,7 @@ export default function Navbar() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="absolute top-[4.5rem] left-3 right-3 sm:left-4 sm:right-4 bg-[#0B0F19]/98 border border-white/[0.06] rounded-2xl p-2 flex flex-col gap-1 shadow-2xl shadow-black/40"
+              className="absolute top-[4.5rem] left-3 right-3 sm:left-4 sm:right-4 bg-[#0B0F19]/98 border border-white/[0.06] rounded-2xl p-2 flex flex-col gap-0.5 shadow-2xl shadow-black/40"
               aria-label="Mobile navigation"
               aria-modal="true"
               role="dialog"
@@ -400,7 +395,6 @@ export default function Navbar() {
                 >
                   <Link
                     href={link.href}
-                    prefetch={false}
                     onClick={(e) => handleNavClick(e, link.href)}
                     aria-current={activeSection === link.href ? "page" : undefined}
                     className={`flex items-center px-4 py-3.5 text-[15px] font-medium rounded-xl transition-all active:scale-[0.98] touch-target ${
@@ -422,7 +416,6 @@ export default function Navbar() {
                 >
                   <Link
                     href="#contact"
-                    prefetch={false}
                     onClick={(e) => handleNavClick(e, "#contact")}
                     className="flex items-center justify-center w-full text-center px-5 py-3.5 text-sm font-semibold bg-white text-[#0B0F19] rounded-full active:bg-[#CBD5E1] transition-colors overflow-hidden relative focus-ring touch-target"
                   >
