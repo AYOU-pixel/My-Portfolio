@@ -106,6 +106,27 @@
     content-visibility: auto;
     contain-intrinsic-size: 0 500px;
   }
+
+  /* Reusable muted text — replaces repeated text-[#94A3B8] across components */
+  .text-muted {
+    @apply text-[#94A3B8];
+  }
+
+  /* Slightly lighter than the old #64748B to clear 4.5:1 contrast on small caption text */
+  .text-muted-dim {
+    color: #8595AC;
+  }
+
+  /* Thin, on-brand scrollbar for the overflow-y-auto project/testimonial panels */
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(199 89% 48% / 0.3) transparent;
+  }
+  .scroll-thin::-webkit-scrollbar { width: 6px; }
+  .scroll-thin::-webkit-scrollbar-thumb {
+    background: hsl(199 89% 48% / 0.3);
+    border-radius: 999px;
+  }
 }
 
 @layer utilities {
@@ -158,5 +179,10 @@
   /* Prevent layout shift from scrollbar */
   .scrollbar-stable {
     scrollbar-gutter: stable;
+  }
+
+  /* Safe-area support for notched devices — referenced by Navbar but never defined */
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
   }
 }

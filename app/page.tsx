@@ -6,10 +6,12 @@ import SmoothScroll from "./components/SmoothScroll";
 
 function SectionSkeleton() {
   return (
-    <div
-      aria-hidden="true"
-      className="min-h-[40vh] w-full animate-pulse bg-white/[0.02]"
-    />
+    <div aria-hidden="true" className="section-padding">
+      <div className="container-tight">
+        <div className="h-8 w-48 rounded-full bg-white/[0.03] animate-pulse mb-6" />
+        <div className="h-64 md:h-80 w-full rounded-3xl bg-gradient-to-br from-white/[0.03] to-white/[0.01] animate-pulse" />
+      </div>
+    </div>
   );
 }
 

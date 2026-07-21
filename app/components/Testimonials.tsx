@@ -160,7 +160,7 @@ function TestimonialCard({ testimonial, cardRef, splitQuote = true }: Testimonia
               ) : (
                 <div className="relative">
                   <blockquote className="relative z-10">
-                    <p className="text-lg md:text-xl lg:text-[1.35rem] text-[#64748B] leading-[1.65] font-medium text-balance italic">
+                    <p className="text-lg md:text-xl lg:text-[1.35rem] text-muted-dim leading-[1.65] font-medium text-balance italic">
                       &ldquo;Waiting for client feedback...&rdquo;
                     </p>
                   </blockquote>
@@ -187,7 +187,7 @@ function TestimonialCard({ testimonial, cardRef, splitQuote = true }: Testimonia
                   <p className="text-base md:text-lg font-semibold text-white">
                     {testimonial.businessName}
                   </p>
-                  <p className="text-sm text-[#94A3B8]">{testimonial.position}</p>
+                  <p className="text-sm text-muted">{testimonial.position}</p>
                 </div>
               </div>
             </div>
@@ -208,9 +208,9 @@ function TestimonialCard({ testimonial, cardRef, splitQuote = true }: Testimonia
             <div className="space-y-5 md:space-y-6 flex-1">
               {testimonial.projectDetails.map((detail) => (
                 <div key={detail.label} className="t-detail-row flex items-start gap-3.5">
-                  <detail.icon className="w-4 h-4 text-[#64748B] mt-0.5 flex-shrink-0" aria-hidden="true" />
+                  <detail.icon className="w-4 h-4 text-muted-dim mt-0.5 flex-shrink-0" aria-hidden="true" />
                   <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] mb-0.5">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-dim mb-0.5">
                       {detail.label}
                     </p>
                     <p className="text-sm md:text-base text-[#E2E8F0] font-medium">{detail.value}</p>
@@ -219,9 +219,9 @@ function TestimonialCard({ testimonial, cardRef, splitQuote = true }: Testimonia
               ))}
 
               <div className="t-detail-row flex items-start gap-3.5 pt-2">
-                <Globe className="w-4 h-4 text-[#64748B] mt-0.5 flex-shrink-0" aria-hidden="true" />
+                <Globe className="w-4 h-4 text-muted-dim mt-0.5 flex-shrink-0" aria-hidden="true" />
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] mb-0.5">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-dim mb-0.5">
                     Website
                   </p>
                   <a
@@ -477,7 +477,7 @@ export default function Testimonials() {
 
           <motion.p
             variants={itemVariants}
-            className="text-base md:text-lg text-[#94A3B8] max-w-2xl mx-auto leading-relaxed text-balance"
+            className="text-base md:text-lg text-muted max-w-2xl mx-auto leading-relaxed text-balance"
           >
             {isCarousel
               ? `Feedback from ${N} businesses I've collaborated with`

@@ -58,6 +58,13 @@ const hamburgerVariants: Variants = {
   exit: { rotate: 45, opacity: 0, scale: 0.8 },
 };
 
+// Hoisted so both desktop and (future) mobile variants share one source of truth
+function navLinkClasses(isActive: boolean) {
+  return `relative px-4 py-2.5 text-sm font-medium rounded-lg focus-ring group inline-block transition-colors duration-200 touch-target ${
+    isActive ? "text-white" : "text-[#94A3B8] hover:text-white"
+  }`;
+}
+
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("#home");
@@ -240,6 +247,7 @@ export default function Navbar() {
             {/* Logo — Improved touch target */}
             <Link
               href="#home"
+              prefetch={false}
               onClick={(e) => handleNavClick(e, "#home")}
               className="relative z-10 rounded-full focus-ring touch-target flex items-center justify-center -ml-2"
               aria-label="Go to homepage"
@@ -271,13 +279,10 @@ export default function Navbar() {
                 >
                   <Link
                     href={link.href}
+                    prefetch={false}
                     onClick={(e) => handleNavClick(e, link.href)}
                     aria-current={activeSection === link.href ? "page" : undefined}
-                    className={`relative px-4 py-2.5 text-sm font-medium rounded-lg focus-ring group inline-block transition-colors duration-200 touch-target ${
-                      activeSection === link.href
-                        ? "text-white"
-                        : "text-[#94A3B8] hover:text-white"
-                    }`}
+                    className={navLinkClasses(activeSection === link.href)}
                   >
                     <span className="relative z-10">{link.label}</span>
                     {activeSection === link.href && (
@@ -304,6 +309,7 @@ export default function Navbar() {
               >
                 <Link
                   href="#contact"
+                  prefetch={false}
                   onClick={(e) => handleNavClick(e, "#contact")}
                   className="relative inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold bg-white text-[#0B0F19] rounded-full hover:bg-[#E2E8F0] active:bg-[#CBD5E1] transition-colors duration-200 focus-ring overflow-hidden group touch-target"
                 >
@@ -395,6 +401,7 @@ export default function Navbar() {
                 >
                   <Link
                     href={link.href}
+                    prefetch={false}
                     onClick={(e) => handleNavClick(e, link.href)}
                     aria-current={activeSection === link.href ? "page" : undefined}
                     className={`flex items-center px-4 py-3.5 text-[15px] font-medium rounded-xl transition-all active:scale-[0.98] touch-target ${
@@ -416,6 +423,7 @@ export default function Navbar() {
                 >
                   <Link
                     href="#contact"
+                    prefetch={false}
                     onClick={(e) => handleNavClick(e, "#contact")}
                     className="flex items-center justify-center w-full text-center px-5 py-3.5 text-sm font-semibold bg-white text-[#0B0F19] rounded-full active:bg-[#CBD5E1] transition-colors overflow-hidden relative focus-ring touch-target"
                   >
