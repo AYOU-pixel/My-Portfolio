@@ -20,7 +20,7 @@ export default function FooterSection() {
   const shouldReduceMotion = useReducedMotion();
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: shouldReduceMotion ? "auto" : "smooth" });
   };
 
   const currentYear = new Date().getFullYear();
@@ -41,7 +41,7 @@ export default function FooterSection() {
             <span className="text-white font-semibold text-sm md:text-base">
               Ayoub Rachidi
             </span>
-            <span className="text-[#475569] text-xs md:text-sm" aria-label={`Copyright ${currentYear}`}>
+            <span className="text-muted-dim text-xs md:text-sm" aria-label={`Copyright ${currentYear}`}>
               © {currentYear}
             </span>
           </div>
@@ -56,7 +56,7 @@ export default function FooterSection() {
               whileHover={shouldReduceMotion ? {} : { scale: 1.12, y: -2 }}
               whileTap={{ scale: 0.92 }}
               transition={springMicro}
-              className="text-[#64748B] hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring touch-target"
+              className="text-muted-dim hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring touch-target"
             >
               <Github size={18} aria-hidden="true" />
             </motion.a>
@@ -68,7 +68,7 @@ export default function FooterSection() {
               whileHover={shouldReduceMotion ? {} : { scale: 1.12, y: -2 }}
               whileTap={{ scale: 0.92 }}
               transition={springMicro}
-              className="text-[#64748B] hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring touch-target"
+              className="text-muted-dim hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring touch-target"
             >
               <Linkedin size={18} aria-hidden="true" />
             </motion.a>
@@ -81,7 +81,7 @@ export default function FooterSection() {
               whileHover={shouldReduceMotion ? {} : { scale: 1.05, y: -1 }}
               whileTap={{ scale: 0.95 }}
               transition={springMicro}
-              className="group flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-[#64748B] hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring touch-target"
+              className="group flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-muted-dim hover:text-white transition-colors duration-200 p-1.5 -m-1.5 rounded-lg focus-ring touch-target"
               aria-label="Scroll back to top"
             >
               Back to top

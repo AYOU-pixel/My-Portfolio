@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+"use client";
+
+import React, { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 interface TextThreeProps {
   text: string;
@@ -17,25 +19,27 @@ const TextThree = ({
   reducedMotion = false 
 }: TextThreeProps) => {
     const [displayText, setDisplayText] = useState(reducedMotion ? text : "")
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     useEffect(() => {
         if (reducedMotion) return;
         
         let currentIndex = 0
         const timeoutId = setTimeout(() => {
-            const intervalId = setInterval(() => {
+            intervalRef.current = setInterval(() => {
                 if (currentIndex <= text.length) {
                     setDisplayText(text.slice(0, currentIndex))
                     currentIndex++
                 } else {
-                    clearInterval(intervalId)
+                    if (intervalRef.current) clearInterval(intervalRef.current);
                 }
             }, speed)
-            
-            return () => clearInterval(intervalId)
         }, delay)
 
-        return () => clearTimeout(timeoutId)
+        return () => {
+            clearTimeout(timeoutId);
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        }
     }, [text, speed, delay, reducedMotion])
 
     return (
@@ -44,10 +48,11 @@ const TextThree = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
+            aria-hidden="true"
         >
             {displayText}
         </motion.span>
     )
 }
 
-export default TextThree
+export default TextThree;

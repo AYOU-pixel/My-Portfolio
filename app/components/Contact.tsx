@@ -151,7 +151,7 @@ function ContactInfoCard({ item }: ContactInfoCardProps) {
   const Icon = item.icon;
   const CardWrapper = item.isLink ? "a" : "div";
   const linkProps = item.isLink
-    ? { href: item.href!, target: "_blank", rel: "noopener noreferrer", "aria-label": item.ariaLabel }
+    ? { href: item.href!, "aria-label": item.ariaLabel }
     : {};
 
   return (
@@ -167,7 +167,7 @@ function ContactInfoCard({ item }: ContactInfoCardProps) {
             <Icon className={`w-4 h-4 md:w-5 md:h-5 ${item.iconColor}`} aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <div className="text-xs md:text-sm text-[#64748B] mb-0.5">{item.label}</div>
+            <div className="text-xs md:text-sm text-muted-dim mb-0.5">{item.label}</div>
             <div
               className={`text-sm md:text-base text-white font-medium transition-colors truncate ${item.hoverColor}`}
             >
@@ -322,7 +322,7 @@ export default function Contact() {
               initial="hidden"
               animate={isInView || shouldReduceMotion ? "visible" : "hidden"}
             >
-              <h3 className="text-xs md:text-sm font-medium text-[#64748B] uppercase tracking-[0.12em] mb-3 md:mb-4">
+              <h3 className="text-xs md:text-sm font-medium text-muted-dim uppercase tracking-[0.12em] mb-3 md:mb-4">
                 Socials
               </h3>
               <div className="flex flex-wrap gap-2.5 md:gap-3">
@@ -459,7 +459,7 @@ export default function Contact() {
                     whileHover={!isSubmitting && !isSubmitted && !shouldReduceMotion ? { scale: 1.02, y: -1 } : {}}
                     whileTap={!isSubmitting && !isSubmitted ? { scale: 0.97 } : {}}
                     transition={springMicro}
-                    className="w-full sm:w-auto inline-block relative overflow-hidden"
+                    className="group w-full sm:w-auto inline-block relative overflow-hidden"
                   >
                     <Button
                       type="submit"
