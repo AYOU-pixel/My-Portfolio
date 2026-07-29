@@ -55,7 +55,7 @@ const TESTIMONIALS: TestimonialData[] = [
     businessName: "Olympic Jafy Gym",
     position: "Owner",
     website: "olympicjafygym.com",
-    logo: "/J1.png",
+    logo: "/iconeg.png",
     projectDetails: [
       { label: "Project Type", value: "Landing Page", icon: Briefcase },
       { label: "Industry", value: "Fitness & Gym", icon: Globe },

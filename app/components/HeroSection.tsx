@@ -168,7 +168,7 @@ export default function HeroSection() {
                 <ArrowDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" aria-hidden="true" />
               </a>
               <a
-                href="/MYCVFORDEV.pdf"
+                href="/MYCVFORDEV(en).pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 glass rounded-full font-semibold text-sm text-white hover:bg-white/5 active:scale-95 transition-all duration-200 w-full sm:w-auto"

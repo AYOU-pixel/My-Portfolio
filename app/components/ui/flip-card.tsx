@@ -95,14 +95,14 @@ export function FlipCard({ data }: FlipCardProps) {
         <h3 className="text-xl sm:text-2xl font-bold text-white mb-1">{data.name}</h3>
         <p className="text-sm font-medium text-sky-400 mb-6 sm:mb-8">{data.role}</p>
 
-        <div className="space-y-2.5 text-sm text-muted">
-          <div className="flex items-center justify-center gap-2">
-            <MapPin size={15} aria-hidden="true" />
-            <span>{data.location}</span>
+        <div className="space-y-2.5 text-sm">
+          <div className="flex items-center justify-center gap-2 text-slate-200">
+            <MapPin size={15} aria-hidden="true" className="text-sky-400" />
+            <span className="font-medium text-white/90">{data.location}</span>
           </div>
-          <div className="flex items-center justify-center gap-2">
-            <Mail size={15} aria-hidden="true" />
-            <span>{data.availability}</span>
+          <div className="flex items-center justify-center gap-2 text-slate-200">
+            <Mail size={15} aria-hidden="true" className="text-sky-400" />
+            <span className="font-medium text-white/90">{data.availability}</span>
           </div>
         </div>
 
