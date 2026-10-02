@@ -18,18 +18,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ayoubtec.vercel.app"),
+  metadataBase: new URL("https://ayoubdev.me"),
   verification: {
-    google: "vV6lRWvLdX8NYd9NYh9Fp3-d1FzlzhZLZGLFO5UUu0s",
+    google: "jj-dqmNxs-DZqBYxK0F27XhJrS0AqCkynA_mx9qNYSw",
   },
 
   title: {
-    default: "Ayoub Rachidi Frontend Developer",
+    default: "Ayoub Rachidi | Frontend Developer",
     template: "%s | Ayoub Rachidi",
   },
 
   description:
-    "Frontend Developer specializing in React, Next.js and TypeScript. I build fast, responsive landing pages and modern web applications focused on performance and user experience.",
+    "Frontend Developer specializing in React, Next.js, and TypeScript. I build fast, responsive landing pages and modern web applications focused on performance and user experience.",
 
   keywords: [
     "Frontend Developer",
@@ -43,27 +43,26 @@ export const metadata: Metadata = {
     "React",
     "Next.js",
     "Ayoub Rachidi",
+    "ayoubdev.me",
   ],
 
   authors: [
     {
       name: "Ayoub Rachidi",
-      url: "https://ayoubtec.vercel.app",
+      url: "https://ayoubdev.me",
     },
   ],
 
   creator: "Ayoub Rachidi",
-
   publisher: "Ayoub Rachidi",
 
   alternates: {
-    canonical: "https://ayoubtec.vercel.app",
+    canonical: "https://ayoubdev.me",
   },
 
   robots: {
     index: true,
     follow: true,
-
     googleBot: {
       index: true,
       follow: true,
@@ -76,16 +75,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-
-    url: "https://ayoubtec.vercel.app",
-
+    url: "https://ayoubdev.me",
     title: "Ayoub Rachidi | React & Next.js Frontend Developer",
-
     description:
-      "Frontend Developer specializing in React, Next.js and TypeScript. Building fast landing pages and modern web applications.",
-
+      "Frontend Developer specializing in React, Next.js, and TypeScript. Building fast landing pages and modern web applications.",
     siteName: "Ayoub Rachidi Portfolio",
-
     images: [
       {
         url: "/og-image.png",
@@ -98,14 +92,10 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-
     title: "Ayoub Rachidi | React & Next.js Frontend Developer",
-
     description:
-      "Frontend Developer specializing in React, Next.js and TypeScript.",
-
+      "Frontend Developer specializing in React, Next.js, and TypeScript.",
     images: ["/og-image.png"],
-
     creator: "@AYOU_pixel",
   },
 
@@ -135,24 +125,15 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-
   themeColor: [
-    {
-      media: "(prefers-color-scheme: light)",
-      color: "#ffffff",
-    },
-    {
-      media: "(prefers-color-scheme: dark)",
-      color: "#0B0F19",
-    },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0B0F19" },
   ],
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
@@ -162,7 +143,6 @@ export default function RootLayout({
     >
       <body className="antialiased">
         {children}
-
         <Analytics />
       </body>
     </html>

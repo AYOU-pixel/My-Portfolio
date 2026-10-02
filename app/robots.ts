@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://ayoubtec.vercel.app/sitemap.xml",
+    sitemap: "https://ayoubdev.me/sitemap.xml",
   };
 }
